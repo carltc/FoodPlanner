@@ -27,6 +27,7 @@ namespace FoodPlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Setup application back-end database
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
@@ -34,6 +35,10 @@ namespace FoodPlanner
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            // Setup food planning database
+            services.AddDbContext<FoodPlannerContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
