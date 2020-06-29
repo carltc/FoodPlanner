@@ -10,22 +10,22 @@ using FoodPlanner.Models;
 
 namespace FoodPlanner.Controllers
 {
-    public class ConsumablesController : Controller
+    public class ProductsController : Controller
     {
         private readonly FoodPlannerContext _context;
 
-        public ConsumablesController(FoodPlannerContext context)
+        public ProductsController(FoodPlannerContext context)
         {
             _context = context;
         }
 
-        // GET: Consumables
+        // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Consumable.ToListAsync());
+            return View(await _context.Product.ToListAsync());
         }
 
-        // GET: Consumables/Details/5
+        // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,42 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var consumable = await _context.Consumable
+            var product = await _context.Product
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (consumable == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return View(consumable);
+            return View(product);
         }
 
-        // GET: Consumables/Create
+        // GET: Products/Create
         public IActionResult Create()
         {
+            // Add consumables to viewbag
+            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
+
             return View();
         }
 
-        // POST: Consumables/Create
+        // POST: Products/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Consumable consumable)
+        public async Task<IActionResult> Create([Bind("Id,Name,CategoryId")] Product product)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(consumable);
+                _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(consumable);
+            return View(product);
         }
 
-        // GET: Consumables/Edit/5
+        // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +76,22 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var consumable = await _context.Consumable.FindAsync(id);
-            if (consumable == null)
+            var product = await _context.Product.FindAsync(id);
+            if (product == null)
             {
                 return NotFound();
             }
-            return View(consumable);
+            return View(product);
         }
 
-        // POST: Consumables/Edit/5
+        // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Consumable consumable)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Product product)
         {
-            if (id != consumable.Id)
+            if (id != product.Id)
             {
                 return NotFound();
             }
@@ -97,12 +100,12 @@ namespace FoodPlanner.Controllers
             {
                 try
                 {
-                    _context.Update(consumable);
+                    _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ConsumableExists(consumable.Id))
+                    if (!ProductExists(product.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +116,10 @@ namespace FoodPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(consumable);
+            return View(product);
         }
 
-        // GET: Consumables/Delete/5
+        // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +127,30 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var consumable = await _context.Consumable
+            var product = await _context.Product
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (consumable == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return View(consumable);
+            return View(product);
         }
 
-        // POST: Consumables/Delete/5
+        // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var consumable = await _context.Consumable.FindAsync(id);
-            _context.Consumable.Remove(consumable);
+            var product = await _context.Product.FindAsync(id);
+            _context.Product.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ConsumableExists(int id)
+        private bool ProductExists(int id)
         {
-            return _context.Consumable.Any(e => e.Id == id);
+            return _context.Product.Any(e => e.Id == id);
         }
     }
 }

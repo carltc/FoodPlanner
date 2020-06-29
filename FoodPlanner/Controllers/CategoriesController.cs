@@ -10,23 +10,22 @@ using FoodPlanner.Models;
 
 namespace FoodPlanner.Controllers
 {
-    public class IngredientsController : Controller
+    public class CategoriesController : Controller
     {
         private readonly FoodPlannerContext _context;
 
-        public IngredientsController(FoodPlannerContext context)
+        public CategoriesController(FoodPlannerContext context)
         {
             _context = context;
         }
 
-        // GET: Ingredients
+        // GET: Categories
         public async Task<IActionResult> Index()
         {
-            var foodPlannerContext = _context.Ingredient.Include(i => i.Product).Include(i => i.Recipe);
-            return View(await foodPlannerContext.ToListAsync());
+            return View(await _context.Category.ToListAsync());
         }
 
-        // GET: Ingredients/Details/5
+        // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,45 +33,39 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredient
-                .Include(i => i.Product)
-                .Include(i => i.Recipe)
+            var category = await _context.Category
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ingredient == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(ingredient);
+            return View(category);
         }
 
-        // GET: Ingredients/Create
+        // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id");
-            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Id");
             return View();
         }
 
-        // POST: Ingredients/Create
+        // POST: Categories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ProductId,Quantity,Unit,RecipeId")] Ingredient ingredient)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ingredient);
+                _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", ingredient.ProductId);
-            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Id", ingredient.RecipeId);
-            return View(ingredient);
+            return View(category);
         }
 
-        // GET: Ingredients/Edit/5
+        // GET: Categories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,24 +73,22 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredient.FindAsync(id);
-            if (ingredient == null)
+            var category = await _context.Category.FindAsync(id);
+            if (category == null)
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", ingredient.ProductId);
-            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Id", ingredient.RecipeId);
-            return View(ingredient);
+            return View(category);
         }
 
-        // POST: Ingredients/Edit/5
+        // POST: Categories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,ProductId,Quantity,Unit,RecipeId")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Category category)
         {
-            if (id != ingredient.Id)
+            if (id != category.Id)
             {
                 return NotFound();
             }
@@ -106,12 +97,12 @@ namespace FoodPlanner.Controllers
             {
                 try
                 {
-                    _context.Update(ingredient);
+                    _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!IngredientExists(ingredient.Id))
+                    if (!CategoryExists(category.Id))
                     {
                         return NotFound();
                     }
@@ -122,12 +113,10 @@ namespace FoodPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Id", ingredient.ProductId);
-            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Id", ingredient.RecipeId);
-            return View(ingredient);
+            return View(category);
         }
 
-        // GET: Ingredients/Delete/5
+        // GET: Categories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,32 +124,30 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredient
-                .Include(i => i.Product)
-                .Include(i => i.Recipe)
+            var category = await _context.Category
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ingredient == null)
+            if (category == null)
             {
                 return NotFound();
             }
 
-            return View(ingredient);
+            return View(category);
         }
 
-        // POST: Ingredients/Delete/5
+        // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ingredient = await _context.Ingredient.FindAsync(id);
-            _context.Ingredient.Remove(ingredient);
+            var category = await _context.Category.FindAsync(id);
+            _context.Category.Remove(category);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool IngredientExists(int id)
+        private bool CategoryExists(int id)
         {
-            return _context.Ingredient.Any(e => e.Id == id);
+            return _context.Category.Any(e => e.Id == id);
         }
     }
 }

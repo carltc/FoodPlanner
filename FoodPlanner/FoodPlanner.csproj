@@ -6,6 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200629180319_RenameConsumableCategory.cs" />
+    <Compile Remove="Migrations\20200629180319_RenameConsumableCategory.Designer.cs" />
+    <Compile Remove="Migrations\20200629180559_RenameConsumableCategory.cs" />
+    <Compile Remove="Migrations\20200629180559_RenameConsumableCategory.Designer.cs" />
+    <Compile Remove="Migrations\20200629180924_RenameConsumableCategory.cs" />
+    <Compile Remove="Migrations\20200629180924_RenameConsumableCategory.Designer.cs" />
+    <Compile Remove="Migrations\20200629205719_AddRecipeInput.cs" />
+    <Compile Remove="Migrations\20200629205719_AddRecipeInput.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.5" />

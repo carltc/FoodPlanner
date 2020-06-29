@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
+using FoodPlanner.Classes;
 
 namespace FoodPlanner.Controllers
 {
@@ -46,6 +47,8 @@ namespace FoodPlanner.Controllers
         // GET: Recipes/Create
         public IActionResult Create()
         {
+            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name");
+
             return View();
         }
 
@@ -54,11 +57,31 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Recipe recipe)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Recipe recipe, List<int> ProductIds, List<int> Quantities, List<Unit> Units)
         {
             if (ModelState.IsValid)
             {
+                // Initialise ingredients
+                recipe.Ingredients = new List<Ingredient>();
+
+                // Add ingredients
+                //foreach(int productId in ProductIds)
+                for (int i = 0; i < ProductIds.Count; i++)
+                {
+                    var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+                    var ingredient = new Ingredient()
+                    {
+                        Name = product.Name,
+                        ProductId = product.Id,
+                        Quantity = Quantities[i],
+                        Unit = Units[i]
+                    };
+                    recipe.Ingredients.Add(ingredient);
+                }
+
+                // Add recipe
                 _context.Add(recipe);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
