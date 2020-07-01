@@ -21,5 +21,9 @@ namespace FoodPlanner.Data
         public DbSet<FoodPlanner.Models.Category> Category { get; set; }
 
         public DbSet<FoodPlanner.Models.Product> Product { get; set; }
+
+        public DbSet<FoodPlanner.Models.FoodPlan> FoodPlan { get; set; }
+
+        public DbSet<FoodPlanner.Models.ShopItem> ShopItem { get; set; }
     }
 }

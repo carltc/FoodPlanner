@@ -4,14 +4,16 @@ using FoodPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FoodPlanner.Migrations
 {
     [DbContext(typeof(FoodPlannerContext))]
-    partial class FoodPlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20200630125138_AddingFoodPlan")]
+    partial class AddingFoodPlan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,26 +54,40 @@ namespace FoodPlanner.Migrations
                     b.ToTable("FoodPlan");
                 });
 
-            modelBuilder.Entity("FoodPlanner.Models.FoodPlanRecipe", b =>
+            modelBuilder.Entity("FoodPlanner.Models.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FoodPlanId")
+                    b.Property<int?>("FoodPlanId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<int>("RecipeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Unit")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FoodPlanId");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("FoodPlanRecipe");
+                    b.ToTable("Ingredient");
                 });
 
             modelBuilder.Entity("FoodPlanner.Models.Product", b =>
@@ -101,73 +117,33 @@ namespace FoodPlanner.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Recipe");
-                });
-
-            modelBuilder.Entity("FoodPlanner.Models.ShopItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("FoodPlanId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FoodPlanId");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ShopItem");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ShopItem");
+                    b.ToTable("Recipe");
                 });
 
             modelBuilder.Entity("FoodPlanner.Models.Ingredient", b =>
                 {
-                    b.HasBaseType("FoodPlanner.Models.ShopItem");
+                    b.HasOne("FoodPlanner.Models.FoodPlan", null)
+                        .WithMany("Ingredients")
+                        .HasForeignKey("FoodPlanId");
 
-                    b.Property<int>("RecipeId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("RecipeId");
-
-                    b.HasDiscriminator().HasValue("Ingredient");
-                });
-
-            modelBuilder.Entity("FoodPlanner.Models.FoodPlanRecipe", b =>
-                {
-                    b.HasOne("FoodPlanner.Models.FoodPlan", "FoodPlan")
-                        .WithMany("Recipes")
-                        .HasForeignKey("FoodPlanId")
+                    b.HasOne("FoodPlanner.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FoodPlanner.Models.Recipe", "Recipe")
-                        .WithMany()
+                        .WithMany("Ingredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -182,26 +158,11 @@ namespace FoodPlanner.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FoodPlanner.Models.ShopItem", b =>
+            modelBuilder.Entity("FoodPlanner.Models.Recipe", b =>
                 {
                     b.HasOne("FoodPlanner.Models.FoodPlan", null)
-                        .WithMany("ShopItems")
+                        .WithMany("Recipes")
                         .HasForeignKey("FoodPlanId");
-
-                    b.HasOne("FoodPlanner.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FoodPlanner.Models.Ingredient", b =>
-                {
-                    b.HasOne("FoodPlanner.Models.Recipe", "Recipe")
-                        .WithMany("Ingredients")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

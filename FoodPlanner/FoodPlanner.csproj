@@ -14,6 +14,8 @@
     <Compile Remove="Migrations\20200629180924_RenameConsumableCategory.Designer.cs" />
     <Compile Remove="Migrations\20200629205719_AddRecipeInput.cs" />
     <Compile Remove="Migrations\20200629205719_AddRecipeInput.Designer.cs" />
+    <Compile Remove="Migrations\20200630124950_AddingFoodPlan.cs" />
+    <Compile Remove="Migrations\20200630124950_AddingFoodPlan.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,6 +13,12 @@ namespace FoodPlanner.Classes
     {
         unit, // none
         l, // litres
-        g // grams
+        g, // grams
+        cup, // cups
+        tbsp, // 
+        tsp,
+        pinch,
+        ml,
+        kg
     }
 }

@@ -1,0 +1,96 @@
+﻿@model FoodPlanner.Models.FoodPlan
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    function addRecipe() {
+        var RL = document.getElementById('RecipeList');
+        var RR = document.getElementsByName('RecipeRow')[0];
+        var newRow = RR.cloneNode(true);
+        RL.appendChild(newRow);
+    }
+    function addProduct() {
+        var PL = document.getElementById('ProductList');
+        var PR = document.getElementsByName('ProductRow')[0];
+        var newRow = PR.cloneNode(true);
+        PL.appendChild(newRow);
+    }
+</script>
+
+<h1>Create</h1>
+
+<h4>FoodPlan</h4>
+<hr />
+<div class="row">
+    <div class="col-md">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PlanStart" class="control-label"></label>
+                <input asp-for="PlanStart" class="form-control" />
+                <span asp-validation-for="PlanStart" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    Recipes:
+
+                    <div class="form-group" id="RecipeList">
+                        <div class="row" name="RecipeRow">
+                            <div class="col">
+                                <select name="RecipeIds" class="form-control" asp-items="ViewBag.RecipeId"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="addRecipe()">Add Recipe</button>
+                </div>
+                <div class="col-2"></div>
+                <div class="col">
+                    Products:
+
+                    <div class="form-group" id="ProductList">
+                        <div class="row" name="ProductRow">
+                            <div class="col">
+                                <select name="ProductIds" class="form-control" asp-items="ViewBag.ProductId"></select>
+                            </div>
+                            <div class="col">
+                                <input name="Quantities" type="number" step="any" />
+                            </div>
+                            <div class="col">
+                                <select name="Units"
+                                        class="form-control"
+                                        asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="addProduct()">Add Product</button>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

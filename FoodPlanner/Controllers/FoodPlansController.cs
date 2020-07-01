@@ -11,22 +11,22 @@ using FoodPlanner.Classes;
 
 namespace FoodPlanner.Controllers
 {
-    public class RecipesController : Controller
+    public class FoodPlansController : Controller
     {
         private readonly FoodPlannerContext _context;
 
-        public RecipesController(FoodPlannerContext context)
+        public FoodPlansController(FoodPlannerContext context)
         {
             _context = context;
         }
 
-        // GET: Recipes
+        // GET: FoodPlans
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipe.ToListAsync());
+            return View(await _context.FoodPlan.ToListAsync());
         }
 
-        // GET: Recipes/Details/5
+        // GET: FoodPlans/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,61 +34,76 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe
+            var foodPlan = await _context.FoodPlan
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null)
+            if (foodPlan == null)
             {
                 return NotFound();
             }
 
-            return View(recipe);
+            return View(foodPlan);
         }
 
-        // GET: Recipes/Create
+        // GET: FoodPlans/Create
         public IActionResult Create()
         {
+            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Name");
             ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name");
 
             return View();
         }
 
-        // POST: Recipes/Create
+        // POST: FoodPlans/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
+        public async Task<IActionResult> Create([Bind("Id,Name,PlanStart")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
         {
             if (ModelState.IsValid)
             {
                 // Initialise ingredients
-                recipe.Ingredients = new List<Ingredient>();
+                foodPlan.ShopItems = new List<ShopItem>();
+                foodPlan.Recipes = new List<FoodPlanRecipe>();
 
                 // Add ingredients
                 //foreach(int productId in ProductIds)
                 for (int i = 0; i < ProductIds.Count; i++)
                 {
                     var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
-                    var ingredient = new Ingredient()
+                    var foodPlanProduct = new FoodPlanProduct()
                     {
                         Name = product.Name,
                         ProductId = product.Id,
-                        Quantity = Quantities[i],
-                        Unit = Units[i]
+                        Product = product,
+                        FoodPlanId = foodPlan.Id,
+                        FoodPlan = foodPlan
                     };
-                    recipe.Ingredients.Add(ingredient);
+                    foodPlan.ShopItems.Add(foodPlanProduct);
                 }
 
-                // Add recipe
-                _context.Add(recipe);
+                // Add Recipes
+                for (int i = 0; i < RecipeIds.Count; i++)
+                {
+                    var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
+                    var foodPlanRecipe = new FoodPlanRecipe()
+                    {
+                        RecipeId = recipe.Id,
+                        Recipe = recipe,
+                        FoodPlanId = foodPlan.Id,
+                        FoodPlan = foodPlan
+                    };
+                    foodPlan.Recipes.Add(foodPlanRecipe);
+                }
 
+                _context.Add(foodPlan);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(recipe);
+            return View(foodPlan);
         }
 
-        // GET: Recipes/Edit/5
+        // GET: FoodPlans/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -96,22 +111,22 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe.FindAsync(id);
-            if (recipe == null)
+            var foodPlan = await _context.FoodPlan.FindAsync(id);
+            if (foodPlan == null)
             {
                 return NotFound();
             }
-            return View(recipe);
+            return View(foodPlan);
         }
 
-        // POST: Recipes/Edit/5
+        // POST: FoodPlans/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Recipe recipe)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PlanStart")] FoodPlan foodPlan)
         {
-            if (id != recipe.Id)
+            if (id != foodPlan.Id)
             {
                 return NotFound();
             }
@@ -120,12 +135,12 @@ namespace FoodPlanner.Controllers
             {
                 try
                 {
-                    _context.Update(recipe);
+                    _context.Update(foodPlan);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RecipeExists(recipe.Id))
+                    if (!FoodPlanExists(foodPlan.Id))
                     {
                         return NotFound();
                     }
@@ -136,10 +151,10 @@ namespace FoodPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(recipe);
+            return View(foodPlan);
         }
 
-        // GET: Recipes/Delete/5
+        // GET: FoodPlans/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -147,30 +162,30 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe
+            var foodPlan = await _context.FoodPlan
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (recipe == null)
+            if (foodPlan == null)
             {
                 return NotFound();
             }
 
-            return View(recipe);
+            return View(foodPlan);
         }
 
-        // POST: Recipes/Delete/5
+        // POST: FoodPlans/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipe = await _context.Recipe.FindAsync(id);
-            _context.Recipe.Remove(recipe);
+            var foodPlan = await _context.FoodPlan.FindAsync(id);
+            _context.FoodPlan.Remove(foodPlan);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RecipeExists(int id)
+        private bool FoodPlanExists(int id)
         {
-            return _context.Recipe.Any(e => e.Id == id);
+            return _context.FoodPlan.Any(e => e.Id == id);
         }
     }
 }

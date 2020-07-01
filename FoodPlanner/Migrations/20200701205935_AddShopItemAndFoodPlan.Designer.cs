@@ -4,14 +4,16 @@ using FoodPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FoodPlanner.Migrations
 {
     [DbContext(typeof(FoodPlannerContext))]
-    partial class FoodPlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20200701205935_AddShopItemAndFoodPlan")]
+    partial class AddShopItemAndFoodPlan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,8 +131,8 @@ namespace FoodPlanner.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<int>("Unit")
                         .HasColumnType("int");

@@ -34,7 +34,7 @@
                         <select name="ProductIds" class="form-control" asp-items="ViewBag.ProductId"></select>
                     </div>
                     <div class="col">
-                        <input type="number" name="Quantities" />
+                        <input name="Quantities" type="number" step="any" />
                     </div>
                     <div class="col">
                         <select name="Units"
@@ -60,6 +60,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
+@*@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+}*@
