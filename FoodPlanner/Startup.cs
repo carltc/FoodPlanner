@@ -39,6 +39,7 @@ namespace FoodPlanner
             // Setup food planning database
             services.AddDbContext<FoodPlannerContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContext")));
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,14 +4,16 @@ using FoodPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FoodPlanner.Migrations
 {
     [DbContext(typeof(FoodPlannerContext))]
-    partial class FoodPlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20200703175632_CascadeDeleteFoodPlanProducts")]
+    partial class CascadeDeleteFoodPlanProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,6 +122,9 @@ namespace FoodPlanner.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("FoodPlanId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -134,23 +139,13 @@ namespace FoodPlanner.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FoodPlanId");
+
                     b.HasIndex("ProductId");
 
                     b.ToTable("ShopItem");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("ShopItem");
-                });
-
-            modelBuilder.Entity("FoodPlanner.Models.FoodPlanProduct", b =>
-                {
-                    b.HasBaseType("FoodPlanner.Models.ShopItem");
-
-                    b.Property<int>("FoodPlanId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("FoodPlanId");
-
-                    b.HasDiscriminator().HasValue("FoodPlanProduct");
                 });
 
             modelBuilder.Entity("FoodPlanner.Models.Ingredient", b =>
@@ -191,18 +186,13 @@ namespace FoodPlanner.Migrations
 
             modelBuilder.Entity("FoodPlanner.Models.ShopItem", b =>
                 {
+                    b.HasOne("FoodPlanner.Models.FoodPlan", null)
+                        .WithMany("ShopItems")
+                        .HasForeignKey("FoodPlanId");
+
                     b.HasOne("FoodPlanner.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("FoodPlanner.Models.FoodPlanProduct", b =>
-                {
-                    b.HasOne("FoodPlanner.Models.FoodPlan", "FoodPlan")
-                        .WithMany("Products")
-                        .HasForeignKey("FoodPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -4,6 +4,10 @@
       "type": "mssql",
       "connectionId": "BackendContext"
     },
+    "appInsights1": {
+      "type": "appInsights",
+      "connectionId": "APPINSIGHTS_INSTRUMENTATIONKEY"
+    },
     "mssql2": {
       "type": "mssql",
       "connectionId": "FoodPlannerContext"

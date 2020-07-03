@@ -1,8 +1,22 @@
 {
   "dependencies": {
+    "appInsights1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/microsoft.insights/components/Flist",
+      "type": "appInsights.azure",
+      "connectionId": "APPINSIGHTS_INSTRUMENTATIONKEY",
+      "secretStore": "LocalSecretsFile"
+    },
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/Microsoft.Sql/servers/flistdbserver/databases/Flist_db",
+      "type": "mssql.azure",
+      "connectionId": "BackendContext",
+      "secretStore": "LocalSecretsFile"
+    },
     "mssql2": {
-      "type": "mssql.local",
-      "connectionId": "FoodPlannerContext"
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroup')]/providers/Microsoft.Sql/servers/flistdbserver/databases/Flist_db",
+      "type": "mssql.azure",
+      "connectionId": "FoodPlannerContext",
+      "secretStore": "LocalSecretsFile"
     }
   }
 }

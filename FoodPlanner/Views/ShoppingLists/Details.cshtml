@@ -1,0 +1,27 @@
+﻿@model IEnumerable<ShopItem>
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Shopping List:</h4>
+    <hr />
+    @foreach (var shopItem in Model)
+    {
+        <dl class="row">
+            <dt class="col-sm-6">
+                @Html.DisplayFor(model => shopItem.Product.Category.Name) (@Html.DisplayFor(model => shopItem.Product.Name))
+            </dt>
+            <dd class="col-sm-6">
+                @Html.DisplayFor(model => shopItem.Quantity) @Html.DisplayFor(model => shopItem.Unit)
+            </dd>
+        </dl>
+    }
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

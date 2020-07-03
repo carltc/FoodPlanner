@@ -47,7 +47,17 @@ namespace FoodPlanner.Controllers
         // GET: Recipes/Create
         public IActionResult Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name");
+            // Get products and categories
+            var products = _context.Product
+                .Include(p => p.Category)
+                .Select(p => new
+                {
+                    Id = p.Id,
+                    FullName = p.Category.Name + " (" + p.Name + ")"
+                });
+
+
+            ViewData["ProductId"] = new SelectList(products, "Id", "FullName");
 
             return View();
         }

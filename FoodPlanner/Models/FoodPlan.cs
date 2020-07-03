@@ -11,6 +11,6 @@ namespace FoodPlanner.Models
         public string Name { get; set; }
         public DateTime PlanStart { get; set; }
         public List<FoodPlanRecipe> Recipes { get; set; }
-        public List<ShopItem> ShopItems { get; set; }
+        public List<FoodPlanProduct> Products { get; set; }
     }
 }

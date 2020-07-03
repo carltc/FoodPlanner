@@ -40,7 +40,7 @@
             </div>
 
             <div class="row">
-                <div class="col">
+                <div class="col-4">
                     Recipes:
 
                     <div class="form-group" id="RecipeList">
@@ -53,17 +53,17 @@
 
                     <button type="button" onclick="addRecipe()">Add Recipe</button>
                 </div>
-                <div class="col-2"></div>
+                <div class="col-1"></div>
                 <div class="col">
                     Products:
 
                     <div class="form-group" id="ProductList">
                         <div class="row" name="ProductRow">
-                            <div class="col">
+                            <div class="col-8">
                                 <select name="ProductIds" class="form-control" asp-items="ViewBag.ProductId"></select>
                             </div>
-                            <div class="col">
-                                <input name="Quantities" type="number" step="any" />
+                            <div class="col-2">
+                                <input name="Quantities" type="number" step="0.01" min="0" style="width: inherit;" />
                             </div>
                             <div class="col">
                                 <select name="Units"

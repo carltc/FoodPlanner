@@ -46,9 +46,17 @@ namespace FoodPlanner.Controllers
 
         // GET: FoodPlans/Create
         public IActionResult Create()
-        {
+        {// Get products and categories
+            var products = _context.Product
+                .Include(p => p.Category)
+                .Select(p => new
+                {
+                    Id = p.Id,
+                    FullName = p.Category.Name + " (" + p.Name + ")"
+                });
+
             ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Name");
-            ViewData["ProductId"] = new SelectList(_context.Product, "Id", "Name");
+            ViewData["ProductId"] = new SelectList(products, "Id", "FullName");
 
             return View();
         }
@@ -63,7 +71,7 @@ namespace FoodPlanner.Controllers
             if (ModelState.IsValid)
             {
                 // Initialise ingredients
-                foodPlan.ShopItems = new List<ShopItem>();
+                foodPlan.Products = new List<FoodPlanProduct>();
                 foodPlan.Recipes = new List<FoodPlanRecipe>();
 
                 // Add ingredients
@@ -77,9 +85,11 @@ namespace FoodPlanner.Controllers
                         ProductId = product.Id,
                         Product = product,
                         FoodPlanId = foodPlan.Id,
-                        FoodPlan = foodPlan
+                        FoodPlan = foodPlan,
+                        Quantity = Quantities[i],
+                        Unit = Units[i]
                     };
-                    foodPlan.ShopItems.Add(foodPlanProduct);
+                    foodPlan.Products.Add(foodPlanProduct);
                 }
 
                 // Add Recipes

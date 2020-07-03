@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-FoodPlanner-22A3D535-0157-403D-BB7F-5D3BE4489561</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/be04e479-8e61-4afa-8aaa-f2668484da36/resourceGroups/Flist/providers/microsoft.insights/components/Flist</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +17,14 @@
     <Compile Remove="Migrations\20200629205719_AddRecipeInput.Designer.cs" />
     <Compile Remove="Migrations\20200630124950_AddingFoodPlan.cs" />
     <Compile Remove="Migrations\20200630124950_AddingFoodPlan.Designer.cs" />
+    <Compile Remove="Migrations\20200703175132_CascadeDeleteFoodPlanProducts.cs" />
+    <Compile Remove="Migrations\20200703175132_CascadeDeleteFoodPlanProducts.Designer.cs" />
+    <Compile Remove="Migrations\20200703175607_CascadeDeleteFoodPlanProducts.cs" />
+    <Compile Remove="Migrations\20200703175607_CascadeDeleteFoodPlanProducts.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.5" />
