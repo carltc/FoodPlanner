@@ -37,8 +37,18 @@ namespace FoodPlanner
             services.AddRazorPages();
 
             // Setup food planning database
-            services.AddDbContext<FoodPlannerContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContext")));
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                services.AddDbContext<FoodPlannerContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContextDev")));
+            }
+            else
+            {
+                services.AddDbContext<FoodPlannerContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContext")));
+            }
+
+            // Application insights
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);
         }
 

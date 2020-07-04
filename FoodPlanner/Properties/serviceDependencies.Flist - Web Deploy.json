@@ -16,6 +16,12 @@
       "type": "mssql.azure",
       "connectionId": "FoodPlannerContext",
       "secretStore": "AzureAppSettings"
+    },
+    "mssql3": {
+      "type": "mssql",
+      "connectionId": "FoodPlannerContextDev",
+      "suggestion": "true",
+      "ignored": "true"
     }
   }
 }

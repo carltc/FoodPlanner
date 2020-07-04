@@ -10,22 +10,22 @@ using FoodPlanner.Models;
 
 namespace FoodPlanner.Controllers
 {
-    public class ProductsController : Controller
+    public class ProductTypesController : Controller
     {
         private readonly FoodPlannerContext _context;
 
-        public ProductsController(FoodPlannerContext context)
+        public ProductTypesController(FoodPlannerContext context)
         {
             _context = context;
         }
 
-        // GET: Products
+        // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+            return View(await _context.ProductType.ToListAsync());
         }
 
-        // GET: Products/Details/5
+        // GET: ProductTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,44 +33,39 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var productType = await _context.ProductType
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (productType == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(productType);
         }
 
-        // GET: Products/Create
+        // GET: ProductTypes/Create
         public IActionResult Create()
         {
-            // Add product types to viewbag
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "Id", "Name");
-            // Add categories to viewbag
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
-
             return View();
         }
 
-        // POST: Products/Create
+        // POST: ProductTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ProductTypeId,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name")] ProductType productType)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
+                _context.Add(productType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(productType);
         }
 
-        // GET: Products/Edit/5
+        // GET: ProductTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,22 +73,22 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+            var productType = await _context.ProductType.FindAsync(id);
+            if (productType == null)
             {
                 return NotFound();
             }
-            return View(product);
+            return View(productType);
         }
 
-        // POST: Products/Edit/5
+        // POST: ProductTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] ProductType productType)
         {
-            if (id != product.Id)
+            if (id != productType.Id)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace FoodPlanner.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(productType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!ProductTypeExists(productType.Id))
                     {
                         return NotFound();
                     }
@@ -118,10 +113,10 @@ namespace FoodPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(productType);
         }
 
-        // GET: Products/Delete/5
+        // GET: ProductTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,30 +124,30 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var productType = await _context.ProductType
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (productType == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(productType);
         }
 
-        // POST: Products/Delete/5
+        // POST: ProductTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
+            var productType = await _context.ProductType.FindAsync(id);
+            _context.ProductType.Remove(productType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool ProductTypeExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.ProductType.Any(e => e.Id == id);
         }
     }
 }

@@ -49,11 +49,11 @@ namespace FoodPlanner.Controllers
         {
             // Get products and categories
             var products = _context.Product
-                .Include(p => p.Category)
+                .Include(p => p.ProductType)
                 .Select(p => new
                 {
                     Id = p.Id,
-                    FullName = p.Category.Name + " (" + p.Name + ")"
+                    FullName = p.ProductType.Name + " (" + p.Name + ")"
                 });
 
 

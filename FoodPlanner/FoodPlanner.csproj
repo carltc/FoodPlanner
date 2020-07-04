@@ -21,6 +21,8 @@
     <Compile Remove="Migrations\20200703175132_CascadeDeleteFoodPlanProducts.Designer.cs" />
     <Compile Remove="Migrations\20200703175607_CascadeDeleteFoodPlanProducts.cs" />
     <Compile Remove="Migrations\20200703175607_CascadeDeleteFoodPlanProducts.Designer.cs" />
+    <Compile Remove="Migrations\20200704132822_AddProductTypes.cs" />
+    <Compile Remove="Migrations\20200704132822_AddProductTypes.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

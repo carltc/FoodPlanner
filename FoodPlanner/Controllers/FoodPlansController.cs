@@ -48,11 +48,11 @@ namespace FoodPlanner.Controllers
         public IActionResult Create()
         {// Get products and categories
             var products = _context.Product
-                .Include(p => p.Category)
+                .Include(p => p.ProductType)
                 .Select(p => new
                 {
                     Id = p.Id,
-                    FullName = p.Category.Name + " (" + p.Name + ")"
+                    FullName = p.ProductType.Name + " (" + p.Name + ")"
                 });
 
             ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Name");

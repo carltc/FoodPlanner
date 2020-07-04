@@ -1,13 +1,12 @@
-﻿@model FoodPlanner.Models.Product
+﻿@model FoodPlanner.Models.ProductType
 
 @{
     ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Create</h1>
 
-<h4>Product</h4>
+<h4>ProductType</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,17 +17,6 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-
-            <div class="form-group">
-                <label asp-for="ProductTypeId" class="control-label"></label>
-                <select asp-for="ProductTypeId" class="form-control" asp-items="ViewBag.ProductTypeId"></select>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-            </div>
-
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

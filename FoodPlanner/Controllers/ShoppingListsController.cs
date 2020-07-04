@@ -35,12 +35,12 @@ namespace FoodPlanner.Controllers
             var foodPlan = await _context.FoodPlan
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
-                        .ThenInclude(p => p.Category)
+                        .ThenInclude(p => p.ProductType)
                 .Include(fp => fp.Recipes)
                     .ThenInclude(r => r.Recipe)
                         .ThenInclude(r => r.Ingredients)
                             .ThenInclude(i => i.Product)
-                                .ThenInclude(p => p.Category)
+                                .ThenInclude(p => p.ProductType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (foodPlan == null)
             {

@@ -18,6 +18,8 @@ namespace FoodPlanner.Data
 
         public DbSet<FoodPlanner.Models.Recipe> Recipe { get; set; }
 
+        public DbSet<FoodPlanner.Models.ProductType> ProductType { get; set; }
+
         public DbSet<FoodPlanner.Models.Category> Category { get; set; }
 
         public DbSet<FoodPlanner.Models.Product> Product { get; set; }
