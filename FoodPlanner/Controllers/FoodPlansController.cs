@@ -121,7 +121,24 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var foodPlan = await _context.FoodPlan.FindAsync(id);
+            var products = _context.Product
+                .Include(p => p.Category)
+                .Select(p => new
+                {
+                    Id = p.Id,
+                    FullName = p.Category.Name + " (" + p.Name + ")"
+                });
+
+            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Name");
+            ViewData["ProductId"] = new SelectList(products, "Id", "FullName");
+
+            var foodPlan = _context.FoodPlan
+                .Where(fp => fp.Id == id)
+                .Include(fp => fp.Recipes)
+                    .ThenInclude(r => r.Recipe)
+                .Include(fp => fp.Products)
+                    .ThenInclude(p => p.Product)
+                .FirstOrDefault();
             if (foodPlan == null)
             {
                 return NotFound();
@@ -134,7 +151,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PlanStart")] FoodPlan foodPlan)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PlanStart")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
         {
             if (id != foodPlan.Id)
             {
@@ -145,6 +162,42 @@ namespace FoodPlanner.Controllers
             {
                 try
                 {
+                    // Initialise ingredients
+                    foodPlan.Products = new List<FoodPlanProduct>();
+                    foodPlan.Recipes = new List<FoodPlanRecipe>();
+
+                    // Add ingredients
+                    //foreach(int productId in ProductIds)
+                    for (int i = 0; i < ProductIds.Count; i++)
+                    {
+                        var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+                        var foodPlanProduct = new FoodPlanProduct()
+                        {
+                            Name = product.Name,
+                            ProductId = product.Id,
+                            Product = product,
+                            FoodPlanId = foodPlan.Id,
+                            FoodPlan = foodPlan,
+                            Quantity = Quantities[i],
+                            Unit = Units[i]
+                        };
+                        foodPlan.Products.Add(foodPlanProduct);
+                    }
+
+                    // Add Recipes
+                    for (int i = 0; i < RecipeIds.Count; i++)
+                    {
+                        var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
+                        var foodPlanRecipe = new FoodPlanRecipe()
+                        {
+                            RecipeId = recipe.Id,
+                            Recipe = recipe,
+                            FoodPlanId = foodPlan.Id,
+                            FoodPlan = foodPlan
+                        };
+                        foodPlan.Recipes.Add(foodPlanRecipe);
+                    }
+
                     _context.Update(foodPlan);
                     await _context.SaveChangesAsync();
                 }
