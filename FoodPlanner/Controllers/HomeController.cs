@@ -29,10 +29,10 @@ namespace FoodPlanner.Controllers
             var dateTime1WeekPast = dateTimeNow.AddDays(-7);
 
             // Get latest foodplan (food plan starting within a week)
-            if (_context.FoodPlan.Where(fp => fp.PlanStart <= dateTimeNow && fp.PlanStart >= dateTime1WeekPast).Count() > 0)
+            if (_context.FoodPlan.Where(fp => fp.Date <= dateTimeNow && fp.Date >= dateTime1WeekPast).Count() > 0)
             {
-                ViewData["CurrentFoodPlanId"] = _context.FoodPlan.Where(fp => fp.PlanStart <= dateTimeNow && fp.PlanStart >= dateTime1WeekPast).FirstOrDefault().Id;
-                ViewData["CurrentFoodPlanStart"] = _context.FoodPlan.Where(fp => fp.PlanStart <= dateTimeNow && fp.PlanStart >= dateTime1WeekPast).FirstOrDefault().PlanStart.ToShortDateString();
+                ViewData["CurrentFoodPlanId"] = _context.FoodPlan.Where(fp => fp.Date <= dateTimeNow && fp.Date >= dateTime1WeekPast).FirstOrDefault().Id;
+                ViewData["CurrentFoodDate"] = _context.FoodPlan.Where(fp => fp.Date <= dateTimeNow && fp.Date >= dateTime1WeekPast).FirstOrDefault().Date.ToShortDateString();
             }
             else
             {
@@ -40,10 +40,10 @@ namespace FoodPlanner.Controllers
             }
 
             // Get current shopping list
-            if (_context.FoodPlan.Where(fp => fp.PlanStart >= dateTimeNow && fp.PlanStart <= dateTime1WeekFuture).Count() > 0)
+            if (_context.FoodPlan.Where(fp => fp.Date >= dateTimeNow && fp.Date <= dateTime1WeekFuture).Count() > 0)
             {
-                ViewData["UpcomingFoodPlanId"] = _context.FoodPlan.Where(fp => fp.PlanStart >= dateTimeNow && fp.PlanStart <= dateTime1WeekFuture).FirstOrDefault().Id;
-                ViewData["UpcomingFoodPlanStart"] = _context.FoodPlan.Where(fp => fp.PlanStart >= dateTimeNow && fp.PlanStart <= dateTime1WeekFuture).FirstOrDefault().PlanStart.ToShortDateString();
+                ViewData["UpcomingFoodPlanId"] = _context.FoodPlan.Where(fp => fp.Date >= dateTimeNow && fp.Date <= dateTime1WeekFuture).FirstOrDefault().Id;
+                ViewData["UpcomingFoodDate"] = _context.FoodPlan.Where(fp => fp.Date >= dateTimeNow && fp.Date <= dateTime1WeekFuture).FirstOrDefault().Date.ToShortDateString();
             }
             else
             {

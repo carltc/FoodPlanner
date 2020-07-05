@@ -9,7 +9,7 @@ namespace FoodPlanner.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime PlanStart { get; set; }
+        public DateTime Date { get; set; }
         public List<FoodPlanRecipe> Recipes { get; set; }
         public List<FoodPlanProduct> Products { get; set; }
     }
