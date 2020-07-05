@@ -10,6 +10,7 @@ using FoodPlanner.Models;
 using FoodPlanner.Classes;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace FoodPlanner.Controllers
 {
@@ -43,13 +44,20 @@ namespace FoodPlanner.Controllers
             }
 
             //var foodPlans = await _context.FoodPlan.Where(fp => fp.Date >= dateNow && fp.Date <= endDate).ToListAsync();
-            foreach (var foodplan in  _context.FoodPlan
+            var allFoodPlans = _context.FoodPlan
+                .Include(fp => fp.Products)
+                    .ThenInclude(p => p.Product)
+                .Include(fp => fp.Recipes)
+                    .ThenInclude(r => r.Recipe)
+                .ToList();
+            var currentFoodPlans = _context.FoodPlan
                 .Where(fp => fp.Date >= dateNow && fp.Date <= endDate)
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
                 .Include(fp => fp.Recipes)
                     .ThenInclude(r => r.Recipe)
-                .ToList())
+                .ToList();
+            foreach (var foodplan in currentFoodPlans)
             {
                 var matchIndex = foodPlans.IndexOf(foodPlans.Where(fp => fp.Date.Date == foodplan.Date.Date).FirstOrDefault());
                 if (matchIndex != -1)
@@ -86,68 +94,180 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Create
-        public IActionResult Create()
-        {// Get products and categories
-            var products = _context.Product
-                .Include(p => p.ProductType)
-                .Select(p => new
-                {
-                    Id = p.Id,
-                    FullName = p.ProductType.Name + " (" + p.Name + ")"
-                });
+        public IActionResult Create(long? foodplandate)
+        {
+            if (foodplandate == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
-            ViewData["RecipeId"] = new SelectList(_context.Recipe, "Id", "Name");
-            ViewData["ProductId"] = new SelectList(products, "Id", "FullName");
+            // Reconstruct long date
+            DateTime dateTime = DateTime.FromBinary(foodplandate.Value);
 
-            return View();
+            // Get foodplan to add to
+            var foodplan = new FoodPlan(dateTime);
+
+            if (foodplan == null)
+            {
+                return RedirectToAction(nameof(Create));
+            }
+
+            PopulateRecipeAndProductLists();
+
+            return View(foodplan);
         }
 
-        // POST: FoodPlans/Create
+        //// POST: FoodPlans/Create
+        //// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        // Initialise ingredients
+        //        foodPlan.Products = new List<FoodPlanProduct>();
+        //        foodPlan.Recipes = new List<FoodPlanRecipe>();
+
+        //        // Add ingredients
+        //        //foreach(int productId in ProductIds)
+        //        for (int i = 0; i < ProductIds.Count; i++)
+        //        {
+        //            var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+        //            var foodPlanProduct = new FoodPlanProduct()
+        //            {
+        //                Name = product.Name,
+        //                ProductId = product.Id,
+        //                Product = product,
+        //                FoodPlanId = foodPlan.Id,
+        //                FoodPlan = foodPlan,
+        //                Quantity = Quantities[i],
+        //                Unit = Units[i]
+        //            };
+        //            foodPlan.Products.Add(foodPlanProduct);
+        //        }
+
+        //        // Add Recipes
+        //        for (int i = 0; i < RecipeIds.Count; i++)
+        //        {
+        //            var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
+        //            var foodPlanRecipe = new FoodPlanRecipe()
+        //            {
+        //                RecipeId = recipe.Id,
+        //                Recipe = recipe,
+        //                FoodPlanId = foodPlan.Id,
+        //                FoodPlan = foodPlan
+        //            };
+        //            foodPlan.Recipes.Add(foodPlanRecipe);
+        //        }
+
+        //        _context.Add(foodPlan);
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(foodPlan);
+        //}
+
+        // GET: FoodPlans/Add
+        public IActionResult Add(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Create));
+            }
+
+            // Get foodplan to add to
+            var foodplan = _context.FoodPlan.Where(fp => fp.Id == id).FirstOrDefault();
+
+            if (foodplan == null)
+            {
+                return RedirectToAction(nameof(Create));
+            }
+
+            PopulateRecipeAndProductLists();
+
+            return View(foodplan);
+        }
+
+        // POST: FoodPlans/Add
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
+        public async Task<IActionResult> Add([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<Meal> RecipeMeals, List<int> ProductIds, List<Meal> ProductMeals, List<double> Quantities, List<Unit> Units)
         {
             if (ModelState.IsValid)
             {
-                // Initialise ingredients
-                foodPlan.Products = new List<FoodPlanProduct>();
-                foodPlan.Recipes = new List<FoodPlanRecipe>();
+                // Get full foodplan that is being added or use new if it doesn't exist yet
+                FoodPlan fullFoodPlan;
+                bool newFoodPlan;
+                if (_context.FoodPlan.Find(foodPlan.Id) == null)
+                {
+                    fullFoodPlan = foodPlan;
+                    fullFoodPlan.Recipes = new List<FoodPlanRecipe>(); // initiate new list of recipes
+                    fullFoodPlan.Products = new List<FoodPlanProduct>(); // initiate new list of products
+                    newFoodPlan = true;
+                }
+                else
+                {
+                    fullFoodPlan = _context.FoodPlan.Where(fp => fp.Id == foodPlan.Id)
+                        .Include(fp => fp.Products)
+                        .Include(fp => fp.Recipes)
+                        .FirstOrDefault();
+                    newFoodPlan = false;
+                }
 
                 // Add ingredients
                 //foreach(int productId in ProductIds)
                 for (int i = 0; i < ProductIds.Count; i++)
                 {
-                    var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
-                    var foodPlanProduct = new FoodPlanProduct()
+                    if (ProductIds[i] != 0) // Check if product Id is 0, which is the None type
                     {
-                        Name = product.Name,
-                        ProductId = product.Id,
-                        Product = product,
-                        FoodPlanId = foodPlan.Id,
-                        FoodPlan = foodPlan,
-                        Quantity = Quantities[i],
-                        Unit = Units[i]
-                    };
-                    foodPlan.Products.Add(foodPlanProduct);
+                        var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+                        var foodPlanProduct = new FoodPlanProduct()
+                        {
+                            Name = product.Name,
+                            ProductId = product.Id,
+                            Product = product,
+                            FoodPlanId = fullFoodPlan.Id,
+                            FoodPlan = fullFoodPlan,
+                            Quantity = Quantities[i],
+                            Unit = Units[i],
+                            Meal = ProductMeals[i]
+                        };
+                        fullFoodPlan.Products.Add(foodPlanProduct);
+                    }
                 }
 
                 // Add Recipes
                 for (int i = 0; i < RecipeIds.Count; i++)
                 {
-                    var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
-                    var foodPlanRecipe = new FoodPlanRecipe()
+                    if (RecipeIds[i] != 0) // Check if recipe Id is 0, which is the None type
                     {
-                        RecipeId = recipe.Id,
-                        Recipe = recipe,
-                        FoodPlanId = foodPlan.Id,
-                        FoodPlan = foodPlan
-                    };
-                    foodPlan.Recipes.Add(foodPlanRecipe);
+                        var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
+                        var foodPlanRecipe = new FoodPlanRecipe()
+                        {
+                            RecipeId = recipe.Id,
+                            Recipe = recipe,
+                            FoodPlanId = fullFoodPlan.Id,
+                            FoodPlan = fullFoodPlan,
+                            Meal = RecipeMeals[i]
+                        };
+                        fullFoodPlan.Recipes.Add(foodPlanRecipe);
+                    }
                 }
 
-                _context.Add(foodPlan);
+                // Check if food plan is new and add if it is otherwise update existing
+                if (newFoodPlan)
+                {
+                    _context.Add(fullFoodPlan);
+                }
+                else
+                {
+                    _context.Update(fullFoodPlan);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -290,6 +410,35 @@ namespace FoodPlanner.Controllers
         private bool FoodPlanExists(int id)
         {
             return _context.FoodPlan.Any(e => e.Id == id);
+        }
+
+        private void PopulateRecipeAndProductLists()
+        {
+            // Get products
+            var products = _context.Product
+                .Include(p => p.ProductType)
+                .Select(p => new
+                {
+                    Id = p.Id,
+                    FullName = p.ProductType.Name + " (" + p.Name + ")"
+                }).ToList(); // Create product names as combination of product and product type
+            // Add a blank one for none
+            products.Add(new
+            {
+                Id = 0,
+                FullName = "None"
+            });
+            var productList = new SelectList(products, "Id", "FullName"); // Create a select list from products
+            productList.Where(pl => pl.Value == "0").FirstOrDefault().Selected = true; // Set the blank one as default value
+            ViewData["ProductId"] = productList; // Send it to client viewbag
+
+            // Get recipes
+            var recipes = _context.Recipe.ToList();
+            // Add a blank one for none
+            recipes.Add(new Recipe() { Name = "None", Id = 0 });
+            var recipeList = new SelectList(recipes, "Id", "Name"); // Create a select list from recipes
+            recipeList.Where(pl => pl.Value == "0").FirstOrDefault().Selected = true; // Set the blank one as default value
+            ViewData["RecipeId"] = recipeList; // Send it to client viewbag
         }
     }
 }

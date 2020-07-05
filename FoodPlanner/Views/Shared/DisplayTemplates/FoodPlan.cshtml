@@ -32,5 +32,18 @@
             }
         }
 
+        @if (Model.Id == 0)
+        {
+            <a class="btn btn-outline-primary" asp-area="" asp-controller="FoodPlans" asp-action="Create" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
+                Add
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-outline-primary" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" style="width: 100%; height: 100%;">
+                Add
+            </a>
+        }
+
     </div>
 </div>

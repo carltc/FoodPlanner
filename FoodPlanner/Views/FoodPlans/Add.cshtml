@@ -20,7 +20,7 @@
     }
 </script>
 
-<h1>Create</h1>
+<h1>Add</h1>
 
 <h4>FoodPlan</h4>
 <hr />
@@ -28,6 +28,7 @@
     <div class="col-md">
         <form asp-action="Add">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" readonly="readonly" />
@@ -100,7 +101,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Back to Food Plan</a>
 </div>
 
 @section Scripts {

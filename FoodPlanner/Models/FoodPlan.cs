@@ -21,7 +21,7 @@ namespace FoodPlanner.Models
 
         public FoodPlan(DateTime dateTime)
         {
-            Name = "";
+            Name = $"{dateTime.DayOfWeek.ToString()} {dateTime.Day.ToString()} {Date.Month.ToString()}";
             Date = dateTime;
             Recipes = new List<FoodPlanRecipe>();
             Products = new List<FoodPlanProduct>();
