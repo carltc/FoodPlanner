@@ -43,20 +43,17 @@ namespace FoodPlanner.Controllers
                 foodPlans.Add(new FoodPlan(dateNow.AddDays(i)));
             }
 
-            //var foodPlans = await _context.FoodPlan.Where(fp => fp.Date >= dateNow && fp.Date <= endDate).ToListAsync();
-            var allFoodPlans = _context.FoodPlan
-                .Include(fp => fp.Products)
-                    .ThenInclude(p => p.Product)
-                .Include(fp => fp.Recipes)
-                    .ThenInclude(r => r.Recipe)
-                .ToList();
+            // Get upcoming foodplans
             var currentFoodPlans = _context.FoodPlan
                 .Where(fp => fp.Date >= dateNow && fp.Date <= endDate)
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
+                        .ThenInclude(p => p.ProductType)
                 .Include(fp => fp.Recipes)
                     .ThenInclude(r => r.Recipe)
                 .ToList();
+
+            // Add all foodplans to food plan
             foreach (var foodplan in currentFoodPlans)
             {
                 var matchIndex = foodPlans.IndexOf(foodPlans.Where(fp => fp.Date.Date == foodplan.Date.Date).FirstOrDefault());

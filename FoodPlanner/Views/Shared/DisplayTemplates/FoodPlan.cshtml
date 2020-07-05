@@ -27,7 +27,7 @@
             }
             @foreach (var product in Model.Products.Where(r => r.Meal == meal))
             {
-                <p class="card-text">@product.Product.Name</p>
+                <p class="card-text">@product.Product.Name @product.Product.ProductType.Name</p>
                 <hr />
             }
         }
