@@ -1,0 +1,36 @@
+﻿@using FoodPlanner.Classes
+
+@model FoodPlan
+
+<div class="foodplancard card @if (Model.Date.Date == DateTime.Now.Date) {  <text>text-white bg-primary</text> } ">
+    <div class="card-header">
+        @Model.Date.ToShortDateString()
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Date.DayOfWeek.ToString()</h5>
+
+        @foreach (var meal in new List<Meal>() { Meal.Breakfast, Meal.Lunch, Meal.Dinner, Meal.Snack, Meal.None })
+        {
+            @if (meal == Meal.None)
+            {
+                <text><b>Additional:</b></text>
+            }
+            else
+            {
+                <text><b>@meal:</b></text>
+            }
+            <hr />
+            @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
+            {
+                <p class="card-text">@recipe.Recipe.Name</p>
+                <hr />
+            }
+            @foreach (var product in Model.Products.Where(r => r.Meal == meal))
+            {
+                <p class="card-text">@product.Product.Name</p>
+                <hr />
+            }
+        }
+
+    </div>
+</div>

@@ -5,32 +5,26 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Shopping Lists:</h1>
+<h1>Pick shopping list size:</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
+                Days
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var days in new List<int>() { 5, 7, 12, 14})
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    @days
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">View</a>
+                    <a asp-action="Details" asp-route-Days="@days">View</a>
                 </td>
             </tr>
         }

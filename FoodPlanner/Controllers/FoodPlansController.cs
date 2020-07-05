@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
 using FoodPlanner.Classes;
+using Microsoft.EntityFrameworkCore.Internal;
+using System.Text.RegularExpressions;
 
 namespace FoodPlanner.Controllers
 {
@@ -21,7 +23,46 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? Days)
+        {
+            // Set days to 14 if not set
+            if (Days == null)
+            {
+                Days = 14;
+            }    
+
+            // get current date
+            var dateNow = DateTime.Now;
+            var endDate = dateNow.AddDays(14);
+
+            // Create a list of empty foodplans for this date range
+            var foodPlans = new List<FoodPlan>();
+            for (int i = 0; i < Days; i++)
+            {
+                foodPlans.Add(new FoodPlan(dateNow.AddDays(i)));
+            }
+
+            //var foodPlans = await _context.FoodPlan.Where(fp => fp.Date >= dateNow && fp.Date <= endDate).ToListAsync();
+            foreach (var foodplan in  _context.FoodPlan
+                .Where(fp => fp.Date >= dateNow && fp.Date <= endDate)
+                .Include(fp => fp.Products)
+                    .ThenInclude(p => p.Product)
+                .Include(fp => fp.Recipes)
+                    .ThenInclude(r => r.Recipe)
+                .ToList())
+            {
+                var matchIndex = foodPlans.IndexOf(foodPlans.Where(fp => fp.Date.Date == foodplan.Date.Date).FirstOrDefault());
+                if (matchIndex != -1)
+                {
+                    foodPlans[matchIndex] = foodplan;
+                }
+            }
+
+            return View(foodPlans);
+        }
+
+        // GET: FoodPlans
+        public async Task<IActionResult> List()
         {
             return View(await _context.FoodPlan.ToListAsync());
         }
@@ -66,7 +107,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,PlanStart")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
+        public async Task<IActionResult> Create([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
         {
             if (ModelState.IsValid)
             {
@@ -151,7 +192,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,PlanStart")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<int> ProductIds, List<double> Quantities, List<Unit> Units)
         {
             if (id != foodPlan.Id)
             {

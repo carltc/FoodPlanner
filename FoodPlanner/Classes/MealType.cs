@@ -14,6 +14,7 @@ namespace FoodPlanner.Classes
         None, // none
         Breakfast,
         Lunch,
-        Dinner
+        Dinner,
+        Snack
     }
 }
