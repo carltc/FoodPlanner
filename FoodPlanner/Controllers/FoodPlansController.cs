@@ -175,7 +175,7 @@ namespace FoodPlanner.Controllers
                         var product = _context.Product.Where(p => p.Id == ProductIds[i]).Include(p => p.ProductType).FirstOrDefault();
                         var foodPlanProduct = new FoodPlanProduct()
                         {
-                            Name = $"{product.Name} {product.ProductType}",
+                            Name = $"{product.Name} {product.ProductType.Name}",
                             ProductId = product.Id,
                             Product = product,
                             FoodPlanId = fullFoodPlan.Id,
@@ -368,7 +368,7 @@ namespace FoodPlanner.Controllers
                 .Select(p => new
                 {
                     Id = p.Id,
-                    FullName = p.ProductType.Name + " (" + p.Name + ")"
+                    FullName = $"{p.Name} {p.ProductType.Name}"
                 }).ToList(); // Create product names as combination of product and product type
             // Add a blank one for none
             products.Add(new

@@ -51,6 +51,8 @@ namespace FoodPlanner.Controllers
                 .Include(fp => fp.Recipes)
                     .ThenInclude(r => r.Recipe)
                         .ThenInclude(r => r.Ingredients)
+                            .ThenInclude(i => i.Product)
+                                .ThenInclude(p => p.ProductType)
                 .ToList();
 
             // Initialise Shop Items
@@ -79,7 +81,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Combine same products
-            shopItems = MeasurementUnit.CombineShopItems(shopItems);
+            //shopItems = MeasurementUnit.CombineShopItems(shopItems);
 
             return View(shopItems);
         }

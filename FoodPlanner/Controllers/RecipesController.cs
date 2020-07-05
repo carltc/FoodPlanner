@@ -53,9 +53,8 @@ namespace FoodPlanner.Controllers
                 .Select(p => new
                 {
                     Id = p.Id,
-                    FullName = p.ProductType.Name + " (" + p.Name + ")"
-                });
-
+                    FullName = $"{p.Name} {p.ProductType.Name}"
+                }); ;
 
             ViewData["ProductId"] = new SelectList(products, "Id", "FullName");
 
