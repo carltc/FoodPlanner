@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FoodPlanner.Classes;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,7 @@ namespace FoodPlanner.Controllers
                 .Where(fp => fp.Date >= DateTime.Now && fp.Date <= shopDate.AddDays(Days.Value) && fp.ShopTrip == null)
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
+                        .ThenInclude(p => p.ProductType)
                 .Include(fp => fp.Recipes)
                     .ThenInclude(r => r.Recipe)
                         .ThenInclude(r => r.Ingredients)
@@ -54,23 +56,30 @@ namespace FoodPlanner.Controllers
             // Initialise Shop Items
             List<ShopItem> shopItems = new List<ShopItem>();
 
+            // Add shop items for each unshopped day
             foreach (var foodPlan in foodPlans)
             {
                 // Add food plan products
                 foreach (var product in foodPlan.Products)
                 {
-                    shopItems.Add((ShopItem)product);
+                    // Convert to standard units and add item
+                    shopItems.Add(MeasurementUnit.ConvertToStandardUnits(product));
                 }
 
                 // Add recipe ingredients
                 foreach (var recipe in foodPlan.Recipes)
                 {
+                    // Add product for each ingredient
                     foreach (var ingredient in recipe.Recipe.Ingredients)
                     {
-                        shopItems.Add((ShopItem)ingredient);
+                        // Convert to standard units and add item
+                        shopItems.Add(MeasurementUnit.ConvertToStandardUnits(ingredient));
                     }
                 }
             }
+
+            // Combine same products
+            shopItems = MeasurementUnit.CombineShopItems(shopItems);
 
             return View(shopItems);
         }
