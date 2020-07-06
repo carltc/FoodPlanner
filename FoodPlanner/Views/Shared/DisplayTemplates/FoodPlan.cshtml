@@ -22,12 +22,16 @@
             <hr />
             @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
             {
-                <p class="card-text">@recipe.Recipe.Name</p>
+                <p class="card-text">
+                    @recipe.Recipe.Name <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@recipe.Id"><i class="far fa-times-circle"></i></a>
+                </p>
                 <hr />
             }
             @foreach (var product in Model.Products.Where(r => r.Meal == meal))
             {
-                <p class="card-text">@product.Product.Name @product.Product.ProductType.Name</p>
+                <p class="card-text">
+                    @product.Product.Name @product.Product.ProductType.Name <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id"><i class="far fa-times-circle"></i></a>
+                </p>
                 <hr />
             }
         }

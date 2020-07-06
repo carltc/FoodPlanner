@@ -28,6 +28,8 @@ namespace FoodPlanner.Data
 
         public DbSet<FoodPlanner.Models.ShopItem> ShopItem { get; set; }
 
+        public DbSet<FoodPlanner.Models.FoodPlanRecipe> FoodPlanRecipe { get; set; }
+
         public DbSet<FoodPlanner.Models.ShopTrip> ShopTrip { get; set; }
     }
 }

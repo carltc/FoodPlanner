@@ -352,6 +352,27 @@ namespace FoodPlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: FoodPlans/DeleteItem/5
+        public async Task<IActionResult> DeleteItem(int? foodplan_product_id, int? foodplan_recipe_id)
+        {
+            if (foodplan_product_id != null)
+            {
+                var foodplan_product = await _context.ShopItem.FindAsync(foodplan_product_id);
+                _context.ShopItem.Remove(foodplan_product);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else if (foodplan_recipe_id != null)
+            {
+                var foodplan_recipe = await _context.FoodPlanRecipe.FindAsync(foodplan_recipe_id);
+                _context.FoodPlanRecipe.Remove(foodplan_recipe);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return NotFound();
+        }
+
         private bool FoodPlanExists(int id)
         {
             return _context.FoodPlan.Any(e => e.Id == id);
