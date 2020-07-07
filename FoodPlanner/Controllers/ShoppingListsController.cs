@@ -81,7 +81,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Combine same products
-            //shopItems = MeasurementUnit.CombineShopItems(shopItems);
+            shopItems = MeasurementUnit.CombineShopItems(shopItems);
 
             return View(shopItems);
         }
