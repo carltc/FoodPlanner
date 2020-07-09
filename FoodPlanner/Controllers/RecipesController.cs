@@ -35,6 +35,9 @@ namespace FoodPlanner.Controllers
             }
 
             var recipe = await _context.Recipe
+                .Include(r => r.Ingredients)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.ProductType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (recipe == null)
             {

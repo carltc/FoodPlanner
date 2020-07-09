@@ -33,7 +33,10 @@ namespace FoodPlanner
                     Configuration.GetConnectionString("BackendContext")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+
+            // Setup application views
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
             services.AddRazorPages();
 
             // Setup food planning database

@@ -33,57 +33,96 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            // Set expected shop day
-            var shopDay = DayOfWeek.Sunday;
-            int start = (int)DateTime.Now.DayOfWeek;
-            int target = (int)shopDay;
-            if (target <= start)
-                target += 7;
-            var shopDate = DateTime.Now.AddDays(target - start);
-
-            // Get all future foodplans which haven't been shopped yet
-            var foodPlans = _context.FoodPlan
-                .Include(fp => fp.ShopTrip)
-                .Where(fp => fp.Date >= DateTime.Now && fp.Date <= shopDate.AddDays(Days.Value) && fp.ShopTrip == null)
-                .Include(fp => fp.Products)
-                    .ThenInclude(p => p.Product)
-                        .ThenInclude(p => p.ProductType)
-                .Include(fp => fp.Recipes)
-                    .ThenInclude(r => r.Recipe)
-                        .ThenInclude(r => r.Ingredients)
-                            .ThenInclude(i => i.Product)
-                                .ThenInclude(p => p.ProductType)
-                .ToList();
-
-            // Initialise Shop Items
-            List<ShopItem> shopItems = new List<ShopItem>();
-
-            // Add shop items for each unshopped day
-            foreach (var foodPlan in foodPlans)
+            // Check if correct list already generated, if not then re-generate
+            if (Days.Value != ShoppingList.ShoppingListSize)
             {
-                // Add food plan products
-                foreach (var product in foodPlan.Products)
-                {
-                    // Convert to standard units and add item
-                    shopItems.Add(MeasurementUnit.ConvertToStandardUnits(product));
-                }
-
-                // Add recipe ingredients
-                foreach (var recipe in foodPlan.Recipes)
-                {
-                    // Add product for each ingredient
-                    foreach (var ingredient in recipe.Recipe.Ingredients)
-                    {
-                        // Convert to standard units and add item
-                        shopItems.Add(MeasurementUnit.ConvertToStandardUnits(ingredient));
-                    }
-                }
+                GenerateShoppingList(Days.Value);
             }
 
-            // Combine same products
-            shopItems = MeasurementUnit.CombineShopItems(shopItems);
+            return View(ShoppingList.ShopItems);
+        }
 
-            return View(shopItems);
+        public bool GenerateShoppingList(int days)
+        {
+            try
+            {
+                // Set expected shop day
+                var shopDay = DayOfWeek.Sunday;
+                int start = (int)DateTime.Now.DayOfWeek;
+                int target = (int)shopDay;
+                if (target <= start)
+                    target += days;
+                var shopDate = DateTime.Now.AddDays(target - start);
+
+                // Get all future foodplans which haven't been shopped yet
+                var foodPlans = _context.FoodPlan
+                    .Include(fp => fp.ShopTrip)
+                    .Where(fp => fp.Date >= DateTime.Now && fp.Date <= shopDate.AddDays(days) && fp.ShopTrip == null)
+                    .Include(fp => fp.Products)
+                        .ThenInclude(p => p.Product)
+                            .ThenInclude(p => p.ProductType)
+                    .Include(fp => fp.Recipes)
+                        .ThenInclude(r => r.Recipe)
+                            .ThenInclude(r => r.Ingredients)
+                                .ThenInclude(i => i.Product)
+                                    .ThenInclude(p => p.ProductType)
+                    .ToList();
+
+                // Initialise Shop Items
+                List<ShopItem> shopItems = new List<ShopItem>();
+
+                // Add shop items for each unshopped day
+                foreach (var foodPlan in foodPlans)
+                {
+                    // Add food plan products
+                    foreach (var product in foodPlan.Products)
+                    {
+                        // Convert to standard units and add item
+                        shopItems.Add(MeasurementUnit.ConvertToStandardUnits(product));
+                    }
+
+                    // Add recipe ingredients
+                    foreach (var recipe in foodPlan.Recipes)
+                    {
+                        // Add product for each ingredient
+                        foreach (var ingredient in recipe.Recipe.Ingredients)
+                        {
+                            // Convert to standard units and add item
+                            shopItems.Add(MeasurementUnit.ConvertToStandardUnits(ingredient));
+                        }
+                    }
+                }
+
+                // Combine same products
+                shopItems = MeasurementUnit.CombineShopItems(shopItems);
+
+                ShoppingList.ShopItems = shopItems;
+                ShoppingList.ShoppingListSize = days;
+                ShoppingList.ExpectedShopDate = shopDate;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public ActionResult ToggleShopItem(int? product_id)
+        {
+            if (product_id == null)
+            {
+                return NotFound();
+            }
+
+            var shopItems = ShoppingList.ShopItems.Where(si => si.ProductId == product_id).ToList();
+
+            foreach (var shopItemId in shopItems.Select(si => si.Id))
+            {
+                ShoppingList.ShopItems.Where(si => si.Id == shopItemId).FirstOrDefault().Bought = !ShoppingList.ShopItems.Where(si => si.Id == shopItemId).FirstOrDefault().Bought;
+            }
+
+            return Ok();
         }
     }
 }

@@ -5,16 +5,17 @@ using System.Threading.Tasks;
 
 namespace FoodPlanner.Models
 {
-    public class ShoppingList
+    public static class ShoppingList
     {
-        public List<ShopItem> ShopItems { get; set; }
+        public static int ShoppingListSize { get; set; }
+        public static List<ShopItem> ShopItems { get; set; }
 
-        public DateTime ExpectedShopDate { get; set; }
+        public static DateTime ExpectedShopDate { get; set; }
 
-        public ShoppingList(DateTime expectedShopDate, List<ShopItem> shopItems)
-        {
-            ExpectedShopDate = expectedShopDate;
-            ShopItems = shopItems;
-        }
+        //public ShoppingList(DateTime expectedShopDate, List<ShopItem> shopItems)
+        //{
+        //    ExpectedShopDate = expectedShopDate;
+        //    ShopItems = shopItems;
+        //}
     }
 }

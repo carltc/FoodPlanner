@@ -76,3 +76,17 @@ body {
     width: 300px;
     height: 200px;*/
 }
+
+.shopItemCard{
+
+}
+
+.shopItemBought {
+    background-color: black;
+    color: white;
+    border-width: 4px;
+}
+
+.shopItemRow{
+    padding: 10px!important;
+}

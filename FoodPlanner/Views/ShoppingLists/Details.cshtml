@@ -12,14 +12,7 @@
     <hr />
     @foreach (var shopItem in Model)
     {
-        <dl class="row">
-            <dt class="col-sm-6">
-                @Html.DisplayFor(model => shopItem.Product.ProductType.Name) (@Html.DisplayFor(model => shopItem.Product.Name))
-            </dt>
-            <dd class="col-sm-6">
-                @Html.DisplayFor(model => shopItem.Quantity) @Html.DisplayFor(model => shopItem.Unit)
-            </dd>
-        </dl>
+        @Html.DisplayFor(si => shopItem)
     }
 </div>
 <div>

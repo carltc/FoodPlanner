@@ -4,11 +4,9 @@
 
 <div class="foodplancard card @if (Model.Date.Date == DateTime.Now.Date) {  <text>text-white bg-primary</text> } ">
     <div class="card-header">
-        @Model.Date.ToShortDateString()
+        <h5 class="card-title">@Model.Date.DayOfWeek.ToString() - @Model.Date.ToShortDateString()</h5>
     </div>
     <div class="card-body">
-        <h5 class="card-title">@Model.Date.DayOfWeek.ToString()</h5>
-
         @foreach (var meal in new List<Meal>() { Meal.Breakfast, Meal.Lunch, Meal.Dinner, Meal.Snack, Meal.None })
         {
             @if (meal == Meal.None)
