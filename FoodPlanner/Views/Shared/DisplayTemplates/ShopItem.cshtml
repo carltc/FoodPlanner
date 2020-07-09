@@ -8,7 +8,7 @@
             <b>@Model.Product.Name @Model.Product.ProductType.Name</b>
         </div>
         <div class="col-4 shopItemRow" style="text-align: right;">
-            @Model.Quantity @Model.Unit
+            @Math.Round(Model.Quantity) @Model.Unit
         </div>
     </div>
 </div>
