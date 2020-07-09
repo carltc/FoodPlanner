@@ -8,12 +8,38 @@
 <h1>Details</h1>
 
 <div>
+    <a asp-action="RegenerateList">Re-Generate List</a>
+</div>
+
+<div>
     <h4>Shopping List:</h4>
     <hr />
-    @foreach (var shopItem in Model)
-    {
-        @Html.DisplayFor(si => shopItem)
-    }
+
+    <div class="accordion" id="CategoryAccordion">
+        @foreach (var categoryName in Model.Select(si => si.Product.Category.Name).Distinct())
+        {
+            var categoryShopItems = Model.Where(si => si.Product.Category.Name == categoryName);
+            <div class="card">
+                <div class="card-header" id="Heading-@categoryName">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@categoryName" aria-expanded="true" aria-controls="Collapse-@categoryName">
+                            @categoryName
+                        </button>
+                    </h2>
+                </div>
+
+                <div id="Collapse-@categoryName" class="collapse show" aria-labelledby="Heading-@categoryName" data-parent="#CategoryAccordion">
+                    <div class="card-body">
+                        @foreach (var shopItem in categoryShopItems)
+                        {
+                            @Html.DisplayFor(si => shopItem)
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
 </div>
 <div>
     <a asp-action="Index">Back to List</a>

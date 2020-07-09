@@ -42,6 +42,16 @@ namespace FoodPlanner.Controllers
             return View(ShoppingList.ShopItems);
         }
 
+        public IActionResult RegenerateList()
+        {
+            if (GenerateShoppingList(7))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return NotFound();
+        }
+
         public bool GenerateShoppingList(int days)
         {
             try
@@ -61,11 +71,19 @@ namespace FoodPlanner.Controllers
                     .Include(fp => fp.Products)
                         .ThenInclude(p => p.Product)
                             .ThenInclude(p => p.ProductType)
+                    .Include(fp => fp.Products)
+                        .ThenInclude(p => p.Product)
+                            .ThenInclude(p => p.Category)
                     .Include(fp => fp.Recipes)
                         .ThenInclude(r => r.Recipe)
                             .ThenInclude(r => r.Ingredients)
                                 .ThenInclude(i => i.Product)
                                     .ThenInclude(p => p.ProductType)
+                    .Include(fp => fp.Recipes)
+                        .ThenInclude(r => r.Recipe)
+                            .ThenInclude(r => r.Ingredients)
+                                .ThenInclude(i => i.Product)
+                                    .ThenInclude(p => p.Category)
                     .ToList();
 
                 // Initialise Shop Items
@@ -108,18 +126,18 @@ namespace FoodPlanner.Controllers
             }
         }
 
-        public ActionResult ToggleShopItem(int? product_id)
+        public ActionResult ToggleShopItem(int? product_id, string unitString)
         {
             if (product_id == null)
             {
                 return NotFound();
             }
 
-            var shopItems = ShoppingList.ShopItems.Where(si => si.ProductId == product_id).ToList();
+            var shopItems = ShoppingList.ShopItems.Where(si => si.ProductId == product_id && si.Unit.ToString() == unitString).ToList();
 
-            foreach (var shopItemId in shopItems.Select(si => si.Id))
+            foreach (var shopItem in shopItems)
             {
-                ShoppingList.ShopItems.Where(si => si.Id == shopItemId).FirstOrDefault().Bought = !ShoppingList.ShopItems.Where(si => si.Id == shopItemId).FirstOrDefault().Bought;
+                shopItem.Bought = !shopItem.Bought;
             }
 
             return Ok();

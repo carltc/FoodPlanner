@@ -3,10 +3,10 @@
 
 // Write your JavaScript code.
 
-function ToggleShopItem(shopItemId) {
-    $.get("/ShoppingLists/ToggleShopItem?product_id=" + shopItemId, function (data) {
+function ToggleShopItem(shopItemId, unitString) {
+    $.get("/ShoppingLists/ToggleShopItem?product_id=" + shopItemId + "&unitString=" + unitString, function (data) {
 
-        divId = "ShopItem-" + shopItemId;
+        divId = "ShopItem-" + shopItemId + unitString;
         className = "shopItemBought";
 
         console.log("Toggle: " + divId);
