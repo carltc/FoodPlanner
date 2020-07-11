@@ -12,15 +12,18 @@ function ToggleShopItem(shopItemId, unitString) {
 
         console.log("Toggle: " + divId);
 
-        var v = document.getElementById(divId);
-
-        if (v.classList.contains(className)) {
-            console.log("Remove: " + divId);
-            v.classList.remove(className);
-        }
-        else {
-            console.log("Add: " + divId);
-            v.classList.add(className);
+        var x = document.getElementsByClassName(divId);
+        var i;
+        for (i = 0; i < x.length; i++) {
+            var v = x[i];
+            if (v.classList.contains(className)) {
+                console.log("Remove: " + divId);
+                v.classList.remove(className);
+            }
+            else {
+                console.log("Add: " + divId);
+                v.classList.add(className);
+            }
         }
     });
 }

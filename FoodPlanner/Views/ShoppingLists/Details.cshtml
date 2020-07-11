@@ -16,11 +16,29 @@
     <hr />
 
     <div class="accordion" id="CategoryAccordion">
+        <div class="card">
+            <div class="card-header" id="Heading-All">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-All" aria-expanded="true" aria-controls="Collapse-All">
+                        All
+                    </button>
+                </h2>
+            </div>
+
+            <div id="Collapse-All" class="collapse" aria-labelledby="Heading-All" data-parent="#CategoryAccordion">
+                <div class="card-body">
+                    @foreach (var shopItem in Model)
+                    {
+                        @Html.DisplayFor(si => shopItem)
+                    }
+                </div>
+            </div>
+        </div>
+
         @foreach (var categoryName in Model.Select(si => si.Product.Category.Name).Distinct())
         {
             var categoryShopItems = Model.Where(si => si.Product.Category.Name == categoryName);
             var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
-                             char.IsWhiteSpace(c) ||
                              c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
             <div class="card">
                 <div class="card-header" id="Heading-@categorySimple">
@@ -31,7 +49,7 @@
                     </h2>
                 </div>
 
-                <div id="Collapse-@categorySimple" class="collapse show" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
+                <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
                     <div class="card-body">
                         @foreach (var shopItem in categoryShopItems)
                         {

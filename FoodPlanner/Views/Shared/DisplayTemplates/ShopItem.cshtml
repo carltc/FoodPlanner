@@ -2,7 +2,7 @@
 
 @model ShopItem
 
-<div class="@if (Model.Bought) { <text>shopItemBought</text> } shopItemCard card mb-3" style="width: 100%" onclick="ToggleShopItem(@Model.ProductId, '@Model.Unit.ToString()')" id="ShopItem-@Model.ProductId@Model.Unit">
+<div class="@if (Model.Bought) { <text>shopItemBought</text> } shopItemCard card mb-3 ShopItem-@Model.ProductId@Model.Unit" style="width: 100%" onclick="ToggleShopItem(@Model.ProductId, '@Model.Unit.ToString()')" id="ShopItem-@Model.ProductId@Model.Unit">
     <div class="row no-gutters">
         <div class="col-8 shopItemRow"> @*</div> style="background-color: lightgray;">*@
             <b>@Model.Product.Name @Model.Product.ProductType.Name</b>
