@@ -9,5 +9,16 @@ namespace FoodPlanner.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public ProductType()
+        {
+
+        }
+
+        public ProductType(string name)
+        {
+            Name = name;
+        }
+
     }
 }

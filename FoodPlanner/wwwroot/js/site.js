@@ -3,6 +3,7 @@
 
 // Write your JavaScript code.
 
+
 function ToggleShopItem(shopItemId, unitString) {
     $.get("/ShoppingLists/ToggleShopItem?product_id=" + shopItemId + "&unitString=" + unitString, function (data) {
 

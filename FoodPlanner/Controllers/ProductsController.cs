@@ -50,9 +50,12 @@ namespace FoodPlanner.Controllers
         public IActionResult Create()
         {
             // Add product types to viewbag
-            ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "Id", "Name");
+            ViewData["ProductTypes"] = _context.ProductType.ToList();
             // Add categories to viewbag
-            ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
+            ViewData["Categories"] = _context.Category.ToList();
+
+            //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "Id", "Name");
+            //ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
 
             return View();
         }
@@ -62,14 +65,53 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,ProductTypeId,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,ProductTypeId,CategoryId")] Product product, string Category, string ProductType)
         {
-            if (ModelState.IsValid)
+            // Check if NewProductType has been entered
+            if (ProductType != null)
+            {
+                // Check if product type exists
+                if (_context.ProductType.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).Count() > 0)
+                {
+                    product.ProductType = _context.ProductType.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).FirstOrDefault();
+                }
+                else
+                {
+                    product.ProductType = new ProductType(ProductType);
+                }
+
+            }
+
+            // Check if NewCategory has been entered
+            if (Category != null)
+            {
+                // Check if category exists
+                if (_context.Category.Where(c => c.Name.ToLower() == Category.ToLower()).Count() > 0)
+                {
+                    product.Category = _context.Category.Where(c => c.Name.ToLower() == Category.ToLower()).FirstOrDefault();
+                }
+                else
+                {
+                    product.Category = new Category(Category);
+                }
+            }
+
+
+            if (product.Name != null && 
+                (product.Category != null || product.CategoryId != null) && 
+                (product.ProductType != null || product.ProductTypeId > 0))
             {
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+
+            // Add product types to viewbag
+            ViewData["ProductTypes"] = _context.ProductType.ToList();
+            // Add categories to viewbag
+            ViewData["Categories"] = _context.Category.ToList();
+
             return View(product);
         }
 
@@ -156,6 +198,16 @@ namespace FoodPlanner.Controllers
         private bool ProductExists(int id)
         {
             return _context.Product.Any(e => e.Id == id);
+        }
+
+        public ActionResult GetProductTypes(string term)
+        {
+            return Json(_context.ProductType.Where(pt => pt.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
+        }
+
+        public ActionResult GetCategories(string term)
+        {
+            return Json(_context.Category.Where(c => c.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
         }
     }
 }
