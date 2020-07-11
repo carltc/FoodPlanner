@@ -15,7 +15,7 @@
             }
             else
             {
-                <text><b>@meal:</b></text>
+                <text><b>@meal <a asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
             }
             <hr />
             @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
@@ -34,18 +34,9 @@
             }
         }
 
-        @if (Model.Id == 0)
-        {
-            <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Create" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
-                Add
-            </a>
-        }
-        else
-        {
-            <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" style="width: 100%; height: 100%;">
-                Add
-            </a>
-        }
+        <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
+            Add
+        </a>
 
     </div>
 </div>

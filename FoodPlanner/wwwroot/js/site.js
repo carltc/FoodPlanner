@@ -24,3 +24,16 @@ function ToggleShopItem(shopItemId, unitString) {
         }
     });
 }
+
+function addRecipe() {
+    var RL = document.getElementById('RecipeList');
+    var RR = document.getElementsByName('RecipeRow')[0];
+    var newRow = RR.cloneNode(true);
+    RL.appendChild(newRow);
+}
+function addProduct() {
+    var PL = document.getElementById('ProductList');
+    var PR = document.getElementsByName('ProductRow')[0];
+    var newRow = PR.cloneNode(true);
+    PL.appendChild(newRow);
+}

@@ -11,6 +11,7 @@ using FoodPlanner.Classes;
 using Microsoft.EntityFrameworkCore.Internal;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Diagnostics.Tracing;
 
 namespace FoodPlanner.Controllers
 {
@@ -91,7 +92,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Create
-        public IActionResult Create(long? foodplandate)
+        public IActionResult Create(long? foodplandate, string mealType)
         {
             if (foodplandate == null)
             {
@@ -109,17 +110,21 @@ namespace FoodPlanner.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            PopulateRecipeAndProductLists();
+            _context.Add(foodplan);
+            _context.SaveChanges();
 
-            return View(foodplan);
+            // Get newly created foodplan
+            var newFoodPlan = _context.FoodPlan.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date).FirstOrDefault();
+
+            return RedirectToAction(nameof(Add), new { id = newFoodPlan.Id, mealType = mealType });
         }
 
         // GET: FoodPlans/Add
-        public IActionResult Add(int? id)
+        public IActionResult Add(int? id, long? foodplandate, string mealType)
         {
-            if (id == null)
+            if (id == 0)
             {
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType });
             }
 
             // Get foodplan to add to
@@ -128,6 +133,15 @@ namespace FoodPlanner.Controllers
             if (foodplan == null)
             {
                 return RedirectToAction(nameof(Create));
+            }
+
+            if (mealType != null)
+            {
+                Meal selectedMeal;
+                if (Enum.TryParse(mealType, true, out selectedMeal))
+                {
+                    ViewData["MealType"] = selectedMeal;
+                }
             }
 
             PopulateRecipeAndProductLists();
@@ -380,24 +394,6 @@ namespace FoodPlanner.Controllers
 
         private void PopulateRecipeAndProductLists()
         {
-            // Get products
-            var products = _context.Product
-                .Include(p => p.ProductType)
-                .Select(p => new
-                {
-                    Id = p.Id,
-                    FullName = $"{p.Name} {p.ProductType.Name}"
-                }).ToList(); // Create product names as combination of product and product type
-            // Add a blank one for none
-            products.Add(new
-            {
-                Id = 0,
-                FullName = "None"
-            });
-            var productList = new SelectList(products, "Id", "FullName"); // Create a select list from products
-            productList.Where(pl => pl.Value == "0").FirstOrDefault().Selected = true; // Set the blank one as default value
-            ViewData["ProductId"] = productList; // Send it to client viewbag
-
             // Get recipes
             var recipes = _context.Recipe.ToList();
             // Add a blank one for none
@@ -405,6 +401,12 @@ namespace FoodPlanner.Controllers
             var recipeList = new SelectList(recipes, "Id", "Name"); // Create a select list from recipes
             recipeList.Where(pl => pl.Value == "0").FirstOrDefault().Selected = true; // Set the blank one as default value
             ViewData["RecipeId"] = recipeList; // Send it to client viewbag
+
+            var products = _context.Product
+                .Include(p => p.Category)
+                .Include(p => p.ProductType)
+                .ToList();
+            ViewData["Products"] = products;
         }
     }
 }

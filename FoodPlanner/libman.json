@@ -5,6 +5,10 @@
         {
             "library": "jqueryui@1.12.1",
             "destination": "wwwroot/lib/jquery-ui/"
+        },
+        {
+            "library": "bootstrap-select@1.13.18",
+            "destination": "wwwroot/lib/bootstrap-select/"
         }
     ]
 }
