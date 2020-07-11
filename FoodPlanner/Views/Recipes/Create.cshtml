@@ -5,18 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script type="text/javascript">
-    function addIngredient() {
-        var IL = document.getElementById('IngredientList');
-        var IR = document.getElementsByName('IngredientRow')[0];
-        var newRow = IR.cloneNode(true);
-        IL.appendChild(newRow);
-    }
-</script>
-
-<h1>Create</h1>
-
-<h4>Recipe</h4>
+<h4>Create Recipe</h4>
 <hr />
 <div class="row">
     <div class="col">
@@ -30,11 +19,25 @@
 
             <div class="form-group" id="IngredientList">
                 <div class="row" name="IngredientRow">
-                    <div class="col">
-                        <select name="ProductIds" class="form-control" asp-items="ViewBag.ProductId"></select>
+                    <div class="col-6">
+                        <select id="ProductIdSelect" name="ProductIds" class="form-control selectpicker" data-live-search="true">
+                            <optgroup label="None">
+                                <option value="0">None</option>
+                            </optgroup>
+                            @{var products = (List<Product>)ViewBag.Products;}
+                            @foreach (var category in products.Select(p => p.Category.Name).Distinct().ToList())
+                            {
+                                <optgroup label="@category">
+                                    @foreach (var product in products.Where(p => p.Category.Name == category))
+                                    {
+                                        <option value="@product.Id">@product.Name @product.ProductType.Name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
                     </div>
-                    <div class="col">
-                        <input name="Quantities" type="number" step="any" />
+                    <div class="col-2">
+                        <input name="Quantities" type="number" step="0.01" min="0" value="0" style="width: inherit;" />
                     </div>
                     <div class="col">
                         <select name="Units"
@@ -45,7 +48,9 @@
                 </div>
             </div>
 
-            <button type="button" onclick="addIngredient()">Add Ingredient</button>
+            <div class="form-group">
+                <input type="submit" name="add_ingredient" value="Add" class="btn btn-primary" />
+            </div>
 
             <hr />
 
@@ -60,6 +65,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@*@section Scripts {
+@section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}*@
+}

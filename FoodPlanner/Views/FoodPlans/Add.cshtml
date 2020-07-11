@@ -45,8 +45,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <button type="button" onclick="addRecipe()">Add Recipe</button>
                 </div>
                 <div class="col-1"></div>
                 <div class="col" style="min-width: 400px;">
@@ -95,8 +93,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <button type="button" onclick="addProduct()">Add Product</button>
                 </div>
             </div>
 
@@ -115,18 +111,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        $(document).ready(function () {
-            console.log("ready!");
-            $('#RecipeIdSelect').parent('.bootstrap-select').addClass('show')
-            $('#RecipeIdSelect').siblings('.dropdown-menu ').addClass('show')
-            $('#RecipeIdSelect').selectpicker('refresh');
-
-            $('#ProductIdSelect').parent('.bootstrap-select').addClass('show')
-            $('#ProductIdSelect').siblings('.dropdown-menu ').addClass('show')
-            $('#ProductIdSelect').selectpicker('refresh');
-        });
-    </script>
 }
 

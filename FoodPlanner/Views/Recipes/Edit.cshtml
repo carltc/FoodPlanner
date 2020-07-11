@@ -5,12 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>Recipe</h4>
+<h4>Edit Recipe</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -19,6 +17,62 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
+
+            <div class="row">
+                <div class="col">
+                    Ingredients:
+                </div>
+            </div>
+            @foreach (var ingredient in Model.Ingredients)
+            {
+                <div class="row">
+                    <div class="col-11">
+                        @Html.DisplayFor(i => ingredient)
+                    </div>
+                    <div class="col-1">
+                        <a asp-action="DeleteIngredient" asp-route-recipe_id="@Model.Id" asp-route-recipe_ingredient_id="@ingredient.Id" asp-route-edit="true"><i class="far fa-times-circle"></i></a>
+                    </div>
+                </div>
+            }
+
+            <div class="form-group" id="IngredientList">
+                <div class="row" name="IngredientRow" id="IngredientRow">
+                    <div class="col-6">
+                        <select name="ProductIds" class="form-control selectpicker" data-live-search="true">
+                            <optgroup label="None">
+                                <option value="0">None</option>
+                            </optgroup>
+                            @{var products = (List<Product>)ViewBag.Products;}
+                            @foreach (var category in products.Select(p => p.Category.Name).Distinct().ToList())
+                            {
+                                <optgroup label="@category">
+                                    @foreach (var product in products.Where(p => p.Category.Name == category))
+                                    {
+                                        <option value="@product.Id">@product.Name @product.ProductType.Name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <input name="Quantities" type="number" step="0.01" min="0" value="0" style="width: inherit;" />
+                    </div>
+                    <div class="col">
+                        <select name="Units"
+                                class="form-control"
+                                asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()">
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" name="add_ingredient" value="Add" class="btn btn-primary" />
+            </div>
+
+            <hr />
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -28,6 +82,10 @@
 
 <div>
     <a asp-action="Index">Back to List</a>
+</div>
+
+<div>
+    <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
 </div>
 
 @section Scripts {

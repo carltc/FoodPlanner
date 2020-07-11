@@ -37,3 +37,12 @@ function addProduct() {
     var newRow = PR.cloneNode(true);
     PL.appendChild(newRow);
 }
+
+var i = 0;
+
+function addIngredient() {
+    var IL = document.getElementById('IngredientList');
+    var IR = document.getElementsByName('IngredientRow')[0];
+    var newRow = IR.cloneNode(true);
+    IL.appendChild(newRow);
+}
