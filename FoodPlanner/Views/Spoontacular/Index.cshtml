@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Search Recipes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Search Recipes:</h1>
+</div>
+
+<hr />
+<div class="row">
+    <div class="col">
+        <form asp-action="Index">
+
+            <div class="form-group">
+                <label>
+                    Query:
+                </label>
+                <input name="query" type="text" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Cuisine:
+                </label>
+                <input name="cuisine" type="text" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Diet:
+                </label>
+                <input name="diet" type="text" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Exclude Ingredients:
+                </label>
+                <input name="excludeIngredients" type="text" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>
+                    Intolerances:
+                </label>
+                <input name="intolerances" type="text" class="form-control" />
+            </div>
+
+            <hr />
+
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table">
+    <div class="row">
+        <div class="col">
+            Name
+        </div>
+        <div class="col">
+            Image
+        </div>
+    </div>
+    @{
+        var recipes = (List<OnlineRecipe>)ViewBag.Recipes;
+    }
+    @if (recipes.Count > 0)
+    {
+        foreach (var recipe in recipes)
+        {
+            <a class="row" asp-action="Recipe" asp-route-id="@recipe.id">
+                <div class="col">
+                    @recipe.title
+                </div>
+                <div class="col">
+                    <img src="@recipe.imagePath" alt="Image" style="height: 100px;">
+                </div>
+            </a>
+        }
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

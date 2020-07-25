@@ -5,8 +5,20 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Recipes</h1>
 
+<div class="row">
+    <div class="col">
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+    </div>
+    <div class="col">
+        <p>
+            <a asp-controller="Spoontacular" asp-action="Index">Search Online</a>
+        </p>
+    </div>
+</div>
 <p>
     <a asp-action="Create">Create New</a>
 </p>

@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Online Recipe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var recipe = (OnlineRecipe)ViewBag.Recipe;
+}
+
+<div class="row">
+    <div class="col">
+        <h1 class="display-4">@recipe.title</h1>
+    </div>
+    <div class="col">
+        <img src="@recipe.imagePath" alt="Image" style="height: 200px;">
+    </div>
+
+</div>
+
+<hr />
+
+<div class="table">
+    <div class="row">
+        <div class="col-8">
+            Name
+        </div>
+        <div class="col-4">
+            Quantity
+        </div>
+    </div>
+    @{
+        var ingredients = (List<OnlineIngredient>)recipe.extendedIngredients;
+    }
+    @if (ingredients.Count > 0)
+    {
+        foreach (var ingredient in ingredients)
+        {
+            <div class="row">
+                <div class="col-8">
+                    @ingredient.name
+                </div>
+                <div class="col-4">
+                    @ingredient.amount @ingredient.unit
+                </div>
+
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

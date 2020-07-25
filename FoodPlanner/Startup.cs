@@ -12,6 +12,7 @@ using FoodPlanner.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FoodPlanner.Classes;
 
 namespace FoodPlanner
 {
@@ -71,6 +72,9 @@ namespace FoodPlanner
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            // Initiate Spoontacular
+            Spoontacular.InitiateSpoontacular();
 
             app.UseRouting();
 
