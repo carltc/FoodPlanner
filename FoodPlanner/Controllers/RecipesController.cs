@@ -64,7 +64,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
+        public IActionResult Create([Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
         {
             if (ModelState.IsValid)
             {
@@ -138,7 +138,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
         {
             if (id != recipe.Id)
             {
@@ -153,6 +153,10 @@ namespace FoodPlanner.Controllers
                     var storedRecipe = _context.Recipe.Where(r => r.Id == recipe.Id)
                         .Include(r => r.Ingredients)
                         .FirstOrDefault();
+
+                    // Set values to stored recipe
+                    storedRecipe.Name = recipe.Name;
+                    storedRecipe.Portions = recipe.Portions;
 
                     // Add ingredients
                     //foreach(int productId in ProductIds)

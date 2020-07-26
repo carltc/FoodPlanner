@@ -105,6 +105,15 @@ namespace FoodPlanner.Controllers
                         // Add product for each ingredient
                         foreach (var ingredient in recipe.Recipe.Ingredients)
                         {
+                            // Check portions and adjust quantity for 2 people
+                            if (recipe.Recipe.Portions > 0)
+                            {
+                                float portions = recipe.Recipe.Portions;
+                                float householdSize = 2;
+                                float portionRatio = (householdSize / portions);
+                                ingredient.Quantity = ingredient.Quantity * portionRatio;
+                            }
+
                             // Convert to standard units and add item
                             shopItems.Add(MeasurementUnit.ConvertToStandardUnits(ingredient));
                         }
