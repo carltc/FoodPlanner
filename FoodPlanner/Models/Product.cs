@@ -14,5 +14,16 @@ namespace FoodPlanner.Models
         public Category Category { get; set; }
         public int ProductTypeId { get; set; }
         public ProductType ProductType { get; set; }
+
+        public Product()
+        {
+
+        }
+        public Product(string name, string category, string productType)
+        {
+            Name = name;
+            Category = new Category(category);
+            ProductType = new ProductType(productType);
+        }
     }
 }

@@ -26,6 +26,7 @@ namespace FoodPlanner.Models
         public string imageType { get; set; }
         public int readyInMinutes { get; set; }
         public string summary { get; set; }
+        public int servings { get; set; }
         public List<OnlineIngredient> extendedIngredients { get; set; }
     }
 
@@ -36,5 +37,10 @@ namespace FoodPlanner.Models
         public string name { get; set; }
         public float amount { get; set; }
         public string unit { get; set; }
+        public Product Product
+        {
+            get { return new Product(); }
+            set { Product = value; }
+        }
     }
 }

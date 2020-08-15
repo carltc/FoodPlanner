@@ -8,11 +8,20 @@ using FoodPlanner.Classes;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Org.OpenAPITools.Client;
+using FoodPlanner.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodPlanner.Controllers
 {
     public class SpoontacularController : Controller
     {
+        private readonly FoodPlannerContext _context;
+
+        public SpoontacularController(FoodPlannerContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index(string query, string cuisine, string diet, string excludeIngredients, string intolerances)
         {
             ViewData["Recipes"] = new List<OnlineRecipe>();
@@ -52,7 +61,63 @@ namespace FoodPlanner.Controllers
                 }
             }
 
+            // Add product types to viewbag
+            ViewData["ProductTypes"] = _context.ProductType.ToList();
+            // Add categories to viewbag
+            ViewData["Categories"] = _context.Category.ToList();
+
             return View();
+        }
+
+        public IActionResult AddRecipe(string Name, int Servings, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units)
+        {
+            if (!String.IsNullOrWhiteSpace(Name))
+            {
+                var newRecipe = new Recipe();
+
+                newRecipe.Name = Name;
+                newRecipe.Portions = Servings;
+                newRecipe.Ingredients = new List<Ingredient>();
+
+                if (Names!= null && Units != null && Aisles != null)
+                {
+                    if (Names.Count == Units.Count && Names.Count == Aisles.Count && Names.Count == Amounts.Count)
+                    {
+                        for (int i = 0; i < Names.Count; i++)
+                        {
+                            Ingredient newIngredient;
+                            Product product;
+
+                            // Check if product already exists
+                            var existingProducts = _context.Product
+                                .Include(p => p.ProductType)
+                                .Include(p => p.Category)
+                                .Where(p => p.ProductType.Name == Names[i] && p.Category.Name == Aisles[i])
+                                .ToList();
+
+                            // If product(s) found
+                            if (existingProducts.Count > 0)
+                            {
+                                product = existingProducts.FirstOrDefault();
+                            }
+                            else
+                            {
+                                // Create product then add as ingredient
+                                product = new Product("", Aisles[i], Names[i]);
+                            }
+
+                            newIngredient = new Ingredient(Names[i], Amounts[i], Units[i], product);
+                            newRecipe.Ingredients.Add(newIngredient);
+                        }
+                    }
+                }
+
+                _context.Add(newRecipe);
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
