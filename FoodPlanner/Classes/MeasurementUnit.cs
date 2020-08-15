@@ -91,6 +91,37 @@ namespace FoodPlanner.Classes
 
             return combinedShopItems;
         }
+
+        public static Unit ConvertToUnit(string unitName)
+        {
+            try
+            {
+                object unit;
+                if (Enum.TryParse(typeof(Unit), unitName, out unit))
+                {
+                    return (Unit)unit;
+                }
+
+                // Lowercase matching
+                unitName = unitName.ToLower();
+
+                var mappingDictionary = new Dictionary<string, Unit>()
+            {
+                {"teaspoon", Unit.tsp },
+                {"tablespoon", Unit.tbsp },
+                {"tbp", Unit.tbsp },
+                {"tbs", Unit.tbsp },
+                {"ounce", Unit.oz },
+                {"ounces", Unit.oz }
+            };
+
+                return mappingDictionary.ContainsKey(unitName) ? mappingDictionary[unitName] : Unit.unit;
+            }
+            catch
+            {
+                return Unit.unit;
+            }
+        }
     }
 
     public enum Unit
@@ -103,6 +134,10 @@ namespace FoodPlanner.Classes
         tsp,
         pinch,
         ml,
-        kg
+        kg,
+        oz,
+        large,
+        medium,
+        small
     }
 }
