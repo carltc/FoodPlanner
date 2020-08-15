@@ -46,7 +46,7 @@ namespace FoodPlanner.Controllers
 
             // Get upcoming foodplans
             var currentFoodPlans = _context.FoodPlan
-                .Where(fp => fp.Date >= dateNow && fp.Date <= endDate)
+                .Where(fp => fp.Date.Date >= dateNow.Date && fp.Date.Date <= endDate.Date)
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
                         .ThenInclude(p => p.ProductType)
