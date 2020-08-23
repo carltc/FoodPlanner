@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using FoodPlanner.Classes;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodPlanner.Controllers
@@ -26,27 +28,23 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Details/5
-        public async Task<IActionResult> Details(int? Days)
+        public async Task<IActionResult> Details()
         {
-            if (Days == null)
-            {
-                return NotFound();
-            }
-
+            // DEPRECATED - Only regenerate now on command
             // Check if correct list already generated, if not then re-generate
-            if (Days.Value != ShoppingList.ShoppingListSize)
-            {
-                GenerateShoppingList(Days.Value);
-            }
+            //if (Days.Value != ShoppingList.ShoppingListSize)
+            //{
+            //    GenerateShoppingList(Days.Value);
+            //}
 
             return View(ShoppingList.ShopItems);
         }
 
-        public IActionResult RegenerateList()
+        public IActionResult RegenerateList(int? Days)
         {
-            if (GenerateShoppingList(7))
+            if (Days != null && GenerateShoppingList(Days.Value))
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details));
             }
 
             return NotFound();
@@ -62,12 +60,12 @@ namespace FoodPlanner.Controllers
                 int target = (int)shopDay;
                 if (target <= start)
                     target += days;
-                var shopDate = DateTime.Now.AddDays(target - start);
+                var shopDate = DateTime.Now.AddDays(target - start).Date;
 
                 // Get all future foodplans which haven't been shopped yet
                 var foodPlans = _context.FoodPlan
                     .Include(fp => fp.ShopTrip)
-                    .Where(fp => fp.Date >= DateTime.Now && fp.Date <= shopDate.AddDays(days) && fp.ShopTrip == null)
+                    .Where(fp => fp.Date.Date >= DateTime.Now.Date && fp.Date.Date <= shopDate.AddDays(days).Date && fp.ShopTrip == null)
                     .Include(fp => fp.Products)
                         .ThenInclude(p => p.Product)
                             .ThenInclude(p => p.ProductType)
@@ -123,6 +121,12 @@ namespace FoodPlanner.Controllers
                 // Combine same products
                 shopItems = MeasurementUnit.CombineShopItems(shopItems);
 
+                // Check old shopping list marked items and then set new shopping list marked items
+                if (ShoppingList.ShopItems != null)
+                {
+                    shopItems = ShoppingList.CopyMarkedItems(shopItems, ShoppingList.ShopItems);
+                }
+
                 ShoppingList.ShopItems = shopItems;
                 ShoppingList.ShoppingListSize = days;
                 ShoppingList.ExpectedShopDate = shopDate;
@@ -150,6 +154,16 @@ namespace FoodPlanner.Controllers
             }
 
             return Ok();
+        }
+
+        public IActionResult ResetShoppingListItems()
+        {
+            if (ShoppingList.ResetShopItems())
+            {
+                return RedirectToAction(nameof(Details));
+            }
+
+            return BadRequest();
         }
     }
 }
