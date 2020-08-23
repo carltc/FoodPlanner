@@ -92,7 +92,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Create
-        public IActionResult Create(long? foodplandate, string mealType)
+        public IActionResult Create(long? foodplandate, string mealType, bool menu = false)
         {
             if (foodplandate == null)
             {
@@ -116,6 +116,10 @@ namespace FoodPlanner.Controllers
             // Get newly created foodplan
             var newFoodPlan = _context.FoodPlan.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date).FirstOrDefault();
 
+            if (menu)
+            {
+                return RedirectToAction(nameof(Menu), new { id = newFoodPlan.Id, mealType = mealType });
+            }
             return RedirectToAction(nameof(Add), new { id = newFoodPlan.Id, mealType = mealType });
         }
 
@@ -142,6 +146,34 @@ namespace FoodPlanner.Controllers
                 {
                     ViewData["MealType"] = selectedMeal;
                 }
+            }
+
+            PopulateRecipeAndProductLists();
+
+            return View(foodplan);
+        }
+
+        // GET: FoodPlans/Add
+        public IActionResult Menu(int? id, long? foodplandate, string mealType)
+        {
+            if (id == 0)
+            {
+                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, menu = true });
+            }
+
+            // Get foodplan to add to
+            var foodplan = _context.FoodPlan.Where(fp => fp.Id == id).FirstOrDefault();
+
+            if (foodplan == null || mealType == null)
+            {
+                return BadRequest();
+            }
+
+            // Set meal type
+            Meal selectedMeal;
+            if (Enum.TryParse(mealType, true, out selectedMeal))
+            {
+                ViewData["MealType"] = selectedMeal;
             }
 
             PopulateRecipeAndProductLists();
@@ -395,13 +427,17 @@ namespace FoodPlanner.Controllers
         private void PopulateRecipeAndProductLists()
         {
             // Get recipes
-            var recipes = _context.Recipe.ToList();
+            var recipes = _context.Recipe
+                .ToList();
+            ViewData["Recipes"] = recipes;
+
             // Add a blank one for none
             recipes.Add(new Recipe() { Name = "None", Id = 0 });
             var recipeList = new SelectList(recipes, "Id", "Name"); // Create a select list from recipes
             recipeList.Where(pl => pl.Value == "0").FirstOrDefault().Selected = true; // Set the blank one as default value
             ViewData["RecipeId"] = recipeList; // Send it to client viewbag
 
+            // Get Products
             var products = _context.Product
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)

@@ -13,9 +13,13 @@
             {
                 <text><b>Additional:</b></text>
             }
-            else
+            else if (meal == Meal.Snack)
             {
                 <text><b>@meal <a asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
+            }
+            else
+            {
+                <text><b>@meal <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
             }
             <hr />
             @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))

@@ -63,11 +63,13 @@
 
 </div>
 
+<hr />
+
 <div class="row">
     <div class="col-6" style="text-align: left;">
         <a asp-action="Index">Back to List</a>
     </div>
     <div class="col-6" style="text-align: right;">
-        <a asp-action="ResetShoppingListItems" style="color: red; text-decoration: underline;">Reset Marked Items in List</a>
+        <a asp-action="ResetShoppingListItems" style="color: red; text-decoration: underline;" onclick="return confirm('Are you sure you want to reset this?')">Reset Marked Items in List</a>
     </div>
 </div>
