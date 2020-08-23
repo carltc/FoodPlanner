@@ -23,5 +23,18 @@ namespace FoodPlanner.Models
             Quantity = quantity;
             Unit = MeasurementUnit.ConvertToUnit(unit);
         }
+
+        public Ingredient(Ingredient ingredient)
+        {
+            Id = ingredient.Id;
+            Name = ingredient.Name;
+            ProductId = ingredient.ProductId;
+            Product = ingredient.Product;
+            Quantity = ingredient.Quantity;
+            Unit = ingredient.Unit;
+            Bought = ingredient.Bought;
+            RecipeId = ingredient.RecipeId;
+            Recipe = ingredient.Recipe;
+        }
     }
 }

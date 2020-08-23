@@ -101,8 +101,11 @@ namespace FoodPlanner.Controllers
                     foreach (var recipe in foodPlan.Recipes)
                     {
                         // Add product for each ingredient
-                        foreach (var ingredient in recipe.Recipe.Ingredients)
+                        for (int i = 0; i < recipe.Recipe.Ingredients.Count(); i ++)//foreach (var ingredient in recipe.Recipe.Ingredients)
                         {
+                            // get ingredient
+                            var ingredient = new Ingredient(recipe.Recipe.Ingredients[i]);
+
                             // Check portions and adjust quantity for 2 people
                             if (recipe.Recipe.Portions > 0)
                             {
