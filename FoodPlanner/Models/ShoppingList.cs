@@ -9,6 +9,7 @@ namespace FoodPlanner.Models
     {
         public static int ShoppingListSize { get; set; }
         public static List<ShopItem> ShopItems = new List<ShopItem>();
+        public static ShoppingListSortType SortType = ShoppingListSortType.Category;
 
         public static DateTime ExpectedShopDate { get; set; }
 
@@ -53,5 +54,11 @@ namespace FoodPlanner.Models
         //    ExpectedShopDate = expectedShopDate;
         //    ShopItems = shopItems;
         //}
+    }
+
+    public enum ShoppingListSortType
+    {
+        Category,
+        FoodPlan
     }
 }

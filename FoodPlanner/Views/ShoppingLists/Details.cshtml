@@ -7,8 +7,22 @@
 
 <h1>Details</h1>
 
-<div>
-    <a asp-action="Index">Re-Generate List</a>
+<div class="container">
+    <div class="row">
+        <div class="col-6" style="text-align: left;">
+            <a asp-action="Index">Re-Generate List</a>
+        </div>
+        <div class="col-6" style="text-align: right;">
+            @if (ShoppingList.SortType == ShoppingListSortType.FoodPlan)
+            {
+                <a asp-action="Details" asp-route-sortType="@ShoppingListSortType.Category.ToString()">Sort by Category</a>
+            }
+            else
+            {
+                <a asp-action="Details" asp-route-sortType="@ShoppingListSortType.FoodPlan.ToString()">Sort by FoodPlan Day</a>
+            }
+        </div>
+    </div>
 </div>
 
 <div>
@@ -35,29 +49,59 @@
             </div>
         </div>
 
-        @foreach (var categoryName in Model.Select(si => si.Product.Category.Name).Distinct())
+        @if (ShoppingList.SortType == ShoppingListSortType.FoodPlan)
         {
-            var categoryShopItems = Model.Where(si => si.Product.Category.Name == categoryName);
-            var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
-                             c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
-            <div class="card">
-                <div class="card-header" id="Heading-@categorySimple">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@categorySimple" aria-expanded="true" aria-controls="Collapse-@categorySimple">
-                            @categoryName
-                        </button>
-                    </h2>
-                </div>
+            @foreach (var foodPlan in Model.Select(si => si.TempFoodPlan).Distinct())
+            {
+                var categoryShopItems = Model.Where(si => si.TempFoodPlan.Id == foodPlan.Id);
+                //var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
+                //                 c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
+                <div class="card">
+                    <div class="card-header" id="Heading-@foodPlan.Id">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@foodPlan.Id" aria-expanded="true" aria-controls="Collapse-@foodPlan.Id">
+                                @foodPlan.Date.DayOfWeek.ToString() - @foodPlan.Date.ToShortDateString()
+                            </button>
+                        </h2>
+                    </div>
 
-                <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
-                    <div class="card-body">
-                        @foreach (var shopItem in categoryShopItems)
-                        {
-                            @Html.DisplayFor(si => shopItem)
-                        }
+                    <div id="Collapse-@foodPlan.Id" class="collapse" aria-labelledby="Heading-@foodPlan.Id" data-parent="#CategoryAccordion">
+                        <div class="card-body">
+                            @foreach (var shopItem in categoryShopItems)
+                            {
+                                @Html.DisplayFor(si => shopItem)
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+        }
+        else
+        {
+            @foreach (var categoryName in Model.Select(si => si.Product.Category.Name).Distinct())
+            {
+                var categoryShopItems = Model.Where(si => si.Product.Category.Name == categoryName);
+                var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
+                                 c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
+                <div class="card">
+                    <div class="card-header" id="Heading-@categorySimple">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@categorySimple" aria-expanded="true" aria-controls="Collapse-@categorySimple">
+                                @categoryName
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
+                        <div class="card-body">
+                            @foreach (var shopItem in categoryShopItems)
+                            {
+                                @Html.DisplayFor(si => shopItem)
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
         }
     </div>
 

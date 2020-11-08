@@ -76,7 +76,8 @@ namespace FoodPlanner.Classes
                         ProductId = exampleShopItem.ProductId,
                         Product = exampleShopItem.Product,
                         Unit = unit,
-                        Quantity = 0
+                        Quantity = 0,
+                        TempFoodPlan = exampleShopItem.TempFoodPlan
                     };
 
                     // Add all shop items of this type together in new shop item

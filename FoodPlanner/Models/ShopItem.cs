@@ -18,5 +18,7 @@ namespace FoodPlanner.Models
 
         [NotMapped]
         public bool Bought = false;
+        [NotMapped]
+        public FoodPlan TempFoodPlan { get; set; }
     }
 }

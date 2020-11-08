@@ -28,8 +28,16 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Details/5
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> Details(string sortType)
         {
+            if (!String.IsNullOrWhiteSpace(sortType))
+            {
+                if (Enum.TryParse(sortType, true, out ShoppingListSortType shoppingListSortType))
+                {
+                    ShoppingList.SortType = shoppingListSortType;
+                }
+            }
+
             // DEPRECATED - Only regenerate now on command
             // Check if correct list already generated, if not then re-generate
             //if (Days.Value != ShoppingList.ShoppingListSize)
@@ -54,18 +62,18 @@ namespace FoodPlanner.Controllers
         {
             try
             {
-                // Set expected shop day
-                var shopDay = DayOfWeek.Sunday;
-                int start = (int)DateTime.Now.DayOfWeek;
-                int target = (int)shopDay;
-                if (target <= start)
-                    target += days;
-                var shopDate = DateTime.Now.AddDays(target - start).Date;
+                //// Set expected shop day
+                //var shopDay = DayOfWeek.Sunday;
+                //int start = (int)DateTime.Now.DayOfWeek;
+                //int target = (int)shopDay;
+                //if (target <= start)
+                //    target += days;
+                var shopDate = DateTime.Now.Date; //.AddDays(target - start).Date;
 
                 // Get all future foodplans which haven't been shopped yet
                 var foodPlans = _context.FoodPlan
                     .Include(fp => fp.ShopTrip)
-                    .Where(fp => fp.Date.Date >= DateTime.Now.Date && fp.Date.Date <= shopDate.AddDays(days).Date && fp.ShopTrip == null)
+                    .Where(fp => fp.Date.Date >= DateTime.Now.Date && fp.Date.Date <= shopDate.AddDays(days - 1).Date && fp.ShopTrip == null)
                     .Include(fp => fp.Products)
                         .ThenInclude(p => p.Product)
                             .ThenInclude(p => p.ProductType)
@@ -93,6 +101,8 @@ namespace FoodPlanner.Controllers
                     // Add food plan products
                     foreach (var product in foodPlan.Products)
                     {
+                        // Add the foodplanid for this product temporarily
+                        product.TempFoodPlan = foodPlan;
                         // Convert to standard units and add item
                         shopItems.Add(MeasurementUnit.ConvertToStandardUnits(product));
                     }
@@ -115,6 +125,8 @@ namespace FoodPlanner.Controllers
                                 ingredient.Quantity = ingredient.Quantity * portionRatio;
                             }
 
+                            // Add the foodplanid for this ingredient temporarily
+                            ingredient.TempFoodPlan = foodPlan;
                             // Convert to standard units and add item
                             shopItems.Add(MeasurementUnit.ConvertToStandardUnits(ingredient));
                         }
