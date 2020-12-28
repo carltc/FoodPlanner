@@ -49,3 +49,31 @@ function addIngredient() {
     var newRow = IR.cloneNode(true);
     IL.appendChild(newRow);
 }
+
+function listSearch(searchInput,listBody,listRowClass,searchableElementType) {
+    // Declare variables
+    var input, filter, ul, li, a, b, i, j, txtValue;
+    input = document.getElementById(searchInput);
+    filter = input.value.toUpperCase();
+    ul = document.getElementById(listBody);
+    li = ul.getElementsByClassName(listRowClass);
+
+    // Loop through all list items, and hide those who don't match the search query
+    for (i = 0; i < li.length; i++) {
+        console.log(li[i]);
+        a = li[i].getElementsByTagName(searchableElementType);
+        for (j = 0; j < a.length; j++) {
+            b = a[j];
+            if (b != null) {
+                txtValue = b.textContent || b.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    console.log(li[i]);
+                    li[i].style.display = "";
+                    break;
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    }
+}
