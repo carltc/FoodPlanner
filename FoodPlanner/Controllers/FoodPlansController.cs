@@ -37,7 +37,7 @@ namespace FoodPlanner.Controllers
 
             // get current date
             var dateNow = DateTime.Now;
-            var endDate = dateNow.AddDays(14);
+            var endDate = dateNow.AddDays(Days.Value);
 
             // Create a list of empty foodplans for this date range
             var foodPlans = new List<FoodPlan>();
