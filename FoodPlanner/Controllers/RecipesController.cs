@@ -23,7 +23,7 @@ namespace FoodPlanner.Controllers
         // GET: Recipes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipe.ToListAsync());
+            return View(await _context.Recipe.OrderByDescending(r => r.Id).ToListAsync());
         }
 
         // GET: Recipes/Details/5

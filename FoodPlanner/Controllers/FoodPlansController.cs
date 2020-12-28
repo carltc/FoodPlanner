@@ -31,7 +31,9 @@ namespace FoodPlanner.Controllers
             if (Days == null)
             {
                 Days = 14;
-            }    
+            }
+
+            ViewData["Days"] = Days;
 
             // get current date
             var dateNow = DateTime.Now;
@@ -428,6 +430,7 @@ namespace FoodPlanner.Controllers
         {
             // Get recipes
             var recipes = _context.Recipe
+                .OrderByDescending(r => r.Id)
                 .ToList();
             ViewData["Recipes"] = recipes;
 
@@ -441,6 +444,7 @@ namespace FoodPlanner.Controllers
             var products = _context.Product
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)
+                .OrderByDescending(p => p.Id)
                 .ToList();
             ViewData["Products"] = products;
         }

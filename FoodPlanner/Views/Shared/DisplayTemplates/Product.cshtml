@@ -1,0 +1,14 @@
+﻿@using FoodPlanner.Classes
+
+@model Product
+
+<div class="shopItemCard card mb-3" style="width: 100%">
+    <div class="row no-gutters">
+        <div class="col-8 shopItemRow" style="background-color: lightgray;">
+            <b>@Model.Name @Model.ProductType.Name</b>
+        </div>
+        <div class="col-4 shopItemRow" style="text-align: right;">
+            @Model.Category.Name
+        </div>
+    </div>
+</div>
