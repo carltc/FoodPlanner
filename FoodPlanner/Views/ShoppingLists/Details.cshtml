@@ -40,8 +40,8 @@
             </div>
 
             <div id="Collapse-All" class="collapse" aria-labelledby="Heading-All" data-parent="#CategoryAccordion">
-                <div class="card-body">
-                    @foreach (var shopItem in Model)
+                <div class="card-body CategoryList">
+                    @foreach (var shopItem in Model.OrderBy(item => item.Bought))
                     {
                         @Html.DisplayFor(si => shopItem)
                     }
@@ -66,8 +66,8 @@
                     </div>
 
                     <div id="Collapse-@foodPlan.Id" class="collapse" aria-labelledby="Heading-@foodPlan.Id" data-parent="#CategoryAccordion">
-                        <div class="card-body">
-                            @foreach (var shopItem in categoryShopItems)
+                        <div class="card-body CategoryList">
+                            @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
                             {
                                 @Html.DisplayFor(si => shopItem)
                             }
@@ -93,8 +93,8 @@
                     </div>
 
                     <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
-                        <div class="card-body">
-                            @foreach (var shopItem in categoryShopItems)
+                        <div class="card-body CategoryList">
+                            @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
                             {
                                 @Html.DisplayFor(si => shopItem)
                             }

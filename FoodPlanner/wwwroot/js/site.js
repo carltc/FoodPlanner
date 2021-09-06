@@ -25,7 +25,35 @@ function ToggleShopItem(shopItemId, unitString) {
                 v.classList.add(className);
             }
         }
+
+        ReOrderList();
     });
+
+}
+
+// Reorder shopping list with bought items at the bottom
+function ReOrderList()
+{
+    // Get all the different lists of items which are shown under different categories or days of week
+    var categoryLists = document.getElementsByClassName("CategoryList");
+
+    // Cycle through each list
+    for (i = 0; i < categoryLists.length; i++) {
+        // Get the category list
+        var categoryList = categoryLists[i];
+        // Get all items in list
+        var items = categoryList.children;
+
+        // Cycle through each item
+        for (var j = 0; j < items.length; j++) {
+            var item = items[j];
+            // Check if item has been marked as 'bought'
+            if (item.classList.contains("shopItemBought")) {
+                // Re-append item to list if it is marked, which moves it to the bottom
+                categoryList.appendChild(item);
+            }
+        }
+    }
 }
 
 function addRecipe() {
@@ -34,6 +62,7 @@ function addRecipe() {
     var newRow = RR.cloneNode(true);
     RL.appendChild(newRow);
 }
+
 function addProduct() {
     var PL = document.getElementById('ProductList');
     var PR = document.getElementsByName('ProductRow')[0];
