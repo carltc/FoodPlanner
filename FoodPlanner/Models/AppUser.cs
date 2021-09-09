@@ -29,9 +29,17 @@ namespace FoodPlanner.Models
                     // Therefore find all households and set Id to 1st one
                     var households = user.HouseholdUsers.Select(hu => hu.Household).ToList();
 
-                    // Set the active household id of the user
-                    user.ActiveHouseholdId = households.First().Id;
-
+                    // Check if any households were found
+                    if (households.Count > 0)
+                    {
+                        // Set the active household id of the user
+                        user.ActiveHouseholdId = households.First().Id;
+                    }
+                    else
+                    {
+                        // If not then set the active household id to 0
+                        user.ActiveHouseholdId = 0;
+                    }
                 }
                 else
                 {

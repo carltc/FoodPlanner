@@ -23,7 +23,7 @@ namespace FoodPlanner.Models
         public FoodPlan(DateTime dateTime, int householdId)
         {
             HouseholdId = householdId;
-            Name = $"{dateTime.DayOfWeek.ToString()} {dateTime.Day.ToString()} {Date.Month.ToString()}";
+            Name = $"{dateTime.DayOfWeek.ToString()} {dateTime.Day.ToString()} {dateTime.Month.ToString()}";
             Date = dateTime;
             Recipes = new List<FoodPlanRecipe>();
             Products = new List<FoodPlanProduct>();

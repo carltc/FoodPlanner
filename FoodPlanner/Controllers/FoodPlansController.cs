@@ -49,6 +49,19 @@ namespace FoodPlanner.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
+            // Check if user has a household selected
+            if (user.ActiveHouseholdId == 0)
+            {
+                // Set ActiveHousehold Id
+                user.SetActiveHouseholdId(_context);
+
+                 // Check if user still doesn't have a household
+                if (user.ActiveHouseholdId == 0)
+                {
+                    return View();
+                }
+            }
+
             // Create a list of empty foodplans for this date range
             var foodPlans = new List<FoodPlan>();
             for (int i = 0; i < Days; i++)

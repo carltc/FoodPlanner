@@ -40,6 +40,19 @@ namespace FoodPlanner.Controllers
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
+            // Check if user has a valid household selected
+            if (user.ActiveHouseholdId == 0)
+            {
+                // Set ActiveHousehold Id
+                user.SetActiveHouseholdId(_context);
+
+                // Check if user still doesn't have a household
+                if (user.ActiveHouseholdId == 0)
+                {
+                    return View();
+                }
+            }
+
             var shoppingList = new ShoppingList();
             // Check if a pre-generated list exists
             if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))

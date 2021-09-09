@@ -21,7 +21,14 @@ namespace FoodPlanner.Models
             Name = name;
             Product = product;
             Quantity = quantity;
-            Unit = MeasurementUnit.ConvertToUnit(unit);
+            if (unit == null)
+            {
+                Unit = Unit;
+            }
+            else
+            {
+                Unit = MeasurementUnit.ConvertToUnit(unit);
+            }
         }
 
         public Ingredient(Ingredient ingredient)
