@@ -4,6 +4,32 @@
 @inject FoodPlanner.Data.FoodPlannerContext context
 @{
     var user = await UserManager.GetUserAsync(User);
+    var activeHouseholdName = "Not set";
+
+    // Check if User has an ActiveHouseholdId
+    if (user != null)
+    {
+        if (user.ActiveHouseholdId == 0)
+        {
+            // If it is 0, then it is not set, so set it to the 1st household found
+            user.SetActiveHouseholdId(context);
+        }
+
+        if (user.Households == null || user.Households.Count == 0)
+        {
+            // Load households
+            user.LoadHouseholds(context);
+        }
+
+        if (user.Households.Count > 0)
+        {
+            var households = user.Households.Where(hh => hh.Id == user.ActiveHouseholdId);
+            if (households != null && households.Count() > 0)
+            {
+                activeHouseholdName = households.First().Name;
+            }
+        }
+    }
 }
 
 <ul class="navbar-nav">
@@ -13,13 +39,20 @@
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity.Name!</a>
         </li>
         <li class="nav-item">
-            @*@if (user.Households != null)
-            {
-                foreach (var household in user.Households)
-                {
-                    <p class="nav-link text-dark">@household.Name</p>
-                }
-            }*@
+            <div class="dropdown">
+                Household:
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @activeHouseholdName
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @foreach (var household in user.Households)
+                    {
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/ChangeActiveHousehold" asp-route-activeHouseholdId="@household.Id" asp-route-returnUrl="@Context.Request.Path">
+                            <button type="submit" class="nav-link btn btn-link text-dark">@household.Name</button>
+                        </form>
+                    }
+                </div>
+            </div>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

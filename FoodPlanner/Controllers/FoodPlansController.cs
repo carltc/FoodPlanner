@@ -12,16 +12,19 @@ using Microsoft.EntityFrameworkCore.Internal;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Diagnostics.Tracing;
+using Microsoft.AspNetCore.Identity;
 
 namespace FoodPlanner.Controllers
 {
     public class FoodPlansController : Controller
     {
         private readonly FoodPlannerContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public FoodPlansController(FoodPlannerContext context)
+        public FoodPlansController(FoodPlannerContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: FoodPlans
@@ -39,16 +42,27 @@ namespace FoodPlanner.Controllers
             var dateNow = DateTime.Now;
             var endDate = dateNow.AddDays(Days.Value);
 
+            // Get the current user
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
             // Create a list of empty foodplans for this date range
             var foodPlans = new List<FoodPlan>();
             for (int i = 0; i < Days; i++)
             {
-                foodPlans.Add(new FoodPlan(dateNow.AddDays(i)));
+                foodPlans.Add(new FoodPlan(dateNow.AddDays(i), user.ActiveHouseholdId));
             }
 
-            // Get upcoming foodplans
+            // Get upcoming foodplans for this users household
             var currentFoodPlans = _context.FoodPlans
-                .Where(fp => fp.Date.Date >= dateNow.Date && fp.Date.Date <= endDate.Date)
+                .Where(
+                    fp => fp.Date.Date >= dateNow.Date && 
+                    fp.Date.Date <= endDate.Date &&
+                    fp.HouseholdId == user.ActiveHouseholdId
+                )
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
                         .ThenInclude(p => p.ProductType)
@@ -104,8 +118,15 @@ namespace FoodPlanner.Controllers
             // Reconstruct long date
             DateTime dateTime = DateTime.FromBinary(foodplandate.Value);
 
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
             // Get foodplan to add to
-            var foodplan = new FoodPlan(dateTime);
+            var foodplan = new FoodPlan(dateTime, user.ActiveHouseholdId);
 
             if (foodplan == null)
             {
@@ -447,6 +468,14 @@ namespace FoodPlanner.Controllers
                 .OrderByDescending(p => p.Id)
                 .ToList();
             ViewData["Products"] = products;
+        }
+
+        private async Task<AppUser> GetCurrentUserAsync()
+        {
+            // Get the current user
+            var user = await _userManager.GetUserAsync(User);
+
+            return user;
         }
     }
 }

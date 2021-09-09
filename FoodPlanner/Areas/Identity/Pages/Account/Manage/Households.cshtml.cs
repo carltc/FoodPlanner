@@ -67,6 +67,11 @@ namespace FoodPlanner.Areas.Identity.Pages.Account.Manage
                     await _context_foodplanner.SaveChangesAsync();
 
                     StatusMessage = "You have left household '" + householdname + "'.";
+
+                    if (user.ActiveHouseholdId == LeaveHouseholdId)
+                    {
+                        user.SetActiveHouseholdId(_context_foodplanner);
+                    }
                 }
             }
 
