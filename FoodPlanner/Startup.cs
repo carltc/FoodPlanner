@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FoodPlanner.Classes;
+using FoodPlanner.Models;
 
 namespace FoodPlanner
 {
@@ -28,29 +24,48 @@ namespace FoodPlanner
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Setup application back-end database
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("BackendContext")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
             // Setup application views
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
             services.AddRazorPages();
 
-            // Setup food planning database
+            // Setup food planning databases depending on development or production environment
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
+                // Setup application back-end database
+                //services.AddDbContext<ApplicationDbContext>(options =>
+                //    options.UseSqlServer(
+                //        Configuration.GetConnectionString("FoodPlannerContextDev")));
+
+                // Setup application main database
                 services.AddDbContext<FoodPlannerContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContextDev")));
             }
             else
             {
+                // Setup application back-end database
+                //services.AddDbContext<ApplicationDbContext>(options =>
+                //    options.UseSqlServer(
+                //        Configuration.GetConnectionString("FoodPlannerContext")));
+
+                // Setup application main database
                 services.AddDbContext<FoodPlannerContext>(options =>
                         options.UseSqlServer(Configuration.GetConnectionString("FoodPlannerContext")));
             }
+
+            // Add Users and Roles
+            services.AddIdentity<AppUser, IdentityRole>() //options => options.SignIn.RequireConfirmedAccount = true)
+                .AddDefaultUI()
+                .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider)
+                .AddEntityFrameworkStores<FoodPlannerContext>();
+
+            services.Configure<IdentityOptions>(opts => {
+                opts.Password.RequiredLength = 3;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireDigit = false;
+            });
 
             // Application insights
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_INSTRUMENTATIONKEY"]);

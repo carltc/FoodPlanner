@@ -22,7 +22,7 @@ namespace FoodPlanner.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product
+            return View(await _context.Products
                 .Include(p => p.ProductType)
                 .Include(p => p.Category)
                 .ToListAsync());
@@ -36,7 +36,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -50,9 +50,9 @@ namespace FoodPlanner.Controllers
         public IActionResult Create()
         {
             // Add product types to viewbag
-            ViewData["ProductTypes"] = _context.ProductType.ToList();
+            ViewData["ProductTypes"] = _context.ProductTypes.ToList();
             // Add categories to viewbag
-            ViewData["Categories"] = _context.Category.ToList();
+            ViewData["Categories"] = _context.Categorys.ToList();
 
             //ViewData["ProductTypeId"] = new SelectList(_context.ProductType, "Id", "Name");
             //ViewData["CategoryId"] = new SelectList(_context.Category, "Id", "Name");
@@ -71,9 +71,9 @@ namespace FoodPlanner.Controllers
             if (ProductType != null)
             {
                 // Check if product type exists
-                if (_context.ProductType.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).Count() > 0)
+                if (_context.ProductTypes.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).Count() > 0)
                 {
-                    product.ProductType = _context.ProductType.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).FirstOrDefault();
+                    product.ProductType = _context.ProductTypes.Where(pt => pt.Name.ToLower() == ProductType.ToLower()).FirstOrDefault();
                 }
                 else
                 {
@@ -86,9 +86,9 @@ namespace FoodPlanner.Controllers
             if (Category != null)
             {
                 // Check if category exists
-                if (_context.Category.Where(c => c.Name.ToLower() == Category.ToLower()).Count() > 0)
+                if (_context.Categorys.Where(c => c.Name.ToLower() == Category.ToLower()).Count() > 0)
                 {
-                    product.Category = _context.Category.Where(c => c.Name.ToLower() == Category.ToLower()).FirstOrDefault();
+                    product.Category = _context.Categorys.Where(c => c.Name.ToLower() == Category.ToLower()).FirstOrDefault();
                 }
                 else
                 {
@@ -108,9 +108,9 @@ namespace FoodPlanner.Controllers
 
 
             // Add product types to viewbag
-            ViewData["ProductTypes"] = _context.ProductType.ToList();
+            ViewData["ProductTypes"] = _context.ProductTypes.ToList();
             // Add categories to viewbag
-            ViewData["Categories"] = _context.Category.ToList();
+            ViewData["Categories"] = _context.Categorys.ToList();
 
             return View(product);
         }
@@ -123,7 +123,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product.FindAsync(id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -174,7 +174,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Product
+            var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -189,25 +189,25 @@ namespace FoodPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            _context.Product.Remove(product);
+            var product = await _context.Products.FindAsync(id);
+            _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Products.Any(e => e.Id == id);
         }
 
         public ActionResult GetProductTypes(string term)
         {
-            return Json(_context.ProductType.Where(pt => pt.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
+            return Json(_context.ProductTypes.Where(pt => pt.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
         }
 
         public ActionResult GetCategories(string term)
         {
-            return Json(_context.Category.Where(c => c.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
+            return Json(_context.Categorys.Where(c => c.Name.ToLower().StartsWith(term.ToLower())).Select(a => new { label = a.Name }));
         }
     }
 }

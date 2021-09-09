@@ -71,7 +71,7 @@ namespace FoodPlanner.Controllers
                 var shopDate = DateTime.Now.Date; //.AddDays(target - start).Date;
 
                 // Get all future foodplans which haven't been shopped yet
-                var foodPlans = _context.FoodPlan
+                var foodPlans = _context.FoodPlans
                     .Include(fp => fp.ShopTrip)
                     .Where(fp => fp.Date.Date >= DateTime.Now.Date && fp.Date.Date <= shopDate.AddDays(days - 1).Date && fp.ShopTrip == null)
                     .Include(fp => fp.Products)

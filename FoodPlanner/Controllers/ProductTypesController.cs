@@ -22,7 +22,7 @@ namespace FoodPlanner.Controllers
         // GET: ProductTypes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProductType.ToListAsync());
+            return View(await _context.ProductTypes.ToListAsync());
         }
 
         // GET: ProductTypes/Details/5
@@ -33,7 +33,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var productType = await _context.ProductType
+            var productType = await _context.ProductTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productType == null)
             {
@@ -73,7 +73,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var productType = await _context.ProductType.FindAsync(id);
+            var productType = await _context.ProductTypes.FindAsync(id);
             if (productType == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var productType = await _context.ProductType
+            var productType = await _context.ProductTypes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (productType == null)
             {
@@ -139,15 +139,15 @@ namespace FoodPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var productType = await _context.ProductType.FindAsync(id);
-            _context.ProductType.Remove(productType);
+            var productType = await _context.ProductTypes.FindAsync(id);
+            _context.ProductTypes.Remove(productType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductTypeExists(int id)
         {
-            return _context.ProductType.Any(e => e.Id == id);
+            return _context.ProductTypes.Any(e => e.Id == id);
         }
     }
 }

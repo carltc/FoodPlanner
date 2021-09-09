@@ -23,7 +23,7 @@ namespace FoodPlanner.Controllers
         // GET: Recipes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipe.OrderByDescending(r => r.Id).ToListAsync());
+            return View(await _context.Recipes.OrderByDescending(r => r.Id).ToListAsync());
         }
 
         // GET: Recipes/Details/5
@@ -34,7 +34,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe
+            var recipe = await _context.Recipes
                 .Include(r => r.Ingredients)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.ProductType)
@@ -50,7 +50,7 @@ namespace FoodPlanner.Controllers
         // GET: Recipes/Create
         public IActionResult Create()
         {
-            var products = _context.Product
+            var products = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)
                 .ToList();
@@ -77,7 +77,7 @@ namespace FoodPlanner.Controllers
                 {
                     if (ProductIds[i] != 0)
                     {
-                        var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+                        var product = _context.Products.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
                         var ingredient = new Ingredient()
                         {
                             Name = product.Name,
@@ -95,7 +95,7 @@ namespace FoodPlanner.Controllers
                 _context.SaveChanges();
 
                 // Get newly created recipe
-                var newRecipe = _context.Recipe.Where(r => r.Name == recipe.Name).FirstOrDefault();
+                var newRecipe = _context.Recipes.Where(r => r.Name == recipe.Name).FirstOrDefault();
 
                 if (add_ingredient != null)
                 {
@@ -114,7 +114,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe
+            var recipe = await _context.Recipes
                 .Include(r => r.Ingredients)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.ProductType)
@@ -124,7 +124,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var products = _context.Product
+            var products = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)
                 .ToList();
@@ -150,7 +150,7 @@ namespace FoodPlanner.Controllers
                 try
                 {
                     // Get actual recipe from database
-                    var storedRecipe = _context.Recipe.Where(r => r.Id == recipe.Id)
+                    var storedRecipe = _context.Recipes.Where(r => r.Id == recipe.Id)
                         .Include(r => r.Ingredients)
                         .FirstOrDefault();
 
@@ -164,7 +164,7 @@ namespace FoodPlanner.Controllers
                     {
                         if (ProductIds[i] != 0)
                         {
-                            var product = _context.Product.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
+                            var product = _context.Products.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
                             var ingredient = new Ingredient()
                             {
                                 Name = product.Name,
@@ -208,7 +208,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipe
+            var recipe = await _context.Recipes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (recipe == null)
             {
@@ -223,15 +223,15 @@ namespace FoodPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var recipe = await _context.Recipe.FindAsync(id);
-            _context.Recipe.Remove(recipe);
+            var recipe = await _context.Recipes.FindAsync(id);
+            _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool RecipeExists(int id)
         {
-            return _context.Recipe.Any(e => e.Id == id);
+            return _context.Recipes.Any(e => e.Id == id);
         }
 
 
@@ -240,11 +240,11 @@ namespace FoodPlanner.Controllers
         {
             if (recipe_ingredient_id != null)
             {
-                var recipe_ingredient = (Ingredient)_context.ShopItem.Find(recipe_ingredient_id);
+                var recipe_ingredient = (Ingredient)_context.ShopItems.Find(recipe_ingredient_id);
 
                 if (recipe_ingredient.RecipeId == recipe_id)
                 {
-                    _context.ShopItem.Remove(recipe_ingredient);
+                    _context.ShopItems.Remove(recipe_ingredient);
                     _context.SaveChanges();
                 }
 

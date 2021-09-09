@@ -1,0 +1,29 @@
+﻿@page
+@model Join_HouseholdsModel
+@{
+    ViewData["Title"] = "Households";
+    ViewData["ActivePage"] = ManageNavPages.Households;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="HouseholdName"></label>
+                <input asp-for="HouseholdName" class="form-control" />
+            </div>
+            <button id="update-profile-button" type="submit" class="btn btn-primary">Join</button>
+        </form>
+        <hr />
+        <a class="btn btn-success nav-link @ManageNavPages.HouseholdsNavClass(ViewContext)" id="households" asp-page="./Households">
+            Back
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

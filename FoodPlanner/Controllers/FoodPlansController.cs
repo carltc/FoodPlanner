@@ -47,7 +47,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Get upcoming foodplans
-            var currentFoodPlans = _context.FoodPlan
+            var currentFoodPlans = _context.FoodPlans
                 .Where(fp => fp.Date.Date >= dateNow.Date && fp.Date.Date <= endDate.Date)
                 .Include(fp => fp.Products)
                     .ThenInclude(p => p.Product)
@@ -72,7 +72,7 @@ namespace FoodPlanner.Controllers
         // GET: FoodPlans
         public async Task<IActionResult> List()
         {
-            return View(await _context.FoodPlan.ToListAsync());
+            return View(await _context.FoodPlans.ToListAsync());
         }
 
         // GET: FoodPlans/Details/5
@@ -83,7 +83,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var foodPlan = await _context.FoodPlan
+            var foodPlan = await _context.FoodPlans
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (foodPlan == null)
             {
@@ -116,7 +116,7 @@ namespace FoodPlanner.Controllers
             _context.SaveChanges();
 
             // Get newly created foodplan
-            var newFoodPlan = _context.FoodPlan.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date).FirstOrDefault();
+            var newFoodPlan = _context.FoodPlans.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date).FirstOrDefault();
 
             if (menu)
             {
@@ -134,7 +134,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Get foodplan to add to
-            var foodplan = _context.FoodPlan.Where(fp => fp.Id == id).FirstOrDefault();
+            var foodplan = _context.FoodPlans.Where(fp => fp.Id == id).FirstOrDefault();
 
             if (foodplan == null)
             {
@@ -164,7 +164,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Get foodplan to add to
-            var foodplan = _context.FoodPlan.Where(fp => fp.Id == id).FirstOrDefault();
+            var foodplan = _context.FoodPlans.Where(fp => fp.Id == id).FirstOrDefault();
 
             if (foodplan == null || mealType == null)
             {
@@ -195,7 +195,7 @@ namespace FoodPlanner.Controllers
                 // Get full foodplan that is being added or use new if it doesn't exist yet
                 FoodPlan fullFoodPlan;
                 bool newFoodPlan;
-                if (_context.FoodPlan.Find(foodPlan.Id) == null)
+                if (_context.FoodPlans.Find(foodPlan.Id) == null)
                 {
                     fullFoodPlan = foodPlan;
                     fullFoodPlan.Recipes = new List<FoodPlanRecipe>(); // initiate new list of recipes
@@ -204,7 +204,7 @@ namespace FoodPlanner.Controllers
                 }
                 else
                 {
-                    fullFoodPlan = _context.FoodPlan.Where(fp => fp.Id == foodPlan.Id)
+                    fullFoodPlan = _context.FoodPlans.Where(fp => fp.Id == foodPlan.Id)
                         .Include(fp => fp.Products)
                         .Include(fp => fp.Recipes)
                         .FirstOrDefault();
@@ -217,7 +217,7 @@ namespace FoodPlanner.Controllers
                 {
                     if (ProductIds[i] != 0) // Check if product Id is 0, which is the None type
                     {
-                        var product = _context.Product.Where(p => p.Id == ProductIds[i]).Include(p => p.ProductType).FirstOrDefault();
+                        var product = _context.Products.Where(p => p.Id == ProductIds[i]).Include(p => p.ProductType).FirstOrDefault();
                         var foodPlanProduct = new FoodPlanProduct()
                         {
                             Name = $"{product.Name} {product.ProductType.Name}",
@@ -238,7 +238,7 @@ namespace FoodPlanner.Controllers
                 {
                     if (RecipeIds[i] != 0) // Check if recipe Id is 0, which is the None type
                     {
-                        var recipe = _context.Recipe.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
+                        var recipe = _context.Recipes.Where(r => r.Id == RecipeIds[i]).FirstOrDefault();
                         var foodPlanRecipe = new FoodPlanRecipe()
                         {
                             RecipeId = recipe.Id,
@@ -379,7 +379,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var foodPlan = await _context.FoodPlan
+            var foodPlan = await _context.FoodPlans
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (foodPlan == null)
             {
@@ -394,8 +394,8 @@ namespace FoodPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var foodPlan = await _context.FoodPlan.FindAsync(id);
-            _context.FoodPlan.Remove(foodPlan);
+            var foodPlan = await _context.FoodPlans.FindAsync(id);
+            _context.FoodPlans.Remove(foodPlan);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -405,15 +405,15 @@ namespace FoodPlanner.Controllers
         {
             if (foodplan_product_id != null)
             {
-                var foodplan_product = await _context.ShopItem.FindAsync(foodplan_product_id);
-                _context.ShopItem.Remove(foodplan_product);
+                var foodplan_product = await _context.ShopItems.FindAsync(foodplan_product_id);
+                _context.ShopItems.Remove(foodplan_product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             else if (foodplan_recipe_id != null)
             {
-                var foodplan_recipe = await _context.FoodPlanRecipe.FindAsync(foodplan_recipe_id);
-                _context.FoodPlanRecipe.Remove(foodplan_recipe);
+                var foodplan_recipe = await _context.FoodPlanRecipes.FindAsync(foodplan_recipe_id);
+                _context.FoodPlanRecipes.Remove(foodplan_recipe);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -423,13 +423,13 @@ namespace FoodPlanner.Controllers
 
         private bool FoodPlanExists(int id)
         {
-            return _context.FoodPlan.Any(e => e.Id == id);
+            return _context.FoodPlans.Any(e => e.Id == id);
         }
 
         private void PopulateRecipeAndProductLists()
         {
             // Get recipes
-            var recipes = _context.Recipe
+            var recipes = _context.Recipes
                 .OrderByDescending(r => r.Id)
                 .ToList();
             ViewData["Recipes"] = recipes;
@@ -441,7 +441,7 @@ namespace FoodPlanner.Controllers
             ViewData["RecipeId"] = recipeList; // Send it to client viewbag
 
             // Get Products
-            var products = _context.Product
+            var products = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)
                 .OrderByDescending(p => p.Id)

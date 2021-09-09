@@ -22,7 +22,7 @@ namespace FoodPlanner.Controllers
         // GET: ShopTrips
         public async Task<IActionResult> Index()
         {
-            var foodPlannerContext = _context.ShopTrip.Include(s => s.FoodPlan);
+            var foodPlannerContext = _context.ShopTrips.Include(s => s.FoodPlan);
             return View(await foodPlannerContext.ToListAsync());
         }
 
@@ -34,7 +34,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var shopTrip = await _context.ShopTrip
+            var shopTrip = await _context.ShopTrips
                 .Include(s => s.FoodPlan)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (shopTrip == null)
@@ -48,7 +48,7 @@ namespace FoodPlanner.Controllers
         // GET: ShopTrips/Create
         public IActionResult Create()
         {
-            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlan, "Id", "Id");
+            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlans, "Id", "Id");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace FoodPlanner.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlan, "Id", "Id", shopTrip.FoodPlanId);
+            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlans, "Id", "Id", shopTrip.FoodPlanId);
             return View(shopTrip);
         }
 
@@ -77,12 +77,12 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var shopTrip = await _context.ShopTrip.FindAsync(id);
+            var shopTrip = await _context.ShopTrips.FindAsync(id);
             if (shopTrip == null)
             {
                 return NotFound();
             }
-            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlan, "Id", "Id", shopTrip.FoodPlanId);
+            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlans, "Id", "Id", shopTrip.FoodPlanId);
             return View(shopTrip);
         }
 
@@ -118,7 +118,7 @@ namespace FoodPlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlan, "Id", "Id", shopTrip.FoodPlanId);
+            ViewData["FoodPlanId"] = new SelectList(_context.FoodPlans, "Id", "Id", shopTrip.FoodPlanId);
             return View(shopTrip);
         }
 
@@ -130,7 +130,7 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var shopTrip = await _context.ShopTrip
+            var shopTrip = await _context.ShopTrips
                 .Include(s => s.FoodPlan)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (shopTrip == null)
@@ -146,15 +146,15 @@ namespace FoodPlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shopTrip = await _context.ShopTrip.FindAsync(id);
-            _context.ShopTrip.Remove(shopTrip);
+            var shopTrip = await _context.ShopTrips.FindAsync(id);
+            _context.ShopTrips.Remove(shopTrip);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ShopTripExists(int id)
         {
-            return _context.ShopTrip.Any(e => e.Id == id);
+            return _context.ShopTrips.Any(e => e.Id == id);
         }
     }
 }

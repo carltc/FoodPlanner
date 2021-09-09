@@ -1,0 +1,35 @@
+﻿@page
+@model HouseholdsModel
+@{
+    ViewData["Title"] = "Households";
+    ViewData["ActivePage"] = ManageNavPages.Households;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        @foreach (Household household in Model.Households)
+        {
+            <div class="row">
+                <div class="col-8">@household.Name</div>
+                <div class="col-4">
+                    <form method="post">
+                        <input type="hidden" asp-for="LeaveHouseholdId" value="@household.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Leave
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <hr />
+        }
+        <a class="btn btn-success nav-link @ManageNavPages.HouseholdsNavClass(ViewContext)" id="join_households" asp-page="./Join_Households">
+            + Join a household
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

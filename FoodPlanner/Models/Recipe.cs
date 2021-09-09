@@ -11,5 +11,6 @@ namespace FoodPlanner.Models
         public string Name { get; set; }
         public List<Ingredient> Ingredients { get; set; }
         public int Portions { get; set; }
+        public string AddedBy { get; set; } = "Unknown";
     }
 }

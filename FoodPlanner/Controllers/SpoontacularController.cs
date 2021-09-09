@@ -62,9 +62,9 @@ namespace FoodPlanner.Controllers
             }
 
             // Add product types to viewbag
-            ViewData["ProductTypes"] = _context.ProductType.ToList();
+            ViewData["ProductTypes"] = _context.ProductTypes.ToList();
             // Add categories to viewbag
-            ViewData["Categories"] = _context.Category.ToList();
+            ViewData["Categories"] = _context.Categorys.ToList();
 
             return View();
         }
@@ -89,7 +89,7 @@ namespace FoodPlanner.Controllers
                             Product product;
 
                             // Check if product already exists
-                            var existingProducts = _context.Product
+                            var existingProducts = _context.Products
                                 .Include(p => p.ProductType)
                                 .Include(p => p.Category)
                                 .Where(p => p.ProductType.Name == Names[i] && p.Category.Name == Aisles[i])
