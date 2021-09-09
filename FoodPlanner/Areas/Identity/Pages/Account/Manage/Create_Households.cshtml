@@ -1,5 +1,5 @@
 ﻿@page
-@model Join_HouseholdsModel
+@model Create_HouseholdsModel
 @{
     ViewData["Title"] = "Households";
     ViewData["ActivePage"] = ManageNavPages.Households;
@@ -15,7 +15,7 @@
                 <label asp-for="HouseholdName"></label>
                 <input asp-for="HouseholdName" class="form-control" />
             </div>
-            <button id="update-profile-button" type="submit" class="btn btn-success">Join</button>
+            <button id="update-profile-button" type="submit" class="btn btn-success">Create</button>
         </form>
         <hr />
         <a class="btn btn-primary nav-link @ManageNavPages.HouseholdsNavClass(ViewContext)" id="households" asp-page="./Households">
