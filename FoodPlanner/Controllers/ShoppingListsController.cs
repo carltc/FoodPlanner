@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FoodPlanner.Classes;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,10 +16,12 @@ namespace FoodPlanner.Controllers
     public class ShoppingListsController : Controller
     {
         private readonly FoodPlannerContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ShoppingListsController(FoodPlannerContext context)
+        public ShoppingListsController(FoodPlannerContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: FoodPlans
@@ -30,22 +33,30 @@ namespace FoodPlanner.Controllers
         // GET: FoodPlans/Details/5
         public async Task<IActionResult> Details(string sortType)
         {
+            // Get the current user and therefore the household
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var shoppingList = new ShoppingList();
+            // Check if a pre-generated list exists
+            if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))
+            {
+                shoppingList = ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId];
+            }
+
+            // Set the sort type
             if (!String.IsNullOrWhiteSpace(sortType))
             {
                 if (Enum.TryParse(sortType, true, out ShoppingListSortType shoppingListSortType))
                 {
-                    ShoppingList.SortType = shoppingListSortType;
+                    shoppingList.SortType = shoppingListSortType;
                 }
             }
 
-            // DEPRECATED - Only regenerate now on command
-            // Check if correct list already generated, if not then re-generate
-            //if (Days.Value != ShoppingList.ShoppingListSize)
-            //{
-            //    GenerateShoppingList(Days.Value);
-            //}
-
-            return View(ShoppingList.ShopItems);
+            return View(shoppingList);
         }
 
         public IActionResult RegenerateList(int? Days)
@@ -62,16 +73,19 @@ namespace FoodPlanner.Controllers
         {
             try
             {
-                //// Set expected shop day
-                //var shopDay = DayOfWeek.Sunday;
-                //int start = (int)DateTime.Now.DayOfWeek;
-                //int target = (int)shopDay;
-                //if (target <= start)
-                //    target += days;
-                var shopDate = DateTime.Now.Date; //.AddDays(target - start).Date;
+                // Get the current user and therefore the household
+                var user = GetCurrentUserAsync().Result;
+                if (user == null)
+                {
+                    return false;
+                }
+
+                // Set expected shop day
+                var shopDate = DateTime.Now.Date;
 
                 // Get all future foodplans which haven't been shopped yet
                 var foodPlans = _context.FoodPlans
+                    .Where(fp => fp.HouseholdId == user.ActiveHouseholdId)
                     .Include(fp => fp.ShopTrip)
                     .Where(fp => fp.Date.Date >= DateTime.Now.Date && fp.Date.Date <= shopDate.AddDays(days - 1).Date && fp.ShopTrip == null)
                     .Include(fp => fp.Products)
@@ -136,15 +150,24 @@ namespace FoodPlanner.Controllers
                 // Combine same products
                 shopItems = MeasurementUnit.CombineShopItems(shopItems);
 
-                // Check old shopping list marked items and then set new shopping list marked items
-                if (ShoppingList.ShopItems != null)
+                var shoppingList = new ShoppingList();
+                // Check if list has already been made before
+                if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))
                 {
-                    shopItems = ShoppingList.CopyMarkedItems(shopItems, ShoppingList.ShopItems);
+                    shoppingList = ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId];
+                }
+                // Check old shopping list marked items and then set new shopping list marked items
+                if (shoppingList.ShopItems != null)
+                {
+                    shopItems = shoppingList.CopyMarkedItems(shopItems, shoppingList.ShopItems);
                 }
 
-                ShoppingList.ShopItems = shopItems;
-                ShoppingList.ShoppingListSize = days;
-                ShoppingList.ExpectedShopDate = shopDate;
+                shoppingList.ShopItems = shopItems;
+                shoppingList.ShoppingListSize = days;
+                shoppingList.ExpectedShopDate = shopDate;
+
+                // Add shopping list to temporary storage class ShoppingLists
+                ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId] = shoppingList;
 
                 return true;
             }
@@ -161,24 +184,55 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var shopItems = ShoppingList.ShopItems.Where(si => si.ProductId == product_id && si.Unit.ToString() == unitString).ToList();
-
-            foreach (var shopItem in shopItems)
+            // Get the current user and therefore the household
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
             {
-                shopItem.Bought = !shopItem.Bought;
+                return NotFound();
+            }
+            if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))
+            {
+                var shoppingList = ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId];
+
+                var shopItems = shoppingList.ShopItems.Where(si => si.ProductId == product_id && si.Unit.ToString() == unitString).ToList();
+
+                foreach (var shopItem in shopItems)
+                {
+                    shopItem.Bought = !shopItem.Bought;
+                }
+
+                return Ok();
             }
 
-            return Ok();
+            return NotFound();
         }
 
         public IActionResult ResetShoppingListItems()
         {
-            if (ShoppingList.ResetShopItems())
+            // Get the current user and therefore the household
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
             {
-                return RedirectToAction(nameof(Details));
+                return NotFound();
+            }
+            if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))
+            {
+                var shoppingList = ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId];
+
+                if (shoppingList.ResetShopItems())
+                {
+                    return RedirectToAction(nameof(Details));
+                }
             }
 
             return BadRequest();
+        }
+        private async Task<AppUser> GetCurrentUserAsync()
+        {
+            // Get the current user
+            var user = await _userManager.GetUserAsync(User);
+
+            return user;
         }
     }
 }

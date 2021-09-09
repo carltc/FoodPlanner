@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace FoodPlanner.Models
 {
-    public static class ShoppingList
+    public class ShoppingList
     {
-        public static int ShoppingListSize { get; set; }
-        public static List<ShopItem> ShopItems = new List<ShopItem>();
-        public static ShoppingListSortType SortType = ShoppingListSortType.Category;
+        public int ShoppingListSize { get; set; }
+        public List<ShopItem> ShopItems = new List<ShopItem>();
+        public ShoppingListSortType SortType = ShoppingListSortType.Category;
 
-        public static DateTime ExpectedShopDate { get; set; }
+        public DateTime ExpectedShopDate { get; set; }
 
-        internal static List<ShopItem> CopyMarkedItems(List<ShopItem> newShopItems, List<ShopItem> oldShopItems)
+        internal List<ShopItem> CopyMarkedItems(List<ShopItem> newShopItems, List<ShopItem> oldShopItems)
         {
             // Go through each item in the new list and see if it exists in the old list
             for (int i = 0; i < newShopItems.Count(); i++)
@@ -30,7 +30,7 @@ namespace FoodPlanner.Models
             return newShopItems;
         }
 
-        internal static bool ResetShopItems()
+        internal bool ResetShopItems()
         {
             try
             {
@@ -46,19 +46,5 @@ namespace FoodPlanner.Models
                 return false;
             }
         }
-
-
-
-        //public ShoppingList(DateTime expectedShopDate, List<ShopItem> shopItems)
-        //{
-        //    ExpectedShopDate = expectedShopDate;
-        //    ShopItems = shopItems;
-        //}
-    }
-
-    public enum ShoppingListSortType
-    {
-        Category,
-        FoodPlan
     }
 }

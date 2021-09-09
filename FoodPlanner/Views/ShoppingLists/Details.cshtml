@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ShopItem>
+﻿@model ShoppingList
 
 @{
     ViewData["Title"] = "Details";
@@ -13,7 +13,7 @@
             <a asp-action="Index">Re-Generate List</a>
         </div>
         <div class="col-6" style="text-align: right;">
-            @if (ShoppingList.SortType == ShoppingListSortType.FoodPlan)
+            @if (Model.SortType == ShoppingListSortType.FoodPlan)
             {
                 <a asp-action="Details" asp-route-sortType="@ShoppingListSortType.Category.ToString()">Sort by Category</a>
             }
@@ -41,7 +41,7 @@
 
             <div id="Collapse-All" class="collapse" aria-labelledby="Heading-All" data-parent="#CategoryAccordion">
                 <div class="card-body CategoryList">
-                    @foreach (var shopItem in Model.OrderBy(item => item.Bought))
+                    @foreach (var shopItem in Model.ShopItems.OrderBy(item => item.Bought))
                     {
                         @Html.DisplayFor(si => shopItem)
                     }
@@ -49,11 +49,11 @@
             </div>
         </div>
 
-        @if (ShoppingList.SortType == ShoppingListSortType.FoodPlan)
+        @if (Model.SortType == ShoppingListSortType.FoodPlan)
         {
-            @foreach (var foodPlan in Model.Select(si => si.TempFoodPlan).Distinct().OrderBy(si => si.Date))
+            @foreach (var foodPlan in Model.ShopItems.Select(si => si.TempFoodPlan).Distinct().OrderBy(si => si.Date))
             {
-                var categoryShopItems = Model.Where(si => si.TempFoodPlan.Id == foodPlan.Id);
+                var categoryShopItems = Model.ShopItems.Where(si => si.TempFoodPlan.Id == foodPlan.Id);
                 //var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
                 //                 c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
                 <div class="card">
@@ -78,9 +78,9 @@
         }
         else
         {
-            @foreach (var categoryName in Model.Select(si => si.Product.Category.Name).Distinct())
+            @foreach (var categoryName in Model.ShopItems.Select(si => si.Product.Category.Name).Distinct())
             {
-                var categoryShopItems = Model.Where(si => si.Product.Category.Name == categoryName);
+                var categoryShopItems = Model.ShopItems.Where(si => si.Product.Category.Name == categoryName);
                 var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
                                  c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
                 <div class="card">
