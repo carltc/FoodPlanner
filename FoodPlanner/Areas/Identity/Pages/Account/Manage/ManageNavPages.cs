@@ -10,9 +10,9 @@ namespace FoodPlanner.Areas.Identity.Pages.Account.Manage
     {
         public static string Index => "Index";
 
-        public static string Households => "Households";
-
         public static string Email => "Email";
+
+        public static string Households => "Households";
 
         public static string ChangePassword => "ChangePassword";
 
@@ -28,9 +28,9 @@ namespace FoodPlanner.Areas.Identity.Pages.Account.Manage
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
-        public static string HouseholdsNavClass(ViewContext viewContext) => PageNavClass(viewContext, Households);
-
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
+
+        public static string HouseholdsNavClass(ViewContext viewContext) => PageNavClass(viewContext, Households);
 
         public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 

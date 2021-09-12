@@ -2,6 +2,10 @@
     {
         "outputFileName": "wwwroot/css/site.min.css",
         "inputFiles": [
+            "wwwroot/css/foodplans.css",
+            "wwwroot/css/products.css",
+            "wwwroot/css/recipes.css",
+            "wwwroot/css/shoppinglists.css",
             "wwwroot/css/site.css"
         ]
     },
