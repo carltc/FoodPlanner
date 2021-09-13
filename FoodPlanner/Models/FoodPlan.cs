@@ -17,7 +17,7 @@ namespace FoodPlanner.Models
 
         public FoodPlan()
         {
-
+            Recipes = new List<FoodPlanRecipe>();
         }
 
         public FoodPlan(DateTime dateTime, int householdId)

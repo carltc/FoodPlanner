@@ -2,12 +2,28 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 /* fList colours */
-:root {
+/*:root {
     --primary-colour: #00cc66;
     --secondary-colour: #fa824c;
     --tertiary-colour: #3c91e6;
     --dark-colour: #342e37;
     --light-colour: #fdfffc;
+}*/
+/* fList colours */
+/*:root {
+    --primary-colour: #c75000;
+    --secondary-colour: #2f1000;
+    --tertiary-colour: #945600;
+    --dark-colour: #000000;
+    --light-colour: #ffffff;
+}*/
+/* fList colours */
+:root {
+    --primary-colour: #0fa3b1;
+    --secondary-colour: #ff9b42;
+    --tertiary-colour: #404e7c;
+    --dark-colour: #000000;
+    --light-colour: #ffffff;
 }
 
 @font-face {
@@ -48,12 +64,21 @@ a {
     }
 
 .btn-alternative {
-    color: var(--dark-colour);
+    color: var(--light-colour);
     background-color: var(--secondary-colour);
 }
     .btn-alternative:hover {
-        color: var(--dark-colour);
+        color: var(--light-colour);
         background-color: var(--secondary-colour);
+    }
+
+.btn-tertiary {
+    color: var(--light-colour);
+    background-color: var(--tertiary-colour);
+}
+    .btn-tertiary:hover {
+        color: var(--light-colour);
+        background-color: var(--tertiary-colour);
     }
 
 .btn-subtle {
@@ -83,7 +108,7 @@ a {
 }
 
 button.navbar-link, .navbar-link {
-    color: white;
+    /*color: white;*/
     border-bottom: solid;
     border-left: solid;
     border-right: none;
@@ -91,6 +116,7 @@ button.navbar-link, .navbar-link {
     border-radius: 10px;
     border-width: 3px;
     margin:5px;
+    text-align: center;
 }
     button.navbar-link:hover, .navbar-link:hover {
         color: white;
@@ -98,6 +124,10 @@ button.navbar-link, .navbar-link {
         margin-top: 8px;
         margin-right: 8px;
     }
+
+/*.navbar-link.dark {
+    border-color: var(--dark-colour);
+}*/
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -137,6 +167,7 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
     font-family: FeedText;
+    /*background-color: var(--secondary-colour);*/
 }
 
 .footer {
