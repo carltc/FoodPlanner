@@ -10,6 +10,10 @@
         <form asp-action="Add">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            @if (ViewData.Keys.Contains("returnUrl"))
+            {
+                <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+            }
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" readonly="readonly" />

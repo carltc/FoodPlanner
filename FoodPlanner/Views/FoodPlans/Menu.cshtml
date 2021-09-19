@@ -50,6 +50,10 @@
                                             <input type="hidden" asp-for="Id" />
                                             <input type="hidden" asp-for="Name" />
                                             <input type="hidden" asp-for="Date" />
+                                            @if (ViewData.Keys.Contains("returnUrl"))
+                                            {
+                                                <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                                            }
                                             <input type="hidden" name="RecipeIds" value="@recipe.Id" />
                                             <input type="hidden" name="RecipeMeals" value="@ViewBag.MealType" />
 

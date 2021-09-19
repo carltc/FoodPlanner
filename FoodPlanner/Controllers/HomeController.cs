@@ -37,6 +37,10 @@ namespace FoodPlanner.Controllers
             // get current date
             var dateNow = DateTime.Now;
 
+            // Set default foodplans for today and tomorrow
+            ViewData["TodaysFoodPlan"] = new FoodPlan(DateTime.Now.Date, user.ActiveHouseholdId);
+            ViewData["TomorrowsFoodPlan"] = new FoodPlan(DateTime.Now.AddDays(1).Date, user.ActiveHouseholdId);
+
             // Get today and tomorrows food plans
             var currentFoodPlans = _context.FoodPlans
                 .Where(
@@ -61,6 +65,15 @@ namespace FoodPlanner.Controllers
             {
                 var foodplan = currentFoodPlans.Where(fp => fp.Date.Date == dateNow.AddDays(1).Date).First();
                 ViewData["TomorrowsFoodPlan"] = foodplan;
+            }
+
+            // Get latest 10 recipes
+            ViewData["LatestRecipes"] = _context.Recipes.OrderByDescending(r => r.Id).Take(10).ToList();
+
+            // Get shopping list
+            if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))
+            {
+                ViewData["ShoppingList"] = ShoppingLists.Household_ShoppingLists[user.ActiveHouseholdId];
             }
 
             return View();

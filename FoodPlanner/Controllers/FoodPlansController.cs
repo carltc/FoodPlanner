@@ -121,7 +121,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Create
-        public IActionResult Create(long? foodplandate, string mealType, bool menu = false)
+        public IActionResult Create(long? foodplandate, string mealType, bool menu = false, string returnUrl = null)
         {
             if (foodplandate == null)
             {
@@ -150,21 +150,21 @@ namespace FoodPlanner.Controllers
             _context.SaveChanges();
 
             // Get newly created foodplan
-            var newFoodPlan = _context.FoodPlans.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date).FirstOrDefault();
+            var newFoodPlan = _context.FoodPlans.Where(fp => fp.Name == foodplan.Name && fp.Date == foodplan.Date && fp.HouseholdId == user.ActiveHouseholdId).FirstOrDefault();
 
             if (menu)
             {
-                return RedirectToAction(nameof(Menu), new { id = newFoodPlan.Id, mealType = mealType });
+                return RedirectToAction(nameof(Menu), new { id = newFoodPlan.Id, mealType = mealType, returnUrl = returnUrl });
             }
-            return RedirectToAction(nameof(Add), new { id = newFoodPlan.Id, mealType = mealType });
+            return RedirectToAction(nameof(Add), new { id = newFoodPlan.Id, mealType = mealType, returnUrl = returnUrl });
         }
 
         // GET: FoodPlans/Add
-        public IActionResult Add(int? id, long? foodplandate, string mealType)
+        public IActionResult Add(int? id, long? foodplandate, string mealType, string returnUrl = null)
         {
             if (id == 0)
             {
-                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType });
+                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, returnUrl = returnUrl });
             }
 
             // Get foodplan to add to
@@ -186,15 +186,19 @@ namespace FoodPlanner.Controllers
 
             PopulateRecipeAndProductLists();
 
+            if (returnUrl != null)
+            {
+                ViewData["returnUrl"] = returnUrl;
+            }
             return View(foodplan);
         }
 
-        // GET: FoodPlans/Add
-        public IActionResult Menu(int? id, long? foodplandate, string mealType)
+        // GET: FoodPlans/Menu
+        public IActionResult Menu(int? id, long? foodplandate, string mealType, string returnUrl = null)
         {
             if (id == 0)
             {
-                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, menu = true });
+                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, menu = true, returnUrl = returnUrl });
             }
 
             // Get foodplan to add to
@@ -214,6 +218,10 @@ namespace FoodPlanner.Controllers
 
             PopulateRecipeAndProductLists();
 
+            if (returnUrl != null)
+            {
+                ViewData["returnUrl"] = returnUrl;
+            }
             return View(foodplan);
         }
 
@@ -222,7 +230,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<Meal> RecipeMeals, List<int> ProductIds, List<Meal> ProductMeals, List<double> Quantities, List<Unit> Units)
+        public async Task<IActionResult> Add([Bind("Id,Name,Date")] FoodPlan foodPlan, List<int> RecipeIds, List<Meal> RecipeMeals, List<int> ProductIds, List<Meal> ProductMeals, List<double> Quantities, List<Unit> Units, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -296,8 +304,14 @@ namespace FoodPlanner.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+
+                if (returnUrl != null)
+                {
+                    return LocalRedirect(returnUrl);
+                }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(foodPlan);
         }
 

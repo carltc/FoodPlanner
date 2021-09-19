@@ -14,11 +14,47 @@ for details on configuring this project to bundle and minify static web assets. 
     min-width: 250px;
 }
 
-.foodplan-meal-card {
-    border-color: var(--tertiary-colour);
-    border-width: 3px;
-    border-radius: 5px;
-    background-color: var(--primary-colour);
+#foodplan-calendar {
+    padding: 5px;
+    text-align: center;
+    width: 100%;
+}
+    #foodplan-calendar .day {
+        border-color: black;
+        background-color: red;
+        color: white;
+    }
+    #foodplan-calendar .meal {
+    }
+    #foodplan-calendar .content {
+        vertical-align: middle;
+        margin: auto;
+        background-color: white;
+        color: black;
+        position:relative;
+    }
+    #foodplan-calendar .foodplan-border{
+        border: 2px solid black;
+        border-collapse: collapse;
+    }
+    #foodplan-calendar td {
+        width: 33.3%;
+    }
+
+@media (max-width: 768px) {
+    #foodplan-calendar .meal-logo {
+        float: left;
+    }
+}
+
+.foodplan-add {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.foodplan-add i {
+    padding: 2px;
+    color: lightgrey;
 }
 
 #recipe-summary {
