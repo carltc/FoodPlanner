@@ -117,6 +117,7 @@ button.navbar-link, .navbar-link {
     border-width: 3px;
     margin:5px;
     text-align: center;
+    width: 100%;
 }
     button.navbar-link:hover, .navbar-link:hover {
         color: white;

@@ -46,15 +46,15 @@
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @foreach (var household in user.Households)
                     {
-                        <form class="form-inline" asp-area="Identity" asp-page="/Account/ChangeActiveHousehold" asp-route-activeHouseholdId="@household.Id" asp-route-returnUrl="@Context.Request.Path">
-                            <button type="submit" class="nav-link btn btn-link">@household.Name</button>
+                        <form class="form-inline" style="text-align: center;" asp-area="Identity" asp-page="/Account/ChangeActiveHousehold" asp-route-activeHouseholdId="@household.Id" asp-route-returnUrl="@Context.Request.Path">
+                            <button type="submit" class="nav-link btn btn-link" style="width: 100%;">@household.Name</button>
                         </form>
                     }
                 </div>
             </div>
         </li>
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                 <button type="submit" class="nav-link navbar-link btn-coffee">Logout</button>
             </form>
         </li>
