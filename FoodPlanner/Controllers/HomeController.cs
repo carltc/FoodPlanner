@@ -67,8 +67,9 @@ namespace FoodPlanner.Controllers
                 ViewData["TomorrowsFoodPlan"] = foodplan;
             }
 
-            // Get latest 10 recipes
-            ViewData["LatestRecipes"] = _context.Recipes.OrderByDescending(r => r.Id).Take(10).ToList();
+            // Get latest 6 recipes
+            var latestRecipes = _context.Recipes.OrderByDescending(r => r.Id).Take(6).ToList();
+            ViewData["LatestRecipes"] = latestRecipes;
 
             // Get shopping list
             if (ShoppingLists.HasHouseholdList(user.ActiveHouseholdId))

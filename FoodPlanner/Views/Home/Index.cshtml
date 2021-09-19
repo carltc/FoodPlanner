@@ -18,7 +18,7 @@
         latestRecipes = (List<Recipe>)ViewData["LatestRecipes"];
     }
 
-    var shoppingList = new ShoppingList();
+    ShoppingList shoppingList = null;
     if (ViewData.ContainsKey("ShoppingList"))
     {
         shoppingList = (ShoppingList)ViewData["ShoppingList"];
@@ -61,7 +61,7 @@
                         {
                             @foreach (var breakfast in todaysFoodPlan.Recipes.Where(r => r.Meal == Meal.Breakfast))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -73,7 +73,7 @@
                         {
                             @foreach (var breakfast in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Breakfast))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -90,7 +90,7 @@
                         {
                             @foreach (var lunch in todaysFoodPlan.Recipes.Where(r => r.Meal == Meal.Lunch))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -102,7 +102,7 @@
                         {
                             @foreach (var lunch in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Lunch))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -119,7 +119,7 @@
                         {
                             @foreach (var dinner in todaysFoodPlan.Recipes.Where(r => r.Meal == Meal.Dinner))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -131,7 +131,7 @@
                         {
                             @foreach (var dinner in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Dinner))
                             {
-                                <a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a>
+                                <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
                             }
                         }
                         <div class="foodplan-add">
@@ -154,14 +154,20 @@
                 <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Recipes" asp-action="Index">See All</a>
             </div>
         </div>
-        <div class="card-body">
-            Recently added:
-            <ul>
-                @foreach (var recipe in latestRecipes)
-                {
-                    <li><a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id">@recipe.Name</a></li>
-                }
-            </ul>
+        <div class="card-body" style="display: flex; flex-direction: column;">
+            <div style="overflow-y: auto;">
+                Recently added:
+                <ul>
+                    @foreach (var recipe in latestRecipes)
+                    {
+                        <li><a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.Id">@recipe.Name</a></li>
+                    }
+                </ul>
+            </div>
+            <div style="height: 60px;">
+                <hr />
+                <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Recipes" asp-action="Create">Add NEW Recipe</a>
+            </div>
         </div>
     </div>
     <div id="shoppinglist-summary" class="card homepage-summary">
@@ -174,17 +180,30 @@
             </div>
         </div>
         <div class="card-body">
-            <ul>
-                <li>
-                    Generated for <em style="text-decoration: underline;">@shoppingList.ShoppingListSize days</em>
-                </li>
-                <li>
-                    List contains <em style="text-decoration: underline;">@shoppingList.ShopItems.Count() items</em>
-                </li>
-            </ul>
-            <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Shoppinglists" asp-action="Details">View List</a>
-            <hr />
-            <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Shoppinglists" asp-action="RegenerateList" asp-route-Days="7">Generate NEW Weekly List</a>
+            @if (shoppingList != null)
+            {
+                <div>
+                    <ul>
+                        <li>
+                            Generated for <em style="text-decoration: underline;">@shoppingList.ShoppingListSize days</em>
+                        </li>
+                        <li>
+                            List contains <em style="text-decoration: underline;">@shoppingList.ShopItems.Count() items</em>
+                        </li>
+                    </ul>
+                </div>
+                <div style="height: 60px;">
+                    <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Shoppinglists" asp-action="Details">View List</a>
+                </div>
+            }
+            else
+            {
+                <text>No list generated</text>
+            }
+            <div style="height: 60px;">
+                <hr />
+                <a class="nav-link navbar-link dark btn-alternative" asp-area="" asp-controller="Shoppinglists" asp-action="RegenerateList" asp-route-Days="7">Generate NEW Weekly List</a>
+            </div>
         </div>
     </div>
 </div>
