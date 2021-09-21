@@ -12,7 +12,7 @@
 }
 else
 {
-    <form asp-action="Index">
+    @*<form asp-action="Index">
         <div class="form-row align-items-center">
             <div class="col-auto">
                 <div class="input-group mb-2">
@@ -26,13 +26,13 @@ else
                 <button type="submit" class="btn btn-primary mb-2">Show</button>
             </div>
         </div>
-    </form>
+    </form>*@
 
     <div class="container-fluid">
         <div class="row flex-row flex-nowrap overflow-auto">
             @foreach (var foodplan in Model)
             {
-                <div class="col">
+                <div class="col foodplan-col">
                     @Html.DisplayFor(fp => foodplan)
                 </div>
             }
