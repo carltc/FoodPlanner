@@ -10,16 +10,19 @@ using Newtonsoft.Json;
 using Org.OpenAPITools.Client;
 using FoodPlanner.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace FoodPlanner.Controllers
 {
     public class SpoontacularController : Controller
     {
         private readonly FoodPlannerContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public SpoontacularController(FoodPlannerContext context)
+        public SpoontacularController(FoodPlannerContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IActionResult Index(string query, string cuisine, string diet, string excludeIngredients, string intolerances)
@@ -79,6 +82,13 @@ namespace FoodPlanner.Controllers
                 newRecipe.Portions = Servings;
                 newRecipe.Ingredients = new List<Ingredient>();
 
+                // Get the current user
+                var user = GetCurrentUserAsync().Result;
+                if (user != null)
+                {
+                    newRecipe.AddedBy = user.UserName;
+                }
+
                 if (Names!= null && Units != null && Aisles != null)
                 {
                     if (Names.Count == Units.Count && Names.Count == Aisles.Count && Names.Count == Amounts.Count)
@@ -118,6 +128,14 @@ namespace FoodPlanner.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        private async Task<AppUser> GetCurrentUserAsync()
+        {
+            // Get the current user
+            var user = await _userManager.GetUserAsync(User);
+
+            return user;
         }
     }
 }

@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
 using FoodPlanner.Classes;
+using Microsoft.AspNetCore.Identity;
 
 namespace FoodPlanner.Controllers
 {
     public class RecipesController : Controller
     {
         private readonly FoodPlannerContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public RecipesController(FoodPlannerContext context)
+        public RecipesController(FoodPlannerContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Recipes
@@ -68,6 +71,13 @@ namespace FoodPlanner.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Get the current user
+                var user = GetCurrentUserAsync().Result;
+                if (user != null)
+                {
+                    recipe.AddedBy = user.UserName;
+                }
+
                 // Initialise ingredients
                 recipe.Ingredients = new List<Ingredient>();
 
@@ -256,6 +266,14 @@ namespace FoodPlanner.Controllers
             }
 
             return NotFound();
+        }
+
+        private async Task<AppUser> GetCurrentUserAsync()
+        {
+            // Get the current user
+            var user = await _userManager.GetUserAsync(User);
+
+            return user;
         }
     }
 }
