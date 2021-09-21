@@ -35,18 +35,17 @@ for details on configuring this project to bundle and minify static web assets. 
         color: black;
         position:relative;
     }
-    #foodplan-calendar .foodplan-border{
-        border: 2px solid black;
-        border-collapse: collapse;
+    #foodplan-calendar table {
+        border-collapse: unset;
     }
     #foodplan-calendar td {
         width: 33.3%;
     }
+    #foodplan-calendar .foodplan-content {
+        padding: 10px;
+    }
 
 @media (max-width: 768px) {
-    #foodplan-calendar {
-        font-size: x-small;
-    }
     #foodplan-calendar .meal-logo {
         float: left;
     }
@@ -62,17 +61,26 @@ for details on configuring this project to bundle and minify static web assets. 
     color: lightgrey;
 }
 
+.foodplan-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 2px;
+    color: black;
+    font-size: small;
+}
+@media (max-width: 768px) {
+    .foodplan-label {
+        font-size: 4pt;
+    }
+}
+
 #recipe-summary {
     max-height: 350px;
 }
     #recipe-summary .card-body {
         overflow-y: auto;
     }
-@media (max-width: 768px) {
-    #recipe-summary {
-        font-size: x-small;
-    }
-}
 
 #shoppinglist-summary {
     width: 33%;
@@ -80,7 +88,6 @@ for details on configuring this project to bundle and minify static web assets. 
 @media (max-width: 768px) {
     #shoppinglist-summary {
         width: 100%;
-        font-size: x-small;
     }
 }
 

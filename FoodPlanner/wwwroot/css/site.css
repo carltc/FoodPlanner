@@ -170,6 +170,11 @@ body {
     font-family: FeedText;
     /*background-color: var(--secondary-colour);*/
 }
+@media (max-width: 768px) {
+    body {
+        font-size: x-small;
+    }
+}
 
 .footer {
   position: absolute;
