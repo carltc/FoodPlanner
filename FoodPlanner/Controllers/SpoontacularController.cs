@@ -72,7 +72,7 @@ namespace FoodPlanner.Controllers
             return View();
         }
 
-        public IActionResult AddRecipe(string Name, int Servings, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units)
+        public IActionResult AddRecipe(string Name, int Servings, string Cuisine, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units)
         {
             if (!String.IsNullOrWhiteSpace(Name))
             {
@@ -81,6 +81,24 @@ namespace FoodPlanner.Controllers
                 newRecipe.Name = Name;
                 newRecipe.Portions = Servings;
                 newRecipe.Ingredients = new List<Ingredient>();
+
+                // See if cuisine already exists
+                if (!_context.Cuisines.Where(c => c.Name == Cuisine).Any())
+                {
+                    // Create a new cuisine and add to DB
+                    var cuisine = new Cuisine()
+                    {
+                        Name = Cuisine
+                    };
+                    _context.Cuisines.Add(cuisine);
+                    _context.SaveChanges();
+                }
+
+                // Find newly added Cuisine and add to recipe if it exists
+                if (_context.Cuisines.Where(c => c.Name == Cuisine).Any())
+                {
+                    newRecipe.Cuisine = _context.Cuisines.Where(c => c.Name == Cuisine).FirstOrDefault();
+                }
 
                 // Get the current user
                 var user = GetCurrentUserAsync().Result;

@@ -59,6 +59,10 @@ namespace FoodPlanner.Controllers
                 .ToList();
             ViewData["Products"] = products;
 
+            var cuisines = _context.Cuisines
+                .ToList();
+            ViewData["Cuisines"] = cuisines;
+
             return View();
         }
 
@@ -139,6 +143,10 @@ namespace FoodPlanner.Controllers
                 .Include(p => p.ProductType)
                 .ToList();
             ViewData["Products"] = products;
+
+            var cuisines = _context.Cuisines
+                .ToList();
+            ViewData["Cuisines"] = cuisines;
 
             return View(recipe);
         }

@@ -19,6 +19,8 @@ namespace FoodPlanner.Data
 
         public DbSet<FoodPlanner.Models.Recipe> Recipes { get; set; }
 
+        public DbSet<FoodPlanner.Models.Cuisine> Cuisines { get; set; }
+
         public DbSet<FoodPlanner.Models.ProductType> ProductTypes { get; set; }
 
         public DbSet<FoodPlanner.Models.Category> Categorys { get; set; }
@@ -46,7 +48,6 @@ namespace FoodPlanner.Data
                 .HasOne<Household>(sc => sc.Household)
                 .WithMany(s => s.HouseholdUsers)
                 .HasForeignKey(sc => sc.HouseholdId);
-
 
             modelBuilder.Entity<HouseholdUser>()
                 .HasOne<AppUser>(sc => sc.AppUser)

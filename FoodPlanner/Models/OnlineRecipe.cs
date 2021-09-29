@@ -27,6 +27,7 @@ namespace FoodPlanner.Models
         public int readyInMinutes { get; set; }
         public string summary { get; set; }
         public int servings { get; set; }
+        public List<string> cuisines { get; set; }
         public List<OnlineIngredient> extendedIngredients { get; set; }
     }
 

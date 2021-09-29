@@ -24,6 +24,26 @@
                 <span asp-validation-for="Portions" class="text-danger"></span>
             </div>
 
+            <div class="form-group">
+                <label asp-for="Cuisine" class="control-label"></label>
+                <select name="Cuisine" class="form-control selectpicker" data-live-search="true">
+                    <optgroup label="None">
+                        <option value="0">None</option>
+                    </optgroup>
+                    @{var cuisines = (List<Cuisine>)ViewBag.Cuisines;}
+                    @foreach (var name in cuisines.Select(c => c.Name).Distinct().ToList())
+                    {
+                        <optgroup label="@name">
+                            @foreach (var cuisine in cuisines.Where(c => c.Name == name))
+                            {
+                                <option value="@cuisine.Id">@cuisine.Name</option>
+                            }
+                        </optgroup>
+                    }
+                </select>
+                <span asp-validation-for="Cuisine" class="text-danger"></span>
+            </div>
+
             <div class="row">
                 <div class="col">
                     Ingredients:
