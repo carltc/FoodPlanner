@@ -9,6 +9,7 @@ using FoodPlanner.Data;
 using FoodPlanner.Models;
 using FoodPlanner.Classes;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodPlanner.Controllers
 {
@@ -26,7 +27,7 @@ namespace FoodPlanner.Controllers
         // GET: Recipes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Recipes.OrderByDescending(r => r.Id).ToListAsync());
+            return View(await _context.Recipes.Include(r => r.Cuisine).OrderByDescending(r => r.Cuisine).ToListAsync());
         }
 
         // GET: Recipes/Details/5
@@ -71,7 +72,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
+        public IActionResult Create([Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +81,13 @@ namespace FoodPlanner.Controllers
                 if (user != null)
                 {
                     recipe.AddedBy = user.UserName;
+                }
+
+                // Get Cuisine
+                var cuisine = _context.Cuisines.Find(CuisineId);
+                if (cuisine != null)
+                {
+                    recipe.Cuisine = cuisine;
                 }
 
                 // Initialise ingredients
@@ -156,7 +164,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, string add_ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
         {
             if (id != recipe.Id)
             {
@@ -175,6 +183,13 @@ namespace FoodPlanner.Controllers
                     // Set values to stored recipe
                     storedRecipe.Name = recipe.Name;
                     storedRecipe.Portions = recipe.Portions;
+
+                    // Get Cuisine
+                    var cuisine = _context.Cuisines.Find(CuisineId);
+                    if (cuisine != null)
+                    {
+                        storedRecipe.Cuisine = cuisine;
+                    }
 
                     // Add ingredients
                     //foreach(int productId in ProductIds)
@@ -219,6 +234,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Recipes/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -237,6 +253,7 @@ namespace FoodPlanner.Controllers
         }
 
         // POST: Recipes/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

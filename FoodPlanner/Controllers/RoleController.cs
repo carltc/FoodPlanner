@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using FoodPlanner.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodPlanner.Controllers
 {
@@ -20,20 +21,24 @@ namespace FoodPlanner.Controllers
             userManager = userMrg;
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
             return View(roleManager.Roles);
         }
 
+        [Authorize(Roles = "Administrator")]
         private void Errors(IdentityResult result)
         {
             foreach (IdentityError error in result.Errors)
                 ModelState.AddModelError("", error.Description);
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create() => View();
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Required] string name)
         {
             if (ModelState.IsValid)
@@ -48,6 +53,7 @@ namespace FoodPlanner.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string id)
         {
             IdentityRole role = await roleManager.FindByIdAsync(id);
@@ -64,6 +70,7 @@ namespace FoodPlanner.Controllers
             return View("Index", roleManager.Roles);
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Update(string id)
         {
             IdentityRole role = await roleManager.FindByIdAsync(id);
@@ -82,6 +89,7 @@ namespace FoodPlanner.Controllers
             });
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> Update(RoleModification model)
         {

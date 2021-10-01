@@ -5,123 +5,124 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Shopping List</h1>
+<div class="container">
+    <h1>Shopping List</h1>
 
-@if (Model == null)
-{
-    <p>No shopping list found. Make sure you are in a household and have one selected.</p>
-    <a class="nav-link text-light btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Households" title="Manage">Manage households</a>
-}
-else
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-6" style="text-align: left;">
-                <a asp-action="Index">Re-Generate List</a>
+    @if (Model == null)
+    {
+        <p>No shopping list found. Make sure you are in a household and have one selected.</p>
+        <a class="nav-link text-light btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Households" title="Manage">Manage households</a>
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-6" style="text-align: left;">
+                    <a class="nav-link navbar-link dark btn-alternative" asp-action="Index">Re-Generate List</a>
+                </div>
+                <div class="col-6" style="text-align: right;">
+                    @if (Model.SortType == ShoppingListSortType.FoodPlan)
+                    {
+                        <a class="nav-link navbar-link dark btn-primary" asp-action="Details" asp-route-sortType="@ShoppingListSortType.Category.ToString()">Sort by Category</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link navbar-link dark btn-primary" asp-action="Details" asp-route-sortType="@ShoppingListSortType.FoodPlan.ToString()">Sort by FoodPlan Day</a>
+                    }
+                </div>
             </div>
-            <div class="col-6" style="text-align: right;">
+        </div>
+
+        <div>
+            <hr />
+            <div class="accordion" id="CategoryAccordion">
+                <div class="card">
+                    <div class="card-header" id="Heading-All">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-All" aria-expanded="true" aria-controls="Collapse-All">
+                                All
+                            </button>
+                        </h2>
+                    </div>
+
+                    <div id="Collapse-All" class="collapse" aria-labelledby="Heading-All" data-parent="#CategoryAccordion">
+                        <div class="card-body CategoryList">
+                            @foreach (var shopItem in Model.ShopItems.OrderBy(item => item.Bought))
+                            {
+                                @Html.DisplayFor(si => shopItem)
+                            }
+                        </div>
+                    </div>
+                </div>
+
                 @if (Model.SortType == ShoppingListSortType.FoodPlan)
                 {
-                    <a asp-action="Details" asp-route-sortType="@ShoppingListSortType.Category.ToString()">Sort by Category</a>
+                    @foreach (var foodPlan in Model.ShopItems.Select(si => si.TempFoodPlan).Distinct().OrderBy(si => si.Date))
+                    {
+                        var categoryShopItems = Model.ShopItems.Where(si => si.TempFoodPlan.Id == foodPlan.Id);
+                        //var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
+                        //                 c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
+                        <div class="card">
+                            <div class="card-header" id="Heading-@foodPlan.Id">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@foodPlan.Id" aria-expanded="true" aria-controls="Collapse-@foodPlan.Id">
+                                        @foodPlan.Date.DayOfWeek.ToString() - @foodPlan.Date.ToShortDateString()
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="Collapse-@foodPlan.Id" class="collapse" aria-labelledby="Heading-@foodPlan.Id" data-parent="#CategoryAccordion">
+                                <div class="card-body CategoryList">
+                                    @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
+                                    {
+                                        @Html.DisplayFor(si => shopItem)
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
                 else
                 {
-                    <a asp-action="Details" asp-route-sortType="@ShoppingListSortType.FoodPlan.ToString()">Sort by FoodPlan Day</a>
+                    @foreach (var categoryName in Model.ShopItems.Select(si => si.Product.Category.Name).Distinct())
+                    {
+                        var categoryShopItems = Model.ShopItems.Where(si => si.Product.Category.Name == categoryName);
+                        var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
+                                         c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
+                        <div class="card">
+                            <div class="card-header" id="Heading-@categorySimple">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@categorySimple" aria-expanded="true" aria-controls="Collapse-@categorySimple">
+                                        @categoryName
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
+                                <div class="card-body CategoryList">
+                                    @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
+                                    {
+                                        @Html.DisplayFor(si => shopItem)
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
                 }
             </div>
-        </div>
-    </div>
 
-    <div>
-        <h4>Shopping List:</h4>
+        </div>
+
         <hr />
 
-        <div class="accordion" id="CategoryAccordion">
-            <div class="card">
-                <div class="card-header" id="Heading-All">
-                    <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-All" aria-expanded="true" aria-controls="Collapse-All">
-                            All
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="Collapse-All" class="collapse" aria-labelledby="Heading-All" data-parent="#CategoryAccordion">
-                    <div class="card-body CategoryList">
-                        @foreach (var shopItem in Model.ShopItems.OrderBy(item => item.Bought))
-                        {
-                            @Html.DisplayFor(si => shopItem)
-                        }
-                    </div>
-                </div>
+        <div class="row">
+            <div class="col-6" style="text-align: left;">
+                <a class="nav-link navbar-link dark btn-coffee" asp-controller="Home" asp-action="Index">Back</a>
             </div>
-
-            @if (Model.SortType == ShoppingListSortType.FoodPlan)
-            {
-                @foreach (var foodPlan in Model.ShopItems.Select(si => si.TempFoodPlan).Distinct().OrderBy(si => si.Date))
-                {
-                    var categoryShopItems = Model.ShopItems.Where(si => si.TempFoodPlan.Id == foodPlan.Id);
-                    //var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
-                    //                 c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
-                    <div class="card">
-                        <div class="card-header" id="Heading-@foodPlan.Id">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@foodPlan.Id" aria-expanded="true" aria-controls="Collapse-@foodPlan.Id">
-                                    @foodPlan.Date.DayOfWeek.ToString() - @foodPlan.Date.ToShortDateString()
-                                </button>
-                            </h2>
-                        </div>
-
-                        <div id="Collapse-@foodPlan.Id" class="collapse" aria-labelledby="Heading-@foodPlan.Id" data-parent="#CategoryAccordion">
-                            <div class="card-body CategoryList">
-                                @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
-                                {
-                                    @Html.DisplayFor(si => shopItem)
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                @foreach (var categoryName in Model.ShopItems.Select(si => si.Product.Category.Name).Distinct())
-                {
-                    var categoryShopItems = Model.ShopItems.Where(si => si.Product.Category.Name == categoryName);
-                    var categorySimple = new string(categoryName.Where(c => (char.IsLetterOrDigit(c) ||
-                                     c == '-')).ToArray()); // Create a simple string with no non-alphanumeric-characters
-                    <div class="card">
-                        <div class="card-header" id="Heading-@categorySimple">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#Collapse-@categorySimple" aria-expanded="true" aria-controls="Collapse-@categorySimple">
-                                    @categoryName
-                                </button>
-                            </h2>
-                        </div>
-
-                        <div id="Collapse-@categorySimple" class="collapse" aria-labelledby="Heading-@categorySimple" data-parent="#CategoryAccordion">
-                            <div class="card-body CategoryList">
-                                @foreach (var shopItem in categoryShopItems.OrderBy(item => item.Bought))
-                                {
-                                    @Html.DisplayFor(si => shopItem)
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
+            <div class="col-6" style="text-align: right;">
+                <a class="nav-link navbar-link dark btn-danger" asp-action="ResetShoppingListItems" onclick="return confirm('Are you sure you want to reset this?')">Reset Marked Items in List</a>
+            </div>
         </div>
+    }
 
-    </div>
-
-    <hr />
-
-    <div class="row">
-        <div class="col-6" style="text-align: left;">
-            <a asp-action="Index">Back to List</a>
-        </div>
-        <div class="col-6" style="text-align: right;">
-            <a asp-action="ResetShoppingListItems" style="color: red; text-decoration: underline;" onclick="return confirm('Are you sure you want to reset this?')">Reset Marked Items in List</a>
-        </div>
-    </div>
-}
+</div>

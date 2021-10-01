@@ -26,8 +26,13 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Cuisines/Create
-        public IActionResult Create()
+        public IActionResult Create(string returnUrl = null)
         {
+            if (returnUrl != null)
+            {
+                ViewData["returnUrl"] = returnUrl;
+            }
+
             return View();
         }
 
@@ -36,14 +41,33 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Cuisine cuisine)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Cuisine cuisine, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
+                // Check that this Cuisine doesn't already exist
+                if (_context.Cuisines.Where(c => c.Name.ToLower() == cuisine.Name.ToLower()).Any())
+                {
+                    // Cuisine already exists, therefore send back an invalid response
+                    ViewData["errorMessage"] = $"Cuisine with name '{cuisine.Name}' already exists.";
+
+                    if (returnUrl != null)
+                    {
+                        ViewData["returnUrl"] = returnUrl;
+                    }
+
+                    return View(cuisine);
+                }
                 _context.Add(cuisine);
                 await _context.SaveChangesAsync();
+
+                if (returnUrl != null)
+                {
+                    return LocalRedirect(returnUrl);
+                }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(cuisine);
         }
 

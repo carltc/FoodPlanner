@@ -9,9 +9,19 @@
 
 <h4>Cuisine</h4>
 <hr />
+@if(ViewData.Keys.Contains("errorMessage"))
+{
+    <p class="text-danger">
+        @ViewData["errorMessage"]
+    </p>
+}
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            @if (ViewData.Keys.Contains("returnUrl"))
+            {
+                <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+            }
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>

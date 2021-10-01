@@ -1,4 +1,5 @@
 ﻿using FoodPlanner.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,11 +20,13 @@ namespace FoodPlanner.Controllers
             passwordHasher = passwordHash;
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult Index()
         {
             return View(userManager.Users);
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Update(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -34,6 +37,7 @@ namespace FoodPlanner.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Update(string id, string email, string password)
         {
             AppUser user = await userManager.FindByIdAsync(id);
@@ -64,6 +68,7 @@ namespace FoodPlanner.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(string id)
         {
             AppUser user = await userManager.FindByIdAsync(id);

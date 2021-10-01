@@ -5,28 +5,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Pick shopping list size:</h1>
+<div class="container">
+    <h1>Pick shopping list size:</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Days
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var days in new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14})
-        {
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @days
-                </td>
-                <td>
-                    <a asp-action="RegenerateList" asp-route-Days="@days" style="color: red; text-decoration: underline;">Generate List</a>
-                </td>
+                <th>
+                    Days
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var days in new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 })
+            {
+                <tr>
+                    <td>
+                        @days
+                    </td>
+                    <td>
+                        <a asp-action="RegenerateList" asp-route-Days="@days" style="color: red; text-decoration: underline;">Generate List</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

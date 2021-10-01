@@ -26,8 +26,35 @@
 
             <div class="form-group">
                 <label asp-for="Cuisine" class="control-label"></label>
-                <input asp-for="Cuisine" class="form-control" />
+                <div class="row" id="CuisineRow">
+                    <div class="col-8" id="CuisineDropdown">
+                        <select name="CuisineId" class="form-control selectpicker" data-live-search="true">
+                            <optgroup label="None">
+                                <option value="0">None</option>
+                            </optgroup>
+                            @{var cuisines = (List<Cuisine>)ViewBag.Cuisines;}
+                            @foreach (var name in cuisines.Select(c => c.Name).Distinct().ToList())
+                            {
+                                <optgroup label="@name">
+                                    @foreach (var cuisine in cuisines.Where(c => c.Name == name))
+                                    {
+                                        <option value="@cuisine.Id">@cuisine.Name</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-4" id="NewCuisineButton">
+                        <a class="btn btn-primary" asp-controller="Cuisines" asp-action="Create" asp-route-returnUrl="@Context.Request.Path">Add New Cuisine</a>
+                    </div>
+                </div>
                 <span asp-validation-for="Cuisine" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    Ingredients:
+                </div>
             </div>
 
             <div class="form-group" id="IngredientList">

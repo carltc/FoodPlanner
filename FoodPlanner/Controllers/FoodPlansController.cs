@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Diagnostics.Tracing;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodPlanner.Controllers
 {
@@ -202,7 +203,9 @@ namespace FoodPlanner.Controllers
             }
 
             // Get foodplan to add to
-            var foodplan = _context.FoodPlans.Where(fp => fp.Id == id).FirstOrDefault();
+            var foodplan = _context.FoodPlans
+                .Where(fp => fp.Id == id)
+                .FirstOrDefault();
 
             if (foodplan == null || mealType == null)
             {
@@ -420,6 +423,7 @@ namespace FoodPlanner.Controllers
         //}
 
         // GET: FoodPlans/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -438,6 +442,7 @@ namespace FoodPlanner.Controllers
         }
 
         // POST: FoodPlans/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -478,7 +483,8 @@ namespace FoodPlanner.Controllers
         {
             // Get recipes
             var recipes = _context.Recipes
-                .OrderByDescending(r => r.Id)
+                .Include(r => r.Cuisine)
+                .OrderByDescending(r => r.Cuisine.Id)
                 .ToList();
             ViewData["Recipes"] = recipes;
 

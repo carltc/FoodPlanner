@@ -58,8 +58,12 @@ namespace FoodPlanner
             // Add Users and Roles
             services.AddIdentity<AppUser, IdentityRole>() //options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
+                //.AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider)
                 .AddEntityFrameworkStores<FoodPlannerContext>();
+
+            // TODO: Implement cookie based refresh when backend changes to Identity occur
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-3.1#react-to-back-end-changes
 
             services.Configure<IdentityOptions>(opts => {
                 opts.Password.RequiredLength = 3;
