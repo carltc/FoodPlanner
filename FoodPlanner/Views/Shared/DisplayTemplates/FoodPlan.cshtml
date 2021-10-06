@@ -1,50 +1,8 @@
 ﻿@using FoodPlanner.Classes
 
 @model FoodPlan
-@*<div class="foodplancard card @if (Model.Date.Date == DateTime.Now.Date) {  <text>text-white bg-primary</text> } ">
-        <div class="card-header">
-            <h5 class="card-title">@Model.Date.DayOfWeek.ToString() - @Model.Date.ToShortDateString()</h5>
-        </div>
-        <div class="card-body">
-            @foreach (var meal in new List<Meal>() { Meal.Breakfast, Meal.Lunch, Meal.Dinner, Meal.Snack, Meal.None })
-            {
-                @if (meal == Meal.None)
-                {
-                    <text><b>Additional:</b></text>
-                }
-                else if (meal == Meal.Snack)
-                {
-                    <text><b>@meal <a asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
-                }
-                else
-                {
-                    <text><b>@meal <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
-                }
-                <hr />
-                @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
-                {
-                    <p class="card-text">
-                        @recipe.Recipe.Name <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@recipe.Id"><i class="far fa-times-circle"></i></a>
-                    </p>
-                    <hr />
-                }
-                @foreach (var product in Model.Products.Where(r => r.Meal == meal))
-                {
-                    <p class="card-text">
-                        @product.Product.Name @product.Product.ProductType.Name <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id"><i class="far fa-times-circle"></i></a>
-                    </p>
-                    <hr />
-                }
-            }
 
-            <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
-                Add
-            </a>
-
-        </div>
-    </div>*@
-
-<a asp-controller="FoodPlans" asp-action="Details" asp-route-id="@Model.Id">
+<a asp-controller="FoodPlans" asp-action="Details" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()">
     <table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
         <tr>
             <td class="day" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">

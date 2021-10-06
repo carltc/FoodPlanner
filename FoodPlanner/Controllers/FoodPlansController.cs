@@ -104,11 +104,17 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Details/5
-        public async Task<IActionResult> Details(int? id, string returnUrl = null)
+        public async Task<IActionResult> Details(int? id, long? foodplandate, string returnUrl = null)
         {
             if (id == null)
             {
                 return NotFound();
+            }
+
+            // Check if this foodplan id == 0, if so then this foodplan doesn't exist yet and needs to be made
+            if (id == 0)
+            {
+                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, returnUrl = returnUrl });
             }
 
             var foodPlan = _context.FoodPlans
@@ -169,42 +175,42 @@ namespace FoodPlanner.Controllers
             {
                 return RedirectToAction(nameof(Menu), new { id = newFoodPlan.Id, mealType = mealType, returnUrl = returnUrl });
             }
-            return RedirectToAction(nameof(Add), new { id = newFoodPlan.Id, mealType = mealType, returnUrl = returnUrl });
+            return RedirectToAction(nameof(Details), new { id = newFoodPlan.Id, returnUrl = returnUrl });
         }
 
         // GET: FoodPlans/Add
-        public IActionResult Add(int? id, long? foodplandate, string mealType, string returnUrl = null)
-        {
-            if (id == 0)
-            {
-                return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, returnUrl = returnUrl });
-            }
+        //public IActionResult Add(int? id, long? foodplandate, string mealType, string returnUrl = null)
+        //{
+        //    if (id == 0)
+        //    {
+        //        return RedirectToAction(nameof(Create), new { foodplandate = foodplandate, mealType = mealType, returnUrl = returnUrl });
+        //    }
 
-            // Get foodplan to add to
-            var foodplan = _context.FoodPlans.Where(fp => fp.Id == id).FirstOrDefault();
+        //    // Get foodplan to add to
+        //    var foodplan = _context.FoodPlans.Where(fp => fp.Id == id).FirstOrDefault();
 
-            if (foodplan == null)
-            {
-                return RedirectToAction(nameof(Create));
-            }
+        //    if (foodplan == null)
+        //    {
+        //        return RedirectToAction(nameof(Create));
+        //    }
 
-            if (mealType != null)
-            {
-                Meal selectedMeal;
-                if (Enum.TryParse(mealType, true, out selectedMeal))
-                {
-                    ViewData["MealType"] = selectedMeal;
-                }
-            }
+        //    if (mealType != null)
+        //    {
+        //        Meal selectedMeal;
+        //        if (Enum.TryParse(mealType, true, out selectedMeal))
+        //        {
+        //            ViewData["MealType"] = selectedMeal;
+        //        }
+        //    }
 
-            PopulateRecipeAndProductLists();
+        //    PopulateRecipeAndProductLists();
 
-            if (returnUrl != null)
-            {
-                ViewData["returnUrl"] = returnUrl;
-            }
-            return View(foodplan);
-        }
+        //    if (returnUrl != null)
+        //    {
+        //        ViewData["returnUrl"] = returnUrl;
+        //    }
+        //    return View(foodplan);
+        //}
 
         // GET: FoodPlans/Menu
         public IActionResult Menu(int? id, long? foodplandate, string mealType, string returnUrl = null)

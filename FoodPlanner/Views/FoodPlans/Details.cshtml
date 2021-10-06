@@ -1,7 +1,7 @@
 ﻿@model FoodPlanner.Models.FoodPlan
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"{Model.Date.ToString("dd MMM")}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -30,18 +30,22 @@
     <a asp-action="Index">Back to List</a>
 </div>*@
 
-<div class="container">
+<div class="container flistPage">
+    <p style="text-align:right;">
+        @if (ViewData.Keys.Contains("returnUrl"))
+        {
+            <a href="@ViewData["returnUrl"]" class="btn dark btn-coffee">Back</a>
+        }
+        else
+        {
+            <a class="btn dark btn-coffee" asp-action="Index">Back to Calendar</a>
+        }
+    </p>
+    <hr />
     <table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
         <tr>
             <td class="day" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                @if (Model.Date.Date < DateTime.Now.Date.AddDays(7) && Model.Date.DayOfWeek >= DateTime.Now.DayOfWeek)
-                {
-                    @Model.Date.ToString("ddd")
-                }
-                else
-                {
-                    @Model.Date.ToString("dd MMM")
-                }
+                @Model.Date.ToString("dddd dd MMMM")
             </td>
         </tr>
         <tr>
@@ -149,13 +153,4 @@
             </td>
         </tr>
     </table>
-
-    @if (ViewData.Keys.Contains("returnUrl"))
-    {
-        <a href="@ViewData["returnUrl"]" class="nav-link navbar-link dark btn-coffee">Back</a>
-    }
-    else
-    {
-        <a class="nav-link navbar-link dark btn-coffee" asp-action="Index">Back to Calendar</a>
-    }
 </div>

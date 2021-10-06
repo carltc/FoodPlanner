@@ -126,6 +126,10 @@ button.navbar-link, .navbar-link {
         margin-right: 8px;
     }
 
+.flistPage {
+    text-align: center;
+}
+
 /*.navbar-link.dark {
     border-color: var(--dark-colour);
 }*/
@@ -155,6 +159,11 @@ html {
 button.accept-policy {
   font-size: 1rem;
   line-height: inherit;
+}
+
+.inactive {
+    pointer-events: none;
+    cursor: default;
 }
 
 /* Sticky footer styles

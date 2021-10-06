@@ -28,6 +28,7 @@ namespace FoodPlanner.Controllers
         public IActionResult Index(string query, string cuisine, string diet, string excludeIngredients, string intolerances)
         {
             ViewData["Recipes"] = new List<OnlineRecipe>();
+            ViewData["SearchQuery"] = query;
 
             if (!String.IsNullOrWhiteSpace(query))
             {
@@ -47,7 +48,7 @@ namespace FoodPlanner.Controllers
             return View();
         }
 
-        public IActionResult Recipe(string id)
+        public IActionResult Recipe(string id, string previousSearchQuery = null)
         {
             if (!String.IsNullOrWhiteSpace(id) && Int32.TryParse(id, out int Id))
             {
@@ -57,6 +58,11 @@ namespace FoodPlanner.Controllers
                     var searchResults = Spoontacular.apiInstance.GetRecipeInformation(Id, false);
                     var recipe = JsonConvert.DeserializeObject<OnlineRecipe>(searchResults.ToString());
                     ViewData["Recipe"] = recipe;
+
+                    if (previousSearchQuery != null)
+                    {
+                        ViewData["PreviousSearchQuery"] = previousSearchQuery;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -72,7 +78,7 @@ namespace FoodPlanner.Controllers
             return View();
         }
 
-        public IActionResult AddRecipe(string Name, int Servings, string Cuisine, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units)
+        public IActionResult AddRecipe(string Name, int Servings, string Cuisine, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units, string previousSearchQuery = null)
         {
             if (!String.IsNullOrWhiteSpace(Name))
             {
@@ -145,7 +151,7 @@ namespace FoodPlanner.Controllers
                 _context.SaveChanges();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { Query = previousSearchQuery });
         }
 
         private async Task<AppUser> GetCurrentUserAsync()

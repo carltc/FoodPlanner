@@ -1,29 +1,31 @@
 ﻿@model IEnumerable<FoodPlanner.Models.FoodPlan>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Re-generate";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container" style="text-align:center;">
-    <form asp-action="RegenerateList">
-        <p style="text-align: center;">
-            Regenerate shopping list for
-        </p>
-        <p style="text-align: center;">
-            <i class="fas fa-minus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',-1)"></i>
-            <input id="ShoppingListDays" type="number" name="Days" value="1" style="width: 50%; display: inline-block; max-width: 50px;" />
-            <i class="fas fa-plus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',1)"></i>
-        </p>
-        <p style="text-align: center;">
-            days.
-        </p>
-        <p style="text-align: center;">
-            <input type="submit" value="Re-generate" class="btn btn-danger" style="width:100%; max-width: 200px;" />
-        </p>
-    </form>
-    <hr />
-    <p style="text-align:center;">
-        <a class="btn dark btn-coffee" asp-action="Details" style="width:100%; max-width: 200px; text-align: center;">Back</a>
+<div class="container flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-action="Details" style="width: 100px;">Back</a>
     </p>
+    <hr />
+    <div class="container" style="text-align:center;">
+        <form asp-action="RegenerateList">
+            <p style="text-align: center;">
+                Regenerate shopping list for
+            </p>
+            <p style="text-align: center;">
+                <i class="fas fa-minus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',-1)"></i>
+                <input id="ShoppingListDays" type="number" name="Days" value="1" style="width: 50%; display: inline-block; max-width: 50px;" />
+                <i class="fas fa-plus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',1)"></i>
+            </p>
+            <p style="text-align: center;">
+                days.
+            </p>
+            <p style="text-align: center;">
+                <input type="submit" value="Re-generate" class="btn btn-danger" style="width:100%; max-width: 200px;" />
+            </p>
+        </form>
+    </div>
 </div>

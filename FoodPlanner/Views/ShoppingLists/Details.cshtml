@@ -5,7 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container" style="text-align: center;">
+<div class="container flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee"asp-controller="Home" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
+    <hr />
     <h1>Shopping List</h1>
     <hr />
     @if (Model == null)
@@ -116,11 +120,11 @@
         <hr />
 
         <div class="row">
-            <div class="col-6" style="text-align: left;">
+            @*<div class="col-6" style="text-align: left;">
                 <a class="nav-link navbar-link dark btn-coffee" asp-controller="Home" asp-action="Index">Back</a>
-            </div>
-            <div class="col-6" style="text-align: right;">
-                <a class="nav-link navbar-link dark btn-danger" asp-action="ResetShoppingListItems" onclick="return confirm('Are you sure you want to reset this?')">Reset Marked Items in List</a>
+            </div>*@
+            <div class="col-12" style="text-align: center;">
+                <a class="nav-link navbar-link dark btn-danger" asp-action="ResetShoppingListItems" onclick="return confirm('Are you sure you want to reset this?')" style="width: 50%;">Reset Marked Items in List</a>
             </div>
         </div>
     }

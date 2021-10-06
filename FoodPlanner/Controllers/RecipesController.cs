@@ -42,6 +42,7 @@ namespace FoodPlanner.Controllers
                 .Include(r => r.Ingredients)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.ProductType)
+                .Include(r => r.Cuisine)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (recipe == null)
             {
@@ -136,6 +137,13 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var recipe = await _context.Recipes
                 .Include(r => r.Ingredients)
                     .ThenInclude(i => i.Product)
@@ -144,6 +152,16 @@ namespace FoodPlanner.Controllers
             if (recipe == null)
             {
                 return NotFound();
+            }
+
+            // Check if this user is allowed to edit this recipe.
+            // Only recipes created by the user or household can be edited by the user.
+            if (recipe.AddedBy != user.UserName)
+            {
+                if (!_userManager.IsInRoleAsync(user, "Administrator").Result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             var products = _context.Products
@@ -164,11 +182,29 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions,AddedBy")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
         {
             if (id != recipe.Id)
             {
                 return NotFound();
+            }
+
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Check if this user is allowed to edit this recipe.
+            // Only recipes created by the user or administrator can be edited by the user.
+            // TODO Add household as editing ability on recipes
+            if (recipe.AddedBy != user.UserName)
+            {
+                if (!_userManager.IsInRoleAsync(user, "Administrator").Result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             if (ModelState.IsValid)
@@ -183,6 +219,7 @@ namespace FoodPlanner.Controllers
                     // Set values to stored recipe
                     storedRecipe.Name = recipe.Name;
                     storedRecipe.Portions = recipe.Portions;
+                    storedRecipe.AddedBy = recipe.AddedBy;
 
                     // Get Cuisine
                     var cuisine = _context.Cuisines.Find(CuisineId);

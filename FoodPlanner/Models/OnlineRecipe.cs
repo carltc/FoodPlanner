@@ -20,7 +20,15 @@ namespace FoodPlanner.Models
         public string image { get; set; }
         public string imagePath
         {
-            get { return "https://spoonacular.com/recipeImages/" + image; }
+            get 
+            { 
+                if (image.StartsWith("http"))
+                {
+                    return image;
+                }
+                
+                return "https://spoonacular.com/recipeImages/" + image; 
+            }
             set { image = value; }
         }
         public string imageType { get; set; }

@@ -1,7 +1,7 @@
 ﻿@model FoodPlanner.Models.FoodPlan
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = $"Edit {Model.Date.ToString("dd MMM")}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 

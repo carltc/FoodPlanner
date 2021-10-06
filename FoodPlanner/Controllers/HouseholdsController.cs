@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodPlanner.Controllers
 {
@@ -20,12 +21,14 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Households
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Households.ToListAsync());
         }
 
         // GET: Households/Details/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -44,6 +47,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Households/Create
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +56,7 @@ namespace FoodPlanner.Controllers
         // POST: Households/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Household household, string AppUserId)
@@ -84,6 +89,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Households/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -102,6 +108,7 @@ namespace FoodPlanner.Controllers
         // POST: Households/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Household household)
@@ -135,6 +142,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Households/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -153,6 +161,7 @@ namespace FoodPlanner.Controllers
         }
 
         // POST: Households/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

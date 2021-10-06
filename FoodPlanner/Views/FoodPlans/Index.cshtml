@@ -1,45 +1,38 @@
 ﻿@model IEnumerable<FoodPlanner.Models.FoodPlan>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Calendar";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 @if (Model == null)
 {
-    <p>No foodplans found. Make sure you are in a household and have one selected.</p>
+<div class="container flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-controller="Home" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
+    <hr />
+    <p>No calendar entries found. Make sure you are in a household and have one selected</p>
+    <p>(you can do this in profile settings using the button below).</p>
     <a class="nav-link text-light btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Households" title="Manage">Manage households</a>
+</div>
 }
 else
 {
-    @*<form asp-action="Index">
-            <div class="form-row align-items-center">
-                <div class="col-auto">
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Days:</div>
-                        </div>
-                        <input name="Days" type="text" class="form-control" id="Days" value="@ViewData["Days"]">
-                    </div>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary mb-2">Show</button>
-                </div>
-            </div>
-        </form>*@
-
-    <div class="container-fluid">
-        <div class="row flex-row flex-nowrap overflow-auto">
-            @foreach (var foodplan in Model)
-            {
-                <div class="col foodplan-col">
-                    @Html.DisplayFor(fp => foodplan)
-                </div>
-            }
-        </div>
-    </div>
+<div class="container-fluid flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-controller="Home" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
     <hr />
-    <a class="nav-link navbar-link dark btn-coffee" asp-controller="Home" asp-action="Index">Back to Home</a>
+    <div class="row flex-row flex-nowrap overflow-auto">
+        @foreach (var foodplan in Model)
+        {
+            <div class="col foodplan-col">
+                @Html.DisplayFor(fp => foodplan)
+            </div>
+        }
+    </div>
+</div>
 }
 
 

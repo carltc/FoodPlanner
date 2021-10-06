@@ -1,11 +1,15 @@
 ﻿@model FoodPlanner.Models.Recipe
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Recipe";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
+<div class="container flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
+    <hr />
     <h4>Create Recipe</h4>
     <hr />
     <div class="row">
@@ -28,7 +32,7 @@
                 <div class="form-group">
                     <label asp-for="Cuisine" class="control-label"></label>
                     <div class="row" id="CuisineRow">
-                        <div class="col-8" id="CuisineDropdown">
+                        <div class="col-8" id="CuisineDropdown" style="margin: auto; vertical-align: middle;">
                             <select name="CuisineId" class="form-control selectpicker" data-live-search="true">
                                 <optgroup label="None">
                                     <option value="0">None</option>
@@ -46,7 +50,7 @@
                             </select>
                         </div>
                         <div class="col-4" id="NewCuisineButton">
-                            <a class="btn btn-primary" asp-controller="Cuisines" asp-action="Create" asp-route-returnUrl="@Context.Request.Path">Add New Cuisine</a>
+                            <a class="nav-link navbar-link btn btn-primary" asp-controller="Cuisines" asp-action="Create" asp-route-returnUrl="@Context.Request.Path">Add New Cuisine</a>
                         </div>
                     </div>
                     <span asp-validation-for="Cuisine" class="text-danger"></span>
@@ -60,7 +64,7 @@
 
                 <div class="form-group" id="IngredientList">
                     <div class="row" name="IngredientRow">
-                        <div class="col-6">
+                        <div class="col-5" style="margin: auto; vertical-align: middle; padding: 5px;">
                             <select id="ProductIdSelect" name="ProductIds" class="form-control selectpicker" data-live-search="true">
                                 <optgroup label="None">
                                     <option value="0">None</option>
@@ -77,33 +81,35 @@
                                 }
                             </select>
                         </div>
-                        <div class="col-2">
+                        <div class="col-2" style="margin: auto; vertical-align: middle; padding: 5px;">
                             <input name="Quantities" type="number" step="0.01" min="0" value="0" style="width: inherit;" />
                         </div>
-                        <div class="col">
+                        <div class="col-3" style="margin: auto; vertical-align: middle; padding: 5px;">
                             <select name="Units"
                                     class="form-control"
                                     asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()">
                             </select>
                         </div>
+                        <div class="col-2" style="margin: auto; vertical-align: middle; padding: 5px;">
+                            <input type="submit" name="add_ingredient" value="Add" class="nav-link navbar-link btn btn-primary" />
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <input type="submit" name="add_ingredient" value="Add" class="btn btn-primary" />
+                <div class="row">
+                    <div class="form-group col">
+                        <i style="padding-left: 50px;"></i>
+                        <a class="btn btn-primary" asp-controller="Products" asp-action="Create">Create New Ingredient</a>
+                    </div>
                 </div>
 
                 <hr />
 
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
+                    <input type="submit" value="Create" class="nav-link navbar-link btn btn-primary" />
                 </div>
             </form>
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 

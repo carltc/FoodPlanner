@@ -10,8 +10,12 @@
 }
 
 <div class="container">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-controller="Home" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
+    <hr />
     <h2>Manage your account</h2>
-
+    <hr />
     <div>
         <h4>Change your account settings</h4>
         <hr />
@@ -25,8 +29,6 @@
         </div>
     </div>
 </div>
-<hr />
-<a class="nav-link navbar-link dark btn-coffee" asp-controller="Home" asp-action="Index">Back to Home</a>
 
 @section Scripts {
     @RenderSection("Scripts", required: false)

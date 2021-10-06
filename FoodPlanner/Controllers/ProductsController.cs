@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodPlanner.Data;
 using FoodPlanner.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodPlanner.Controllers
 {
@@ -116,6 +117,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Products/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -134,6 +136,7 @@ namespace FoodPlanner.Controllers
         // POST: Products/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Product product)
@@ -167,6 +170,7 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: Products/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -185,6 +189,7 @@ namespace FoodPlanner.Controllers
         }
 
         // POST: Products/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

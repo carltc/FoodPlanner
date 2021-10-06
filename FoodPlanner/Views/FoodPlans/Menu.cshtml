@@ -1,19 +1,23 @@
 ﻿@model FoodPlanner.Models.FoodPlan
 
 @{
-    ViewData["Title"] = "Menu";
+    ViewData["Title"] = "Add to Calendar";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
     List<Recipe> recipes = ViewBag.Recipes;
     List<Product> products = ViewBag.Products;
 }
 
-<div class="container">
+<div class="container flistPage">
+    <p style="text-align:right;">
+        <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
+    </p>
+    <hr />
     <div class="row">
         <div class="col-md">
             <h1>@Model.Date.ToString("dddd d MMMMM")</h1>
             <h2>@ViewBag.MealType Menu</h2>
-
+            <hr />
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="recipes-tab" data-toggle="tab" href="#recipes" role="tab" aria-controls="recipes" aria-selected="true">Recipes</a>
@@ -30,8 +34,49 @@
                                 <input type="text" id="recipeSearch" onkeyup="listSearch('recipeSearch','recipeList','recipeRow','h3')" placeholder="Search for recipes.." style="width: 100%;">
                             </div>
                             <hr />
-                            <div class="container-fluid" id="recipeList">
-                                @foreach (Cuisine cuisine in recipes.Select(r => r.Cuisine).Distinct())
+                            <div class="container-fluid" id="recipeList" style="padding: 0px;">
+                                @*@foreach (Cuisine cuisine in recipes.Select(r => r.Cuisine).Distinct())
+        {
+            <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
+                <div class="row">
+                    <div class="col">
+                        @if (cuisine == null)
+                        {
+                            <h2>Other</h2>
+                        }
+                        else
+                        {
+                            <h2>@cuisine.Name</h2>
+                        }
+                    </div>
+                </div>
+                @foreach (Recipe recipe in recipes.Where(r => r.Cuisine == cuisine))
+                {
+                    <div class="row recipeRow" style="padding: 5px;">
+                        <div class="col-12">
+                            <form asp-action="Add">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="hidden" asp-for="Name" />
+                                <input type="hidden" asp-for="Date" />
+                                @if (ViewData.Keys.Contains("returnUrl"))
+                                {
+                                    <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                                }
+                                <input type="hidden" name="RecipeIds" value="@recipe.Id" />
+                                <input type="hidden" name="RecipeMeals" value="@ViewBag.MealType" />
+
+                                <div class="form-group">
+                                    <button type="submit">
+                                        <h3 style="text-decoration: underline;">@recipe.Name</h3>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }*@
+                                @foreach (var cuisine in recipes.Select(r => r.Cuisine).Distinct())
                                 {
                                     <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
                                         <div class="row">
@@ -46,9 +91,9 @@
                                                 }
                                             </div>
                                         </div>
-                                        @foreach (Recipe recipe in recipes.Where(r => r.Cuisine == cuisine))
+                                        @foreach (var recipe in recipes.Where(r => r.Cuisine == cuisine))
                                         {
-                                            <div class="row recipeRow" style="padding: 5px;">
+                                            <div class="row" style="padding: 5px;">
                                                 <div class="col-12">
                                                     <form asp-action="Add">
                                                         <input type="hidden" asp-for="Id" />
@@ -63,7 +108,7 @@
 
                                                         <div class="form-group">
                                                             <button type="submit">
-                                                                <h3 style="text-decoration: underline;">@recipe.Name</h3>
+                                                                @Html.DisplayFor(modelItem => recipe.Name) - ADD
                                                             </button>
                                                         </div>
                                                     </form>
@@ -81,60 +126,60 @@
 
                 <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-12 p-0 m-0">
                             <div style="padding-top:10px;">
                                 <input type="text" id="productSearch" onkeyup="listSearch('productSearch','productList','productRow','b')" placeholder="Search for products.." style="width: 100%;">
                             </div>
                             <hr />
-                            <div class="container-fluid" id="productList">
+                            <div class="container-fluid" id="productList" style="padding: 0px;">
                                 @foreach (string categoryName in products.Select(r => r.Category.Name).Distinct())
                                 {
-                                <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
-                                    <div class="row">
-                                        <div class="col">
-                                            @if (categoryName == null)
-                                            {
-                                                <h2>Other</h2>
-                                            }
-                                            else
-                                            {
-                                                <h2>@categoryName</h2>
-                                            }
+                                    <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
+                                        <div class="row">
+                                            <div class="col">
+                                                @if (categoryName == null)
+                                                {
+                                                    <h2>Other</h2>
+                                                }
+                                                else
+                                                {
+                                                    <h2>@categoryName</h2>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                    @foreach (Product product in products.Where(p => p.Category.Name == categoryName))
-                                    {
-                                        <form asp-action="Add">
-                                            <div class="row productRow">
-                                                <div class="col-5" style="vertical-align: middle; margin: auto;">
-                                                    @Html.DisplayFor(r => product)
-                                                </div>
-                                                <div class="col-4" style="text-align: center; padding: 0px; vertical-align: middle; margin: auto;">
-                                                    <i class="fas fa-minus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ProductQuantity-@product.Id',-1)"></i>
-                                                    <input id="ProductQuantity-@product.Id" type="number" name="Quantities" value="1" style="width: 50%; display: inline-block;" />
-                                                    <i class="fas fa-plus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ProductQuantity-@product.Id',1)"></i>
-                                                    <div style="display: inline-block; width: 20%;">
-                                                        <select name="Units"
-                                                                class="form-control selectpicker"
-                                                                asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()" data-live-search="true">
-                                                        </select>
+                                        @foreach (Product product in products.Where(p => p.Category.Name == categoryName))
+                                        {
+                                            <form asp-action="Add">
+                                                <div class="row productRow">
+                                                    <div class="col-5" style="vertical-align: middle; margin: auto;">
+                                                        @Html.DisplayFor(r => product)
+                                                    </div>
+                                                    <div class="col-4" style="text-align: center; padding: 0px; vertical-align: middle; margin: auto;">
+                                                        <i class="fas fa-minus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ProductQuantity-@product.Id',-1)"></i>
+                                                        <input id="ProductQuantity-@product.Id" type="number" name="Quantities" value="1" style="width: 30%; display: inline-block;" />
+                                                        <i class="fas fa-plus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ProductQuantity-@product.Id',1)"></i>
+                                                        <div style="display: inline-block; width: 40%;">
+                                                            <select name="Units"
+                                                                    class="form-control selectpicker"
+                                                                    asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()" data-live-search="true">
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3" style="vertical-align: middle; margin: auto;">
+                                                        <input type="hidden" asp-for="Id" />
+                                                        <input type="hidden" asp-for="Name" />
+                                                        <input type="hidden" asp-for="Date" />
+                                                        @if (ViewData.Keys.Contains("returnUrl"))
+                                                        {
+                                                            <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                                                        }
+                                                        <input type="hidden" name="ProductIds" value="@product.Id" />
+                                                        <input type="hidden" name="ProductMeals" value="@ViewBag.MealType" />
+                                                        <input type="submit" value="Add" class="btn-primary" style="width:100%;" />
                                                     </div>
                                                 </div>
-                                                <div class="col-3" style="vertical-align: middle; margin: auto;">
-                                                    <input type="hidden" asp-for="Id" />
-                                                    <input type="hidden" asp-for="Name" />
-                                                    <input type="hidden" asp-for="Date" />
-                                                    @if (ViewData.Keys.Contains("returnUrl"))
-                                                    {
-                                                        <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
-                                                    }
-                                                    <input type="hidden" name="ProductIds" value="@product.Id" />
-                                                    <input type="hidden" name="ProductMeals" value="@ViewBag.MealType" />
-                                                    <input type="submit" value="Add" class="btn btn-primary" style="width:100%;" />
-                                                </div>
-                                            </div>
-                                        </form>
-                                    }
+                                            </form>
+                                        }
                                     </div>
                                 }
                             </div>
@@ -147,10 +192,6 @@
 
             <hr />
         </div>
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to Food Plan</a>
     </div>
 
 </div>
