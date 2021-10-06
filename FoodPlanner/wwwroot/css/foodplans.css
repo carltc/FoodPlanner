@@ -37,7 +37,7 @@ for details on configuring this project to bundle and minify static web assets. 
     }
 
     .foodplan-calendar .foodplan-content {
-        padding: 20px;
+        padding: 30px;
     }
 
 @media (max-width: 768px) {
@@ -55,7 +55,16 @@ for details on configuring this project to bundle and minify static web assets. 
     .foodplan-add i {
         padding: 2px;
         color: lightgrey;
+        height: 30px;
+        width: 30px;
     }
+
+@media (max-width: 768px) {
+    .foodplan-add i {
+        height: 20px;
+        width: 20px;
+    }
+}
 
 .foodplan-label {
     position: absolute;
@@ -74,11 +83,19 @@ for details on configuring this project to bundle and minify static web assets. 
 
 .foodplan-col {
     padding: 0px;
-    min-width: 300px;
-    min-height: 250px;
+    min-width: 500px;
+    min-height: 450px;
 }
 @media (max-width: 768px) {
     .foodplan-col {
         min-width: 200px;
     }
+}
+
+.productRow input[type=number]::-webkit-inner-spin-button,
+.productRow input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
 }

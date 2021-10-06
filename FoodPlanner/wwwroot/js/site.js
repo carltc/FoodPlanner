@@ -106,3 +106,14 @@ function listSearch(searchInput,listBody,listRowClass,searchableElementType) {
         }
     }
 }
+
+function ChangeElementQuantity(elementId, changeInt) {
+    // Find the value to change
+    var ProductQuantityInput = document.getElementById(elementId)
+
+    if (ProductQuantityInput != null) {
+        var currentQuantity = Number(ProductQuantityInput.value);
+        currentQuantity += Number(changeInt);
+        ProductQuantityInput.value = currentQuantity;
+    }
+}

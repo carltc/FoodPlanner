@@ -5,30 +5,25 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container">
-    <h1>Pick shopping list size:</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Days
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var days in new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 })
-            {
-                <tr>
-                    <td>
-                        @days
-                    </td>
-                    <td>
-                        <a asp-action="RegenerateList" asp-route-Days="@days" style="color: red; text-decoration: underline;">Generate List</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="container" style="text-align:center;">
+    <form asp-action="RegenerateList">
+        <p style="text-align: center;">
+            Regenerate shopping list for
+        </p>
+        <p style="text-align: center;">
+            <i class="fas fa-minus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',-1)"></i>
+            <input id="ShoppingListDays" type="number" name="Days" value="1" style="width: 50%; display: inline-block; max-width: 50px;" />
+            <i class="fas fa-plus-square" style="display: inline-block; width: 10%;" onclick="ChangeElementQuantity('ShoppingListDays',1)"></i>
+        </p>
+        <p style="text-align: center;">
+            days.
+        </p>
+        <p style="text-align: center;">
+            <input type="submit" value="Re-generate" class="btn btn-danger" style="width:100%; max-width: 200px;" />
+        </p>
+    </form>
+    <hr />
+    <p style="text-align:center;">
+        <a class="btn dark btn-coffee" asp-action="Details" style="width:100%; max-width: 200px; text-align: center;">Back</a>
+    </p>
 </div>

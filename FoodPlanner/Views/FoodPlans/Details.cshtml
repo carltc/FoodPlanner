@@ -5,9 +5,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+@*<h1>Details</h1>*@
 
-<div>
+@*<div>
     <h4>FoodPlan</h4>
     <hr />
     <dl class="row">
@@ -28,4 +28,134 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>*@
+
+<div class="container">
+    <table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
+        <tr>
+            <td class="day" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                @if (Model.Date.Date < DateTime.Now.Date.AddDays(7) && Model.Date.DayOfWeek >= DateTime.Now.DayOfWeek)
+                {
+                    @Model.Date.ToString("ddd")
+                }
+                else
+                {
+                    @Model.Date.ToString("dd MMM")
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Breakfast
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Breakfast).Any())
+                    {
+                        @foreach (var breakfast in Model.Recipes.Where(r => r.Meal == Meal.Breakfast))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a> <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@breakfast.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Breakfast).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Breakfast))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Breakfast.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px; color: black;"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Lunch
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Lunch).Any())
+                    {
+                        @foreach (var lunch in Model.Recipes.Where(r => r.Meal == Meal.Lunch))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a> <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@lunch.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Lunch).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Lunch))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Lunch.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px; color: black;"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Dinner
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Dinner).Any())
+                    {
+                        @foreach (var dinner in Model.Recipes.Where(r => r.Meal == Meal.Dinner))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a> <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@dinner.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Dinner).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Dinner))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Dinner.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px; color: black;"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Snack
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Snack).Any())
+                    {
+                        @foreach (var snack in Model.Recipes.Where(fp => fp.Meal == Meal.Snack))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@snack.Recipe.Id">@snack.Recipe.Name</a></div> <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@snack.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Snack).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Snack))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id" asp-route-returnUrl="@Context.Request.Path"><i class="far fa-times-circle"></i></a></div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Snack.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px; color: black;"></i></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    @if (ViewData.Keys.Contains("returnUrl"))
+    {
+        <a href="@ViewData["returnUrl"]" class="nav-link navbar-link dark btn-coffee">Back</a>
+    }
+    else
+    {
+        <a class="nav-link navbar-link dark btn-coffee" asp-action="Index">Back to Calendar</a>
+    }
 </div>

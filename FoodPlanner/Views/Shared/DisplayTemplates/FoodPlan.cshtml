@@ -1,137 +1,166 @@
 ﻿@using FoodPlanner.Classes
 
 @model FoodPlan
-
 @*<div class="foodplancard card @if (Model.Date.Date == DateTime.Now.Date) {  <text>text-white bg-primary</text> } ">
-    <div class="card-header">
-        <h5 class="card-title">@Model.Date.DayOfWeek.ToString() - @Model.Date.ToShortDateString()</h5>
-    </div>
-    <div class="card-body">
-        @foreach (var meal in new List<Meal>() { Meal.Breakfast, Meal.Lunch, Meal.Dinner, Meal.Snack, Meal.None })
-        {
-            @if (meal == Meal.None)
+        <div class="card-header">
+            <h5 class="card-title">@Model.Date.DayOfWeek.ToString() - @Model.Date.ToShortDateString()</h5>
+        </div>
+        <div class="card-body">
+            @foreach (var meal in new List<Meal>() { Meal.Breakfast, Meal.Lunch, Meal.Dinner, Meal.Snack, Meal.None })
             {
-                <text><b>Additional:</b></text>
-            }
-            else if (meal == Meal.Snack)
-            {
-                <text><b>@meal <a asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
-            }
-            else
-            {
-                <text><b>@meal <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
-            }
-            <hr />
-            @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
-            {
-                <p class="card-text">
-                    @recipe.Recipe.Name <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@recipe.Id"><i class="far fa-times-circle"></i></a>
-                </p>
+                @if (meal == Meal.None)
+                {
+                    <text><b>Additional:</b></text>
+                }
+                else if (meal == Meal.Snack)
+                {
+                    <text><b>@meal <a asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
+                }
+                else
+                {
+                    <text><b>@meal <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@meal"><i class="fas fa-plus"></i></a></b></text>
+                }
                 <hr />
+                @foreach (var recipe in Model.Recipes.Where(r => r.Meal == meal))
+                {
+                    <p class="card-text">
+                        @recipe.Recipe.Name <a asp-action="DeleteItem" asp-route-foodplan_recipe_id="@recipe.Id"><i class="far fa-times-circle"></i></a>
+                    </p>
+                    <hr />
+                }
+                @foreach (var product in Model.Products.Where(r => r.Meal == meal))
+                {
+                    <p class="card-text">
+                        @product.Product.Name @product.Product.ProductType.Name <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id"><i class="far fa-times-circle"></i></a>
+                    </p>
+                    <hr />
+                }
             }
-            @foreach (var product in Model.Products.Where(r => r.Meal == meal))
-            {
-                <p class="card-text">
-                    @product.Product.Name @product.Product.ProductType.Name <a asp-action="DeleteItem" asp-route-foodplan_product_id="@product.Id"><i class="far fa-times-circle"></i></a>
-                </p>
-                <hr />
-            }
-        }
 
-        <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
-            Add
-        </a>
+            <a class="btn @if (Model.Date.Date == DateTime.Now.Date) {  <text>btn-outline-light</text> } else { <text>btn-outline-primary</text> }" asp-area="" asp-controller="FoodPlans" asp-action="Add" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" style="width: 100%; height: 100%;">
+                Add
+            </a>
 
-    </div>
-</div>*@
+        </div>
+    </div>*@
 
-<table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
-    <tr>
-        <td class="day" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
-            @if (Model.Date.Date < DateTime.Now.Date.AddDays(7) && Model.Date.DayOfWeek >= DateTime.Now.DayOfWeek)
-            {
-                @Model.Date.ToString("ddd")
-            }
-            else
-            {
-                @Model.Date.ToString("dd MMM")
-            }
-        </td>
-    </tr>
-    <tr>
-        <td class="content">
-            <div class="foodplan-label">
-                Breakfast
-            </div>
-            <div class="foodplan-content">
-                @if (Model.Recipes.Where(fp => fp.Meal == Meal.Breakfast).Any())
+<a asp-controller="FoodPlans" asp-action="Details" asp-route-id="@Model.Id">
+    <table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
+        <tr>
+            <td class="day" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                @if (Model.Date.Date < DateTime.Now.Date.AddDays(7) && Model.Date.DayOfWeek >= DateTime.Now.DayOfWeek)
                 {
-                    @foreach (var breakfast in Model.Recipes.Where(r => r.Meal == Meal.Breakfast))
-                    {
-                        <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
-                    }
+                    @Model.Date.ToString("ddd")
                 }
-            </div>
-            <div class="foodplan-add">
-                <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Breakfast.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td class="content">
-            <div class="foodplan-label">
-                Lunch
-            </div>
-            <div class="foodplan-content">
-                @if (Model.Recipes.Where(fp => fp.Meal == Meal.Lunch).Any())
+                else
                 {
-                    @foreach (var lunch in Model.Recipes.Where(r => r.Meal == Meal.Lunch))
-                    {
-                        <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
-                    }
+                    @Model.Date.ToString("dd MMM")
                 }
-            </div>
-            <div class="foodplan-add">
-                <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Lunch.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td class="content">
-            <div class="foodplan-label">
-                Dinner
-            </div>
-            <div class="foodplan-content">
-                @if (Model.Recipes.Where(fp => fp.Meal == Meal.Dinner).Any())
-                {
-                    @foreach (var dinner in Model.Recipes.Where(r => r.Meal == Meal.Dinner))
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Breakfast
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Breakfast).Any())
                     {
-                        <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
+                        @foreach (var breakfast in Model.Recipes.Where(r => r.Meal == Meal.Breakfast))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
+                        }
                     }
-                }
-            </div>
-            <div class="foodplan-add">
-                <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Dinner.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td class="content">
-            <div class="foodplan-label">
-                Snack
-            </div>
-            <div class="foodplan-content">
-                @if (Model.Recipes.Where(fp => fp.Meal == Meal.Snack).Any())
-                {
-                    @foreach (var snack in Model.Recipes.Where(fp => fp.Meal == Meal.Snack))
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Breakfast).Any())
                     {
-                        <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@snack.Recipe.Id">@snack.Recipe.Name</a></div>
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Breakfast))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                        }
                     }
-                }
-            </div>
-            <div class="foodplan-add">
-                <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Snack.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
-            </div>
-        </td>
-    </tr>
-</table>
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Breakfast.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Lunch
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Lunch).Any())
+                    {
+                        @foreach (var lunch in Model.Recipes.Where(r => r.Meal == Meal.Lunch))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Lunch).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Lunch))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Lunch.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Dinner
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Dinner).Any())
+                    {
+                        @foreach (var dinner in Model.Recipes.Where(r => r.Meal == Meal.Dinner))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Dinner).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Dinner))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Dinner.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="content">
+                <div class="foodplan-label">
+                    Snack
+                </div>
+                <div class="foodplan-content">
+                    @if (Model.Recipes.Where(fp => fp.Meal == Meal.Snack).Any())
+                    {
+                        @foreach (var snack in Model.Recipes.Where(fp => fp.Meal == Meal.Snack))
+                        {
+                            <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@snack.Recipe.Id">@snack.Recipe.Name</a></div>
+                        }
+                    }
+                    @if (Model.Products.Where(fp => fp.Meal == Meal.Snack).Any())
+                    {
+                        @foreach (var product in Model.Products.Where(r => r.Meal == Meal.Snack))
+                        {
+                            <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                        }
+                    }
+                </div>
+                <div class="foodplan-add">
+                    <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@Model.Id" asp-route-foodplandate="@Model.Date.ToBinary()" asp-route-mealType="@Meal.Snack.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</a>

@@ -104,18 +104,30 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string returnUrl = null)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var foodPlan = await _context.FoodPlans
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var foodPlan = _context.FoodPlans
+                .Where(fp => fp.Id == id)
+                .Include(fp => fp.Products)
+                    .ThenInclude(p => p.Product)
+                        .ThenInclude(p => p.ProductType)
+                .Include(fp => fp.Recipes)
+                    .ThenInclude(r => r.Recipe)
+                .FirstOrDefault();
+
             if (foodPlan == null)
             {
                 return NotFound();
+            }
+
+            if (returnUrl != null)
+            {
+                ViewData["returnUrl"] = returnUrl;
             }
 
             return View(foodPlan);
@@ -454,13 +466,18 @@ namespace FoodPlanner.Controllers
         }
 
         // GET: FoodPlans/DeleteItem/5
-        public async Task<IActionResult> DeleteItem(int? foodplan_product_id, int? foodplan_recipe_id)
+        public async Task<IActionResult> DeleteItem(int? foodplan_product_id, int? foodplan_recipe_id, string returnUrl = null)
         {
             if (foodplan_product_id != null)
             {
                 var foodplan_product = await _context.ShopItems.FindAsync(foodplan_product_id);
                 _context.ShopItems.Remove(foodplan_product);
                 await _context.SaveChangesAsync();
+
+                if (returnUrl != null)
+                {
+                    return LocalRedirect(returnUrl);
+                }
                 return RedirectToAction(nameof(Index));
             }
             else if (foodplan_recipe_id != null)
@@ -468,6 +485,11 @@ namespace FoodPlanner.Controllers
                 var foodplan_recipe = await _context.FoodPlanRecipes.FindAsync(foodplan_recipe_id);
                 _context.FoodPlanRecipes.Remove(foodplan_recipe);
                 await _context.SaveChangesAsync();
+
+                if (returnUrl != null)
+                {
+                    return LocalRedirect(returnUrl);
+                }
                 return RedirectToAction(nameof(Index));
             }
 

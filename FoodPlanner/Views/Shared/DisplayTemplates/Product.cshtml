@@ -2,13 +2,13 @@
 
 @model Product
 
-<div class="shopItemCard card mb-3" style="width: 100%">
+<div class="shopItemCard card" style="width: 100%; margin: 1px;">
     <div class="row no-gutters">
-        <div class="col-8 shopItemRow" style="background-color: lightgray;">
+        <div class="col-12 shopItemRow" style="background-color: lightgray;">
             <b>@Model.Name @Model.ProductType.Name</b>
         </div>
-        <div class="col-4 shopItemRow" style="text-align: right;">
+        @*<div class="col-4 shopItemRow" style="text-align: right;">
             <b>@Model.Category.Name</b>
-        </div>
+        </div>*@
     </div>
 </div>

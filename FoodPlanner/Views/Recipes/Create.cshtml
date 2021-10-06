@@ -5,105 +5,108 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h4>Create Recipe</h4>
-<hr />
-<div class="row">
-    <div class="col">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container">
+    <h4>Create Recipe</h4>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Portions" class="control-label"></label>
-                <input asp-for="Portions" class="form-control" />
-                <span asp-validation-for="Portions" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Cuisine" class="control-label"></label>
-                <div class="row" id="CuisineRow">
-                    <div class="col-8" id="CuisineDropdown">
-                        <select name="CuisineId" class="form-control selectpicker" data-live-search="true">
-                            <optgroup label="None">
-                                <option value="0">None</option>
-                            </optgroup>
-                            @{var cuisines = (List<Cuisine>)ViewBag.Cuisines;}
-                            @foreach (var name in cuisines.Select(c => c.Name).Distinct().ToList())
-                            {
-                                <optgroup label="@name">
-                                    @foreach (var cuisine in cuisines.Where(c => c.Name == name))
-                                    {
-                                        <option value="@cuisine.Id">@cuisine.Name</option>
-                                    }
-                                </optgroup>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-4" id="NewCuisineButton">
-                        <a class="btn btn-primary" asp-controller="Cuisines" asp-action="Create" asp-route-returnUrl="@Context.Request.Path">Add New Cuisine</a>
-                    </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Cuisine" class="text-danger"></span>
-            </div>
 
-            <div class="row">
-                <div class="col">
-                    Ingredients:
+                <div class="form-group">
+                    <label asp-for="Portions" class="control-label"></label>
+                    <input asp-for="Portions" class="form-control" />
+                    <span asp-validation-for="Portions" class="text-danger"></span>
                 </div>
-            </div>
 
-            <div class="form-group" id="IngredientList">
-                <div class="row" name="IngredientRow">
-                    <div class="col-6">
-                        <select id="ProductIdSelect" name="ProductIds" class="form-control selectpicker" data-live-search="true">
-                            <optgroup label="None">
-                                <option value="0">None</option>
-                            </optgroup>
-                            @{var products = (List<Product>)ViewBag.Products;}
-                            @foreach (var category in products.Select(p => p.Category.Name).Distinct().ToList())
-                            {
-                                <optgroup label="@category">
-                                    @foreach (var product in products.Where(p => p.Category.Name == category))
-                                    {
-                                        <option value="@product.Id">@product.Name @product.ProductType.Name</option>
-                                    }
+                <div class="form-group">
+                    <label asp-for="Cuisine" class="control-label"></label>
+                    <div class="row" id="CuisineRow">
+                        <div class="col-8" id="CuisineDropdown">
+                            <select name="CuisineId" class="form-control selectpicker" data-live-search="true">
+                                <optgroup label="None">
+                                    <option value="0">None</option>
                                 </optgroup>
-                            }
-                        </select>
+                                @{var cuisines = (List<Cuisine>)ViewBag.Cuisines;}
+                                @foreach (var name in cuisines.Select(c => c.Name).Distinct().ToList())
+                                {
+                                    <optgroup label="@name">
+                                        @foreach (var cuisine in cuisines.Where(c => c.Name == name))
+                                        {
+                                            <option value="@cuisine.Id">@cuisine.Name</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-4" id="NewCuisineButton">
+                            <a class="btn btn-primary" asp-controller="Cuisines" asp-action="Create" asp-route-returnUrl="@Context.Request.Path">Add New Cuisine</a>
+                        </div>
                     </div>
-                    <div class="col-2">
-                        <input name="Quantities" type="number" step="0.01" min="0" value="0" style="width: inherit;" />
-                    </div>
+                    <span asp-validation-for="Cuisine" class="text-danger"></span>
+                </div>
+
+                <div class="row">
                     <div class="col">
-                        <select name="Units"
-                                class="form-control"
-                                asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()">
-                        </select>
+                        Ingredients:
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <input type="submit" name="add_ingredient" value="Add" class="btn btn-primary" />
-            </div>
+                <div class="form-group" id="IngredientList">
+                    <div class="row" name="IngredientRow">
+                        <div class="col-6">
+                            <select id="ProductIdSelect" name="ProductIds" class="form-control selectpicker" data-live-search="true">
+                                <optgroup label="None">
+                                    <option value="0">None</option>
+                                </optgroup>
+                                @{var products = (List<Product>)ViewBag.Products;}
+                                @foreach (var category in products.Select(p => p.Category.Name).Distinct().ToList())
+                                {
+                                    <optgroup label="@category">
+                                        @foreach (var product in products.Where(p => p.Category.Name == category))
+                                        {
+                                            <option value="@product.Id">@product.Name @product.ProductType.Name</option>
+                                        }
+                                    </optgroup>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <input name="Quantities" type="number" step="0.01" min="0" value="0" style="width: inherit;" />
+                        </div>
+                        <div class="col">
+                            <select name="Units"
+                                    class="form-control"
+                                    asp-items="Html.GetEnumSelectList<FoodPlanner.Classes.Unit>()">
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-            <hr />
+                <div class="form-group">
+                    <input type="submit" name="add_ingredient" value="Add" class="btn btn-primary" />
+                </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                <hr />
+
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

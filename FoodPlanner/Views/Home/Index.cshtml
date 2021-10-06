@@ -39,14 +39,18 @@
             </div>
         </div>
         <div class="card-body foodplan-summary-days">
-
+            
             <table class="foodplan-calendar" style="border-collapse: unset; background-color: black; border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 0px;">
                 <tr>
                     <td class="day" style="border-top-left-radius: 10px;">
-                        Today
+                        <a asp-controller="FoodPlans" asp-action="Details" asp-route-id="@todaysFoodPlan.Id" style="color: white;">
+                            Today
+                        </a>
                     </td>
                     <td class="day" style="border-top-right-radius: 10px;">
-                        Tomorrow
+                        <a asp-controller="FoodPlans" asp-action="Details" asp-route-id="@tomorrowsFoodPlan.Id" style="color: white;">
+                            Tomorrow
+                        </a>
                     </td>
                 </tr>
                 <tr>
@@ -60,6 +64,13 @@
                                 @foreach (var breakfast in todaysFoodPlan.Recipes.Where(r => r.Meal == Meal.Breakfast))
                                 {
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
+                                }
+                            }
+                            @if (todaysFoodPlan.Products.Where(fp => fp.Meal == Meal.Breakfast).Any())
+                            {
+                                @foreach (var product in todaysFoodPlan.Products.Where(r => r.Meal == Meal.Breakfast))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
                                 }
                             }
                         </div>
@@ -77,6 +88,13 @@
                                 @foreach (var breakfast in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Breakfast))
                                 {
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@breakfast.Recipe.Id">@breakfast.Recipe.Name</a></div>
+                                }
+                            }
+                            @if (tomorrowsFoodPlan.Products.Where(fp => fp.Meal == Meal.Breakfast).Any())
+                            {
+                                @foreach (var product in tomorrowsFoodPlan.Products.Where(r => r.Meal == Meal.Breakfast))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
                                 }
                             }
                         </div>
@@ -98,6 +116,13 @@
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
                                 }
                             }
+                            @if (todaysFoodPlan.Products.Where(fp => fp.Meal == Meal.Lunch).Any())
+                            {
+                                @foreach (var product in todaysFoodPlan.Products.Where(r => r.Meal == Meal.Lunch))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                                }
+                            }
                         </div>
                         <div class="foodplan-add">
                             <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@todaysFoodPlan.Id" asp-route-foodplandate="@todaysFoodPlan.Date.ToBinary()" asp-route-mealType="@Meal.Lunch.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
@@ -113,6 +138,13 @@
                                 @foreach (var lunch in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Lunch))
                                 {
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@lunch.Recipe.Id">@lunch.Recipe.Name</a></div>
+                                }
+                            }
+                            @if (tomorrowsFoodPlan.Products.Where(fp => fp.Meal == Meal.Lunch).Any())
+                            {
+                                @foreach (var product in tomorrowsFoodPlan.Products.Where(r => r.Meal == Meal.Lunch))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
                                 }
                             }
                         </div>
@@ -134,6 +166,13 @@
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
                                 }
                             }
+                            @if (todaysFoodPlan.Products.Where(fp => fp.Meal == Meal.Dinner).Any())
+                            {
+                                @foreach (var product in todaysFoodPlan.Products.Where(r => r.Meal == Meal.Dinner))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
+                                }
+                            }
                         </div>
                         <div class="foodplan-add">
                             <a asp-controller="FoodPlans" asp-action="Menu" asp-route-id="@todaysFoodPlan.Id" asp-route-foodplandate="@todaysFoodPlan.Date.ToBinary()" asp-route-mealType="@Meal.Dinner.ToString()" asp-route-returnUrl="@Context.Request.Path"><i class="fas fa-plus" style="padding: 2px"></i></a>
@@ -149,6 +188,13 @@
                                 @foreach (var dinner in tomorrowsFoodPlan.Recipes.Where(r => r.Meal == Meal.Dinner))
                                 {
                                     <div><a asp-controller="Recipes" asp-action="Details" asp-route-id="@dinner.Recipe.Id">@dinner.Recipe.Name</a></div>
+                                }
+                            }
+                            @if (tomorrowsFoodPlan.Products.Where(fp => fp.Meal == Meal.Dinner).Any())
+                            {
+                                @foreach (var product in tomorrowsFoodPlan.Products.Where(r => r.Meal == Meal.Dinner))
+                                {
+                                    <div><a asp-controller="Products" asp-action="Details" asp-route-id="@product.Product.ProductType.Id">@product.Name</a> - @product.Quantity @product.Unit</div>
                                 }
                             }
                         </div>
