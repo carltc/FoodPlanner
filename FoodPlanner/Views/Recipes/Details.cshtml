@@ -6,9 +6,14 @@
 }
 
 <div class="container flistPage">
-    <p style="text-align:right;">
-        <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
-    </p>
+    <div style="display: flow-root;">
+        <div style="float: left; text-align: left;">
+            <a class="btn dark btn-alternative" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        </div>
+        <div style="float: right;">
+            <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
+        </div>
+    </div>
     <hr />
     <h4>Recipe</h4>
     <hr />
@@ -52,9 +57,4 @@
             </div>
         </div>
     }
-
-    <hr />
-    <div>
-        <a class="nav-link navbar-link dark btn-alternative" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-    </div>
 </div>
