@@ -33,7 +33,7 @@
 }
 
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User) && user != null)
     {
         <li class="nav-item">
             <a class="nav-link navbar-link btn-success" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="fas fa-user-cog"></i> @user.UserName</a>
