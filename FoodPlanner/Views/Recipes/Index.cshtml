@@ -24,31 +24,36 @@
             </p>
         </div>
     </div>
-
-    @foreach (var cuisine in Model.Select(r => r.Cuisine).Distinct())
-    {
-        <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
-            <div class="row">
-                <div class="col">
-                    @if (cuisine == null)
-                    {
-                        <h2>Other</h2>
-                    }
-                    else
-                    {
-                        <h2>@cuisine.Name</h2>
-                    }
-                </div>
-            </div>
-            @foreach (var item in Model.Where(r => r.Cuisine == cuisine))
-            {
-                <div class="row" style="padding: 5px;">
-                    <div class="col-12">
-                        <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+    <div style="padding-top:10px;">
+        <input type="text" id="recipeSearch" onkeyup="listSearch('recipeSearch','recipeList', 'cuisineBlock','recipeRow','a')" placeholder="Search for recipes.." style="width: 100%;">
+    </div>
+    <hr />
+    <div id="recipeList">
+        @foreach (var cuisine in Model.Select(r => r.Cuisine).Distinct())
+        {
+            <div class="container-fluid cuisineBlock" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
+                <div class="row">
+                    <div class="col">
+                        @if (cuisine == null)
+                        {
+                            <h2>Other</h2>
+                        }
+                        else
+                        {
+                            <h2>@cuisine.Name</h2>
+                        }
                     </div>
                 </div>
-            }
-        </div>
-    }
+                @foreach (var item in Model.Where(r => r.Cuisine == cuisine))
+                {
+                    <div class="row recipeRow" style="padding: 5px;">
+                        <div class="col-12">
+                            <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
 

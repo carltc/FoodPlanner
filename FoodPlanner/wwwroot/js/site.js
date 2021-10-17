@@ -10,18 +10,18 @@ function ToggleShopItem(shopItemId, unitString) {
         divId = "ShopItem-" + shopItemId + unitString;
         className = "shopItemBought";
 
-        console.log("Toggle: " + divId);
+        //console.log("Toggle: " + divId);
 
         var x = document.getElementsByClassName(divId);
         var i;
         for (i = 0; i < x.length; i++) {
             var v = x[i];
             if (v.classList.contains(className)) {
-                console.log("Remove: " + divId);
+                //console.log("Remove: " + divId);
                 v.classList.remove(className);
             }
             else {
-                console.log("Add: " + divId);
+                //console.log("Add: " + divId);
                 v.classList.add(className);
             }
         }
@@ -79,28 +79,42 @@ function addIngredient() {
     IL.appendChild(newRow);
 }
 
-function listSearch(searchInput,listBody,listRowClass,searchableElementType) {
+function listSearch(searchInput,listBody,listCategoryClass,listRowClass,searchableElementType) {
     // Declare variables
-    var input, filter, ul, li, a, b, i, j, txtValue;
+    var input, filter, ul, cl, li, a, b, c, i, j, k, txtValue;
     input = document.getElementById(searchInput);
     filter = input.value.toUpperCase();
     ul = document.getElementById(listBody);
-    li = ul.getElementsByClassName(listRowClass);
 
-    // Loop through all list items, and hide those who don't match the search query
-    for (i = 0; i < li.length; i++) {
-        console.log(li[i]);
-        a = li[i].getElementsByTagName(searchableElementType);
-        for (j = 0; j < a.length; j++) {
-            b = a[j];
-            if (b != null) {
-                txtValue = b.textContent || b.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    console.log(li[i]);
-                    li[i].style.display = "";
-                    break;
-                } else {
-                    li[i].style.display = "none";
+    // Find all category classes
+    cl = ul.getElementsByClassName(listCategoryClass);
+
+    // Loop through each category
+    for (k = 0; k < cl.length; k++) {
+
+        // Hide this category and only show if at least 1 row matches
+        c = cl[k];
+        c.style.display = "none";
+
+        li = cl[k].getElementsByClassName(listRowClass);
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            //console.log(li[i]);
+            a = li[i].getElementsByTagName(searchableElementType);
+            for (j = 0; j < a.length; j++) {
+                b = a[j];
+                if (b != null) {
+                    txtValue = b.textContent || b.innerText;
+                    //console.log(txtValue + " : " + filter);
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        //console.log(li[i]);
+                        li[i].style.display = "";
+                        c.style.display = "";
+                        break;
+                    } else {
+                        li[i].style.display = "none";
+                    }
                 }
             }
         }
@@ -116,4 +130,10 @@ function ChangeElementQuantity(elementId, changeInt) {
         currentQuantity += Number(changeInt);
         ProductQuantityInput.value = currentQuantity;
     }
+}
+
+function capitalize(str) {
+    return str
+        .split(' ')
+        .reduce((prev, current) => `${prev} ${current[0].toUpperCase() + current.slice(1)}`, '')
 }

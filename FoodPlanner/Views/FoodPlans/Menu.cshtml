@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div style="padding-top:10px;">
-                                <input type="text" id="recipeSearch" onkeyup="listSearch('recipeSearch','recipeList','recipeRow','h3')" placeholder="Search for recipes.." style="width: 100%;">
+                                <input type="text" id="recipeSearch" onkeyup="listSearch('recipeSearch','recipeList', 'cuisineBlock','recipeRow','button')" placeholder="Search for recipes.." style="width: 100%;">
                             </div>
                             <hr />
                             <div class="container-fluid" id="recipeList" style="padding: 0px;">
@@ -78,7 +78,7 @@
         }*@
                                 @foreach (var cuisine in recipes.Select(r => r.Cuisine).Distinct())
                                 {
-                                    <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
+                                    <div class="container-fluid cuisineBlock" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
                                         <div class="row">
                                             <div class="col">
                                                 @if (cuisine == null)
@@ -93,7 +93,7 @@
                                         </div>
                                         @foreach (var recipe in recipes.Where(r => r.Cuisine == cuisine))
                                         {
-                                            <div class="row" style="padding: 5px;">
+                                            <div class="row recipeRow" style="padding: 5px;">
                                                 <div class="col-12">
                                                     <form asp-action="Add">
                                                         <input type="hidden" asp-for="Id" />
@@ -128,13 +128,13 @@
                     <div class="row">
                         <div class="col-12 p-0 m-0">
                             <div style="padding-top:10px;">
-                                <input type="text" id="productSearch" onkeyup="listSearch('productSearch','productList','productRow','b')" placeholder="Search for products.." style="width: 100%;">
+                                <input type="text" id="productSearch" onkeyup="listSearch('productSearch','productList', 'categoryBlock','productRow','b')" placeholder="Search for products.." style="width: 100%;">
                             </div>
                             <hr />
                             <div class="container-fluid" id="productList" style="padding: 0px;">
                                 @foreach (string categoryName in products.Select(r => r.Category.Name).Distinct())
                                 {
-                                    <div class="container-fluid" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
+                                    <div class="container-fluid categoryBlock" style="padding: 10px; margin: 10px; border: 3px solid black; border-radius: 5px;">
                                         <div class="row">
                                             <div class="col">
                                                 @if (categoryName == null)

@@ -512,7 +512,7 @@ namespace FoodPlanner.Controllers
             // Get recipes
             var recipes = _context.Recipes
                 .Include(r => r.Cuisine)
-                .OrderByDescending(r => r.Cuisine.Id)
+                .OrderBy(r => r.Cuisine.Name)
                 .ToList();
             ViewData["Recipes"] = recipes;
 
@@ -526,7 +526,7 @@ namespace FoodPlanner.Controllers
             var products = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.ProductType)
-                .OrderByDescending(p => p.Id)
+                .OrderBy(p => p.Category.Name)
                 .ToList();
             ViewData["Products"] = products;
         }
