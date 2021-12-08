@@ -11,6 +11,8 @@ using FoodPlanner.Classes;
 using FoodPlanner.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using FoodPlanner.Services;
 
 namespace FoodPlanner
 {
@@ -56,7 +58,7 @@ namespace FoodPlanner
             }
 
             // Add Users and Roles
-            services.AddIdentity<AppUser, IdentityRole>() //options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
                 //.AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider)
@@ -66,6 +68,7 @@ namespace FoodPlanner
             // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-3.1#react-to-back-end-changes
 
             services.Configure<IdentityOptions>(opts => {
+                opts.User.RequireUniqueEmail = true;
                 opts.Password.RequiredLength = 3;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireLowercase = false;
@@ -84,6 +87,10 @@ namespace FoodPlanner
             {
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            // Configure to support email
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
