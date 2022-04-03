@@ -18,7 +18,16 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><h1><img src="~/images/restaurant-menu.svg" alt="fList Logo" height="50" width="50" /> fList</h1></a>
+                <form asp-controller="Home" asp-action="Index" style="margin: 0px 10px 0px 0px;">
+                    <button type="submit" class="nav-link navbar-link btn-alternative navbar-brand">
+                        <h3>
+                            @*<img src="~/images/restaurant-menu.svg" alt="fList Logo" height="50" width="50" />*@
+                            <i class="fas fa-home"></i>
+                        </h3>
+                    </button>
+                </form>
+                @*<img src="~/images/restaurant-menu.svg" alt="fList Logo" height="50" width="50" />*@
+                <div class="navbar-title"><h1><img src="~/images/restaurant-menu.svg" alt="fList Logo" height="50" width="50" /> <div style="display: inline; vertical-align: middle;">fList</div></h1></div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation" style="color: white;">
                     @*<span class="navbar-toggler-icon"></span>*@
@@ -27,19 +36,19 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     @*<ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="ShoppingLists" asp-action="Details">Shopping List</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="FoodPlans" asp-action="Index">Food Plan</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="Recipes" asp-action="Index">Recipes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
-                        </li>
-                    </ul>*@
+                <li class="nav-item">
+                    <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="ShoppingLists" asp-action="Details">Shopping List</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="FoodPlans" asp-action="Index">Food Plan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="Recipes" asp-action="Index">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link navbar-link btn-alternative" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                </li>
+            </ul>*@
                 </div>
             </div>
         </nav>

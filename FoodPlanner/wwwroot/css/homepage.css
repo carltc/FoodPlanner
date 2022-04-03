@@ -32,6 +32,18 @@ for details on configuring this project to bundle and minify static web assets. 
     }
 }
 
+@media (min-width: 576px) {
+    .container {
+        max-width: 650px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 900px;
+    }
+}
+
 .homepage-summary {
     width: 66%;
     margin: 10px;
