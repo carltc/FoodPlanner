@@ -7,7 +7,9 @@
 
 <div class="container flistPage">
     <p style="text-align:right;">
-        <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
+        <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">
+            Back
+        </a>
     </p>
     <hr />
     <h4>Create Recipe</h4>
@@ -94,6 +96,18 @@
                             <input type="submit" name="add_ingredient" value="Add" class="nav-link navbar-link btn btn-primary" />
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Instructions</label>
+                    <textarea asp-for="InstructionText" class="form-control"></textarea>
+                    <span asp-validation-for="InstructionText" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Source</label>
+                    <input asp-for="RecipeSource" class="form-control" />
+                    <span asp-validation-for="RecipeSource" class="text-danger"></span>
                 </div>
 
                 <div class="row">

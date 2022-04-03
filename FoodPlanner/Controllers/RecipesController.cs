@@ -73,7 +73,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Portions")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
+        public IActionResult Create([Bind("Id,Name,Portions,InstructionText,RecipeSource")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
         {
             if (ModelState.IsValid)
             {
@@ -182,7 +182,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions,AddedBy")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Portions,AddedBy,InstructionText,RecipeSource")] Recipe recipe, List<int> ProductIds, List<double> Quantities, List<Unit> Units, int CuisineId, string add_ingredient)
         {
             if (id != recipe.Id)
             {
@@ -220,6 +220,8 @@ namespace FoodPlanner.Controllers
                     storedRecipe.Name = recipe.Name;
                     storedRecipe.Portions = recipe.Portions;
                     storedRecipe.AddedBy = recipe.AddedBy;
+                    storedRecipe.InstructionText = recipe.InstructionText;
+                    storedRecipe.RecipeSource = recipe.RecipeSource;
 
                     // Get Cuisine
                     var cuisine = _context.Cuisines.Find(CuisineId);
