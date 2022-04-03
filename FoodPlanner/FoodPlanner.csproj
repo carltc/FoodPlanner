@@ -55,6 +55,8 @@
     <Compile Remove="Migrations\20210909090021_MigratingUsersOverToMainDB.Designer.cs" />
     <Compile Remove="Migrations\20210909103619_FixingHouseholdUserTable.cs" />
     <Compile Remove="Migrations\20210909103619_FixingHouseholdUserTable.Designer.cs" />
+    <Compile Remove="Migrations\20220403114030_TestMigration.cs" />
+    <Compile Remove="Migrations\20220403114030_TestMigration.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
