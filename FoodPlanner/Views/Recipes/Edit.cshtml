@@ -111,8 +111,24 @@
 
                 <div class="form-group">
                     <label class="control-label">Instructions</label>
-                    <textarea asp-for="InstructionText" class="form-control"> </textarea>
-                    <span asp-validation-for="InstructionText" class="text-danger"></span>
+                    @if (Model.Instructions != null)
+                    {
+                        <div class="container">
+                            @foreach (var recipeStep in Model.Instructions.Steps)
+                            {
+                                <div class="row">
+                                    @recipeStep.PreText @recipeStep.Action?.Name @recipeStep.MidText @recipeStep.Target?.Name @recipeStep.PostText
+                                </div>
+                            }
+                        </div>
+                        <a class="btn dark btn-coffee" asp-action="EditInstructions" asp-route-id="@Model.Id">Edit Instructions</a>
+                    }
+                    else
+                    {
+                        <div class="container">
+                            <a class="btn dark btn-coffee" asp-action="AddInstructions" asp-route-recipe_id="@Model.Id">Add Instructions</a>
+                        </div>
+                    }
                 </div>
 
                 <div class="form-group">

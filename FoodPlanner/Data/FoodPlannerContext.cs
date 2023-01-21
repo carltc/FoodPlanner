@@ -15,6 +15,8 @@ namespace FoodPlanner.Data
         {
         }
 
+        public DbSet<FoodPlanner.Models.RecipeStepTargetItem> RecipeStepTargetItems { get; set; }
+
         public DbSet<FoodPlanner.Models.Ingredient> Ingredients { get; set; }
 
         public DbSet<FoodPlanner.Models.Recipe> Recipes { get; set; }
@@ -32,6 +34,10 @@ namespace FoodPlanner.Data
         public DbSet<FoodPlanner.Models.ShopItem> ShopItems { get; set; }
 
         public DbSet<FoodPlanner.Models.FoodPlanRecipe> FoodPlanRecipes { get; set; }
+
+        public DbSet<FoodPlanner.Models.RecipeStepAction> RecipeStepActions { get; set; }
+
+        public DbSet<FoodPlanner.Models.RecipeStepTarget> RecipeStepTargets { get; set; }
 
         public DbSet<FoodPlanner.Models.ShopTrip> ShopTrips { get; set; }
 

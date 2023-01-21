@@ -1,0 +1,79 @@
+﻿@using FoodPlanner.Interfaces 
+
+@model FoodPlanner.Models.RecipeStep
+
+<div class="container form-group InstructionContainer" style="display: none" id="StepContainer-@Model.Id">
+    <div class="row">
+        <div class="col">
+            <h1>Step @Model.Order</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input type="hidden" name="StepIds" value="@Model.Id" />
+            <input type="hidden" name="Orders" value="@Model.Order" />
+            <input name="PreTexts" type="Text" class="form-control" value="@Model.PreText" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input name="Actions" type="text" class="form-control" value="@Model.Action?.Name" list="ActionsList" />
+            <datalist id="ActionsList">
+                @{var recipeActions = (List<RecipeStepAction>)ViewBag.Actions;}
+                @foreach (var recipeAction in recipeActions)
+                {
+                    <option value="@recipeAction.Name">@recipeAction.Name</option>
+                }
+            </datalist>
+
+            @*<select name="Actions" class="form-control selectpicker" data-live-search="true" value="@Model.Action?.Name">
+                    @{var recipeActions = (List<RecipeStepAction>)ViewBag.Actions;}
+                    @foreach (var recipeAction in recipeActions)
+                    {
+                        <option value="@recipeAction.Name">@recipeAction.Name</option>
+                    }
+                </select>*@
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input name="MidTexts" type="Text" class="form-control" value="@Model.MidText" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input name="Targets" type="text" class="form-control" value="@Model.Target?.Name" list="TargetsList" />
+            <datalist id="TargetsList">
+                @{var recipeTargets = (List<IRecipeStepTarget>)ViewBag.Targets;}
+                @foreach (var recipeTargetType in recipeTargets.Select(rt => rt.Category).Distinct())
+                {
+                    <optgroup label="@recipeTargetType">
+                        @foreach (var recipeTarget in recipeTargets.Where(rt => string.Equals(rt.Category, recipeTargetType)))
+                        {
+                            <option value="@recipeTarget.Name">@recipeTarget.Name</option>
+                        }
+                    </optgroup>
+                }
+            </datalist>
+
+            @*<select name="Targets" class="form-control selectpicker" data-live-search="true" value="@Model.Target?.Name">
+                    @{var recipeTargets = (List<IRecipeStepTarget>)ViewBag.Targets;}
+                    @foreach (var recipeTargetType in recipeTargets.Select(rt => rt.Category).Distinct())
+                    {
+                        <optgroup label="@recipeTargetType">
+                            @foreach (var recipeTarget in recipeTargets.Where(rt => string.Equals(rt.Category, recipeTargetType)))
+                            {
+                                <option value="@recipeTarget.Name">@recipeTarget.Name</option>
+                            }
+                        </optgroup>
+                    }
+                </select>*@
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input name="PostTexts" type="Text" class="form-control" value="@Model.PostText" />
+        </div>
+    </div>
+</div>
+          

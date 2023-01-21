@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ using FoodPlanner.Models;
 using FoodPlanner.Classes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using FoodPlanner.Interfaces;
 
 namespace FoodPlanner.Controllers
 {
@@ -43,6 +43,8 @@ namespace FoodPlanner.Controllers
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.ProductType)
                 .Include(r => r.Cuisine)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (recipe == null)
             {
@@ -144,11 +146,8 @@ namespace FoodPlanner.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.Ingredients)
-                    .ThenInclude(i => i.Product)
-                        .ThenInclude(p => p.ProductType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = await GetDatabaseRecipeAsync(id);
+
             if (recipe == null)
             {
                 return NotFound();
@@ -272,6 +271,236 @@ namespace FoodPlanner.Controllers
             return View(recipe);
         }
 
+        // GET: Recipes/AddInstructions/5
+        public IActionResult AddInstructions(int? recipe_id)
+        {
+            if (recipe_id == null)
+            {
+                return NotFound();
+            }
+
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Get actual recipe from database
+            var recipe = _context.Recipes.Where(r => r.Id == recipe_id)
+                .Include(r => r.Instructions)
+                .FirstOrDefault();
+
+            if (recipe.Instructions == null)
+            {
+                recipe.Instructions = new RecipeInstructions();
+                _context.Update(recipe);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = recipe_id });
+        }
+
+        // GET: Recipes/EditInstructions/5
+        public async Task<IActionResult> EditInstructions(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var recipe = await GetDatabaseRecipeAsync(id);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            // Check if this user is allowed to edit this recipe.
+            // Only recipes created by the user or household can be edited by the user.
+            if (recipe.AddedBy != user.UserName)
+            {
+                if (!_userManager.IsInRoleAsync(user, "Administrator").Result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            var recipeTargets = new List<IRecipeStepTarget>();
+            recipeTargets.AddRange(recipe.Ingredients.Cast<IRecipeStepTarget>());
+            recipeTargets.AddRange(_context.RecipeStepTargetItems.Cast<IRecipeStepTarget>());
+            ViewData["Targets"] = recipeTargets;
+
+            ViewData["Actions"] = _context.RecipeStepActions.ToList();
+
+            return View(recipe);
+        }
+
+        // POST: Recipes/EditInstrutions/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditInstructions(int id, string SaveAction, List<int> StepIds, List<int> Orders, List<string> PreTexts, List<string> Actions, List<string> MidTexts, List<string> Targets, List<string> PostTexts)
+        {
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            bool returnToRecipe = true;
+
+            switch (SaveAction)
+            {
+                case "Save":
+                    returnToRecipe = false;
+                    break;
+                case "SaveAndReturn":
+                    returnToRecipe = true;
+                    break;
+                case "Return":
+                    return RedirectToAction(nameof(Edit), new { id = id });
+                case "AddInstructionStep":
+                    return RedirectToAction(nameof(AddInstructionStep), new { recipe_id = id });
+
+            }
+
+            // Get actual recipe from database
+            var recipe = _context.Recipes.Where(r => r.Id == id)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                .FirstOrDefault();
+
+            // Check if this user is allowed to edit this recipe.
+            // Only recipes created by the user or administrator can be edited by the user.
+            // TODO Add household as editing ability on recipes
+            if (recipe.AddedBy != user.UserName)
+            {
+                if (!_userManager.IsInRoleAsync(user, "Administrator").Result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    for(int i = 0; i < Orders.Count; i++)
+                    {
+                        var recipeStep = recipe.Instructions.Steps.First(s => s.Id == StepIds[i]);
+
+                        recipeStep.Order = Orders[i];
+                        recipeStep.PreText = PreTexts[i];
+
+                        if (Actions[i] != null)
+                        {
+                            // See if there is an existing action with this value already
+                            var action = _context.RecipeStepActions.FirstOrDefault(rsa => rsa.Name != null && string.Equals(rsa.Name.ToLower(), Actions[i].ToLower()));
+                            if (action == null)
+                            {
+                                // Check if any of the other instruction steps already has an action with this name
+                                // (This will happen when 2+ new steps are created with identical new actions at the same time)
+                                action = recipe.Instructions.Steps.Where(s => s.Action?.Name != null && string.Equals(s.Action.Name.ToLower(), Actions[i].ToLower())).FirstOrDefault()?.Action;
+                            }
+                            if (action == null)
+                            {
+                                // Otherwise make a new action
+                                action = new RecipeStepAction() { Name = Actions[i] };
+                            }
+                            recipeStep.Action = action;
+                        }
+
+                        recipeStep.MidText = MidTexts[i];
+
+                        if (Targets[i] != null)
+                        {
+                            // See if there is an existing target with this value already
+                            var target = _context.RecipeStepTargets.ToList().FirstOrDefault(rst => rst.Name != null && string.Equals(rst.Name.ToLower(), Targets[i].ToLower()));
+                            if (target == null)
+                            {
+                                // Check if any of the other instruction steps already has a target with this name
+                                // (This will happen when 2+ new steps are created with identical new targets at the same time)
+                                target = recipe.Instructions.Steps.Where(s => s.Target?.Name != null && string.Equals(s.Target.Name.ToLower(), Targets[i].ToLower())).FirstOrDefault()?.Target;
+                            }
+                            if (target == null)
+                            {
+                                // If it doesn't yet exist then add this as a new item
+                                var newItem = new RecipeStepTargetItem() { Name = Targets[i] };
+                                target = new RecipeStepTarget { Item = newItem };
+                            }
+                            recipeStep.Target = target;
+
+                        }
+
+                        recipeStep.PostText = PostTexts[i];
+
+                        _context.Update(recipeStep);
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RecipeExists(recipe.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            if (returnToRecipe)
+            {
+                return RedirectToAction(nameof(Edit), new { id = id });
+            }
+            else
+            {
+                return RedirectToAction(nameof(EditInstructions), new { id = id });
+            }
+        }
+
+        // GET: Recipes/AddInstructionStep/5
+        public IActionResult AddInstructionStep(int? recipe_id)
+        {
+            if (recipe_id == null)
+            {
+                return NotFound();
+            }
+
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Get actual recipe from database
+            var recipe = _context.Recipes.Where(r => r.Id == recipe_id)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                .FirstOrDefault();
+
+            var order = recipe.Instructions.Steps.Count > 0 ? recipe.Instructions.Steps.Max(s => s.Order) + 1 : 1;
+            recipe.Instructions.Steps.Add(new RecipeStep() { Order = order });
+            _context.Update(recipe);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(EditInstructions), new { id = recipe_id });
+        }
+
         // GET: Recipes/Delete/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
@@ -308,6 +537,45 @@ namespace FoodPlanner.Controllers
             return _context.Recipes.Any(e => e.Id == id);
         }
 
+        private Recipe GetDatabaseRecipe(int? id)
+        {
+            return _context.Recipes
+                .Include(r => r.Ingredients)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.ProductType)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Action)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Target)
+                            .ThenInclude(t => t.Ingredient)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Target)
+                            .ThenInclude(t => t.Item)
+                .FirstOrDefault(m => m.Id == id);
+        }
+        
+        private async Task<Recipe> GetDatabaseRecipeAsync(int? id)
+        {
+            return await _context.Recipes
+                .Include(r => r.Ingredients)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(p => p.ProductType)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Action)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Target)
+                            .ThenInclude(t => t.Ingredient)
+                .Include(r => r.Instructions)
+                    .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.Target)
+                            .ThenInclude(t => t.Item)
+                .FirstOrDefaultAsync(m => m.Id == id);
+        }
 
         // GET: FoodPlans/DeleteIngredient/5
         public IActionResult DeleteIngredient(int? recipe_id, int? recipe_ingredient_id, bool? edit)

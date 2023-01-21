@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using FoodPlanner.Services;
+using FoodPlanner.Areas.Identity;
 
 namespace FoodPlanner
 {

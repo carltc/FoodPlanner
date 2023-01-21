@@ -1,0 +1,54 @@
+﻿@model FoodPlanner.Models.Recipe
+
+@{
+    ViewData["Title"] = "Edit Recipe Instructions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container flistPage">
+    <form asp-action="EditInstructions">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <div style="display: flow-root;">
+            <div style="float: left; text-align: left;">
+                <button type="submit" name="SaveAction" value="SaveAndReturn" class="btn dark btn-alternative">Save and Return</button>
+            </div>
+            <div style="float: right;">
+                <button type="submit" name="SaveAction" value="Return" class="btn dark btn-coffee">Return to Recipe</button>
+            </div>
+        </div>
+        <hr />
+        <h4>Edit Recipe Instructions</h4>
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <div class="btn btn-secondary" id="previousRecipeStepButton" onclick="PreviousInstructionsStep()"><</div>
+            </div>
+            <div class="col-8">
+
+                <div id="InstructionsContainers">
+                    @foreach (var recipeStep in Model.Instructions.Steps)
+                    {
+                        await Html.RenderPartialAsync("EditStep", recipeStep);
+                    }
+                </div>
+
+                <div class="form-group" style="width: 100%; text-align: center;">
+                    <input type="submit" name="SaveAction" value="Save" class="nav-link navbar-link btn btn-primary" />
+                </div>
+
+            </div>
+            <div class="col-2">
+                <div class="btn btn-secondary" id="nextRecipeStepButton" onclick="NextInstructionsStep()">></div>
+            </div>
+        </div>
+        <div class="row">
+            <button type="submit" name="SaveAction" value="AddInstructionStep" class="btn btn-primary">Add New Step</button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

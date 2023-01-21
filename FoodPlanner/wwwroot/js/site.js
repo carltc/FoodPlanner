@@ -79,6 +79,50 @@ function addIngredient() {
     IL.appendChild(newRow);
 }
 
+function NextInstructionsStep() {
+
+    var instructionsContainer = document.getElementById('InstructionsContainers');
+    var instructionsContainers = instructionsContainer.getElementsByClassName('InstructionContainer');
+
+    for (i = 0; i < instructionsContainers.length - 1; i++) {
+        if (instructionsContainers[i].style.display != "none") {
+
+            if (i < instructionsContainers.length - 1) {
+                instructionsContainers[i].style.display = "none";
+                instructionsContainers[i + 1].style.display = "";
+                return;
+            }
+        }
+    }
+
+    if (instructionsContainers.length > 0) {
+        // if nothing has been opened then open up the last one
+        instructionsContainers[instructionsContainers.length - 1].style.display = "";
+    }
+}
+
+function PreviousInstructionsStep() {
+
+    var instructionsContainer = document.getElementById('InstructionsContainers');
+    var instructionsContainers = instructionsContainer.getElementsByClassName('InstructionContainer');
+
+    for (i = instructionsContainers.length - 1; i >= 0; i--) {
+        if (instructionsContainers[i].style.display != "none") {
+
+            if (i > 0) {
+                instructionsContainers[i].style.display = "none";
+                instructionsContainers[i - 1].style.display = "";
+                return;
+            }
+        }
+    }
+
+    if (instructionsContainers.length > 0) {
+        // if nothing has been opened then open up the first one
+        instructionsContainers[0].style.display = "";
+    }
+}
+
 function listSearch(searchInput,listBody,listCategoryClass,listRowClass,searchableElementType) {
     // Declare variables
     var input, filter, ul, cl, li, a, b, c, i, j, k, txtValue;

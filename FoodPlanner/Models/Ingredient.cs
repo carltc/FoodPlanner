@@ -1,4 +1,5 @@
 ﻿using FoodPlanner.Classes;
+using FoodPlanner.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace FoodPlanner.Models
 {
-    public class Ingredient : ShopItem
+    public class Ingredient : ShopItem, IRecipeStepTarget
     {
         public int RecipeId { get; set; }
         public Recipe Recipe { get; set; }
+
+        public string Category => Product.Category?.Name;
 
         public Ingredient()
         {
