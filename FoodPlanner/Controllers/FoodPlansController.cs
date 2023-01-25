@@ -283,7 +283,6 @@ namespace FoodPlanner.Controllers
                         var product = _context.Products.Where(p => p.Id == ProductIds[i]).Include(p => p.ProductType).FirstOrDefault();
                         var foodPlanProduct = new FoodPlanProduct()
                         {
-                            Name = $"{product.Name} {product.ProductType.Name}",
                             ProductId = product.Id,
                             Product = product,
                             FoodPlanId = fullFoodPlan.Id,

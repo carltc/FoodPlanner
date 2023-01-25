@@ -10,7 +10,7 @@ namespace FoodPlanner.Models
     public class ShopItem
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name => Product.FullName;
         public int ProductId { get; set; }
         public Product Product { get; set; }
         public double Quantity { get; set; }

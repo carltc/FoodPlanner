@@ -7,7 +7,7 @@ namespace FoodPlanner.Interfaces
 {
     public interface IRecipeStepTarget
     {
-        public string Name { get; set; }
+        public string Name { get; }
 
         public string Category { get; }
     }

@@ -38,14 +38,8 @@ namespace FoodPlanner.Controllers
                 return NotFound();
             }
 
-            var recipe = await _context.Recipes
-                .Include(r => r.Ingredients)
-                    .ThenInclude(i => i.Product)
-                        .ThenInclude(p => p.ProductType)
-                .Include(r => r.Cuisine)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var recipe = await GetDatabaseRecipeAsync(id);
+
             if (recipe == null)
             {
                 return NotFound();
@@ -105,7 +99,6 @@ namespace FoodPlanner.Controllers
                         var product = _context.Products.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
                         var ingredient = new Ingredient()
                         {
-                            Name = product.Name,
                             ProductId = product.Id,
                             Quantity = Quantities[i],
                             Unit = Units[i]
@@ -172,6 +165,7 @@ namespace FoodPlanner.Controllers
             var cuisines = _context.Cuisines
                 .ToList();
             ViewData["Cuisines"] = cuisines;
+            ViewData["Ingredients"] = recipe.Ingredients.ToList();
 
             return View(recipe);
         }
@@ -238,7 +232,6 @@ namespace FoodPlanner.Controllers
                             var product = _context.Products.Where(p => p.Id == ProductIds[i]).FirstOrDefault();
                             var ingredient = new Ingredient()
                             {
-                                Name = product.Name,
                                 ProductId = product.Id,
                                 Quantity = Quantities[i],
                                 Unit = Units[i]
@@ -339,6 +332,7 @@ namespace FoodPlanner.Controllers
             ViewData["Targets"] = recipeTargets;
 
             ViewData["Actions"] = _context.RecipeStepActions.ToList();
+            ViewData["Ingredients"] = recipe.Ingredients.ToList();
 
             return View(recipe);
         }
@@ -348,7 +342,7 @@ namespace FoodPlanner.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditInstructions(int id, string SaveAction, List<int> StepIds, List<int> Orders, List<string> PreTexts, List<string> Actions, List<string> MidTexts, List<string> Targets, List<string> PostTexts)
+        public async Task<IActionResult> EditInstructions(int id, string SaveAction, List<int> StepIds, List<int> Orders, List<string> Texts)
         {
             // Get the current user
             var user = GetCurrentUserAsync().Result;
@@ -400,49 +394,7 @@ namespace FoodPlanner.Controllers
                         var recipeStep = recipe.Instructions.Steps.First(s => s.Id == StepIds[i]);
 
                         recipeStep.Order = Orders[i];
-                        recipeStep.PreText = PreTexts[i];
-
-                        if (Actions[i] != null)
-                        {
-                            // See if there is an existing action with this value already
-                            var action = _context.RecipeStepActions.FirstOrDefault(rsa => rsa.Name != null && string.Equals(rsa.Name.ToLower(), Actions[i].ToLower()));
-                            if (action == null)
-                            {
-                                // Check if any of the other instruction steps already has an action with this name
-                                // (This will happen when 2+ new steps are created with identical new actions at the same time)
-                                action = recipe.Instructions.Steps.Where(s => s.Action?.Name != null && string.Equals(s.Action.Name.ToLower(), Actions[i].ToLower())).FirstOrDefault()?.Action;
-                            }
-                            if (action == null)
-                            {
-                                // Otherwise make a new action
-                                action = new RecipeStepAction() { Name = Actions[i] };
-                            }
-                            recipeStep.Action = action;
-                        }
-
-                        recipeStep.MidText = MidTexts[i];
-
-                        if (Targets[i] != null)
-                        {
-                            // See if there is an existing target with this value already
-                            var target = _context.RecipeStepTargets.ToList().FirstOrDefault(rst => rst.Name != null && string.Equals(rst.Name.ToLower(), Targets[i].ToLower()));
-                            if (target == null)
-                            {
-                                // Check if any of the other instruction steps already has a target with this name
-                                // (This will happen when 2+ new steps are created with identical new targets at the same time)
-                                target = recipe.Instructions.Steps.Where(s => s.Target?.Name != null && string.Equals(s.Target.Name.ToLower(), Targets[i].ToLower())).FirstOrDefault()?.Target;
-                            }
-                            if (target == null)
-                            {
-                                // If it doesn't yet exist then add this as a new item
-                                var newItem = new RecipeStepTargetItem() { Name = Targets[i] };
-                                target = new RecipeStepTarget { Item = newItem };
-                            }
-                            recipeStep.Target = target;
-
-                        }
-
-                        recipeStep.PostText = PostTexts[i];
+                        recipeStep.Text = Texts[i];
 
                         _context.Update(recipeStep);
                     }
@@ -545,15 +497,6 @@ namespace FoodPlanner.Controllers
                         .ThenInclude(p => p.ProductType)
                 .Include(r => r.Instructions)
                     .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Action)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Target)
-                            .ThenInclude(t => t.Ingredient)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Target)
-                            .ThenInclude(t => t.Item)
                 .FirstOrDefault(m => m.Id == id);
         }
         
@@ -565,15 +508,6 @@ namespace FoodPlanner.Controllers
                         .ThenInclude(p => p.ProductType)
                 .Include(r => r.Instructions)
                     .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Action)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Target)
-                            .ThenInclude(t => t.Ingredient)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                        .ThenInclude(s => s.Target)
-                            .ThenInclude(t => t.Item)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 

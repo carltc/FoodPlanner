@@ -12,15 +12,7 @@ namespace FoodPlanner.Models
 
         public int Order { get; set; }
 
-        public string PreText { get; set; }
-
-        public RecipeStepAction Action { get; set; }
-
-        public string MidText { get; set; }
-
-        public RecipeStepTarget Target { get; set; }
-
-        public string PostText { get; set; }
+        public string Text { get; set; }
 
     }
 }

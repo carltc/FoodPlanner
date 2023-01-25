@@ -1,0 +1,18 @@
+﻿@using FoodPlanner.Interfaces 
+
+@model FoodPlanner.Models.Ingredient
+
+<span class="box" style="margin: 0px 5px 0px 5px;">
+	<a class="button" href="#popup-@Model.Id">@Model.Product.ProductType.Name</a>
+</span>
+
+<div id="popup-@Model.Id" class="overlay">
+    <div class="popup">
+        <h2>@Model.Name</h2>
+        <a class="close" href="#">&times;</a>
+        <div class="content">
+            @Model.Quantity @Model.Unit
+        </div>
+    </div>
+</div>
+

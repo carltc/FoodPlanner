@@ -1,4 +1,6 @@
-﻿@model FoodPlanner.Models.Recipe
+﻿@using System.Text.RegularExpressions 
+
+@model FoodPlanner.Models.Recipe
 
 @{
     ViewData["Title"] = "Edit Recipe";
@@ -17,6 +19,7 @@
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
+                <input id="RecipeIngredients" type="hidden" value="@System.Text.Json.JsonSerializer.Serialize(ViewBag.Ingredients)" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />
@@ -30,13 +33,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="AddedBy" class="control-label"></label>
+                    <label asp-for="Portions" class="control-label"></label>
                     <input asp-for="AddedBy" class="form-control" readonly="readonly" />
                     <span asp-validation-for="AddedBy" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Cuisine" class="control-label"></label>
+                    <label asp-for="AddedBy" class="control-label"></label>
                     <div class="row" id="CuisineRow">
                         <div class="col-8" id="CuisineDropdown">
                             <select name="CuisineId" class="form-control selectpicker" data-live-search="true">
@@ -110,14 +113,45 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label">Instructions</label>
+                    <label class="control-label">Instructions:</label>
                     @if (Model.Instructions != null)
                     {
-                        <div class="container">
+                        <div class="container" style="margin-bottom: 5px;">
+
                             @foreach (var recipeStep in Model.Instructions.Steps)
                             {
-                                <div class="row">
-                                    @recipeStep.PreText @recipeStep.Action?.Name @recipeStep.MidText @recipeStep.Target?.Name @recipeStep.PostText
+                                <div class="row" style="margin: 3px;">
+                                    <div class="col-2">
+
+                                        @recipeStep.Order .
+
+                                    </div>
+                                    <div class="col-10">
+                                        @{
+                                            string formattedText = recipeStep.Text;
+                                            string pattern = @"""([\w\s]+)""";
+                                            Regex rg = new Regex(pattern);
+
+                                            MatchCollection matchedIngredients = rg.Matches(recipeStep.Text);
+                                            for (int count = 0; count < matchedIngredients.Count; count++)
+                                            {
+                                                var matchedIngredientText = matchedIngredients[count].Value;
+                                                var matchedIngredient = matchedIngredients[count].Groups[1].Value;
+
+                                                var split = formattedText.Split(matchedIngredientText);
+
+                                                @split[0]
+
+                                                formattedText = split[1];
+
+                                                var ingredient = Model.Ingredients.Find(i => i.Name == matchedIngredient);
+
+                                                await Html.RenderPartialAsync("IngredientHighlight", ingredient);
+                                            }
+
+                                            @formattedText
+                                        }
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -137,26 +171,26 @@
                     <span asp-validation-for="RecipeSource" class="text-danger"></span>
                 </div>
 
-                <div class="row">
-                    <div class="form-group col">
-                        <i style="padding-left: 50px;"></i>
-                        <a class="btn btn-primary" asp-controller="Products" asp-action="Create">Create New Ingredient</a>
-                    </div>
+                <div class="form-group">
+                    <i style="padding-left: 50px;"></i>
+                    <a class="btn btn-primary" asp-controller="Products" asp-action="Create">Create New Ingredient</a>
                 </div>
 
                 <hr />
 
-                @foreach (var ingredient in Model.Ingredients)
-                {
-                    <div class="row">
-                        <div class="col-11">
-                            @Html.DisplayFor(i => ingredient)
+                <div class="form-group">
+                    @foreach (var ingredient in Model.Ingredients)
+                    {
+                        <div class="row" id="IngredientRow-@ingredient.Id">
+                            <div class="col-11">
+                                @Html.DisplayFor(i => ingredient)
+                            </div>
+                            <div class="col-1">
+                                <a asp-action="DeleteIngredient" asp-route-recipe_id="@Model.Id" asp-route-recipe_ingredient_id="@ingredient.Id" asp-route-edit="true"><i class="far fa-times-circle"></i></a>
+                            </div>
                         </div>
-                        <div class="col-1">
-                            <a asp-action="DeleteIngredient" asp-route-recipe_id="@Model.Id" asp-route-recipe_ingredient_id="@ingredient.Id" asp-route-edit="true"><i class="far fa-times-circle"></i></a>
-                        </div>
-                    </div>
-                }
+                    }
+                </div>
 
                 <div class="form-group" style="width: 100%; text-align: center;">
                     <input type="submit" value="Save" class="nav-link navbar-link btn btn-primary" />
@@ -165,8 +199,8 @@
         </div>
     </div>
     <hr />
-    <div class="row">
-        <div class="col-12" style="text-align: right;">
+    <div>
+        <div style="text-align: right;">
             <a class="nav-link navbar-link dark btn-danger" asp-action="Delete" asp-route-id="@Model.Id" onclick="return confirm('Are you sure you want to delete this?')"><b>Delete</b></a>
         </div>
     </div>

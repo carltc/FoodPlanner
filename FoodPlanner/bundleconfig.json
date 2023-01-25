@@ -4,6 +4,7 @@
         "inputFiles": [
             "wwwroot/css/foodplans.css",
             "wwwroot/css/homepage.css",
+            "wwwroot/css/popup.css",
             "wwwroot/css/products.css",
             "wwwroot/css/recipes.css",
             "wwwroot/css/shoppinglists.css",

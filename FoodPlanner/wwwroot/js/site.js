@@ -3,6 +3,10 @@
 
 // Write your JavaScript code.
 
+{
+    NextInstructionsStep();
+}
+
 
 function ToggleShopItem(shopItemId, unitString) {
     $.get("/ShoppingLists/ToggleShopItem?product_id=" + shopItemId + "&unitString=" + unitString, function (data) {
@@ -121,6 +125,56 @@ function PreviousInstructionsStep() {
         // if nothing has been opened then open up the first one
         instructionsContainers[0].style.display = "";
     }
+}
+
+function InstructionTextChanged(instructionElement) {
+
+    var t = instructionElement.value;
+
+    t = FormatInstructionText(t);
+
+    console.log(t);
+
+    instructionElement.value = t;
+}
+
+function FormatInstructionText(inputText) {
+
+    var ingredientsRaw = document.getElementById('RecipeIngredients').value;
+    var ingredients = eval('(' + ingredientsRaw + ')');
+
+    var outputText = inputText;
+
+    for (i = 0; i < ingredients.length; i++) {
+
+        var ingredient = ingredients[i];
+        var regex = new RegExp('[^"]' + ingredient.Name + '[^"]', "gi");
+        outputText = outputText.replace(regex, ' "' + ingredient.Name + '" ');
+
+    }
+
+    return outputText;
+}
+
+function IngredientHighlight(element) {
+
+    var ingredientsRaw = document.getElementById('RecipeIngredients').value;
+    var ingredients = eval('(' + ingredientsRaw + ')');
+
+    for (i = 0; i < ingredients.length; i++) {
+
+        var ingredient = ingredients[i];
+
+        if (ingredient.Name == element.innerText) {
+            console.log("Found ingredient: " + ingredient.Name);
+
+
+
+            break;
+        }
+
+    }
+
 }
 
 function listSearch(searchInput,listBody,listCategoryClass,listRowClass,searchableElementType) {

@@ -72,7 +72,6 @@ namespace FoodPlanner.Classes
                     // create a new shop item of this product type to contain all of them
                     var newShopItem = new ShopItem()
                     {
-                        Name = exampleShopItem.Name,
                         ProductId = exampleShopItem.ProductId,
                         Product = exampleShopItem.Product,
                         Unit = unit,
