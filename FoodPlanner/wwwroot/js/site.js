@@ -1,12 +1,6 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
-// Write your JavaScript code.
-
-{
-    NextInstructionsStep();
-}
-
 
 function ToggleShopItem(shopItemId, unitString) {
     $.get("/ShoppingLists/ToggleShopItem?product_id=" + shopItemId + "&unitString=" + unitString, function (data) {
@@ -81,100 +75,6 @@ function addIngredient() {
     var IR = document.getElementsByName('IngredientRow')[0];
     var newRow = IR.cloneNode(true);
     IL.appendChild(newRow);
-}
-
-function NextInstructionsStep() {
-
-    var instructionsContainer = document.getElementById('InstructionsContainers');
-    var instructionsContainers = instructionsContainer.getElementsByClassName('InstructionContainer');
-
-    for (i = 0; i < instructionsContainers.length - 1; i++) {
-        if (instructionsContainers[i].style.display != "none") {
-
-            if (i < instructionsContainers.length - 1) {
-                instructionsContainers[i].style.display = "none";
-                instructionsContainers[i + 1].style.display = "";
-                return;
-            }
-        }
-    }
-
-    if (instructionsContainers.length > 0) {
-        // if nothing has been opened then open up the last one
-        instructionsContainers[instructionsContainers.length - 1].style.display = "";
-    }
-}
-
-function PreviousInstructionsStep() {
-
-    var instructionsContainer = document.getElementById('InstructionsContainers');
-    var instructionsContainers = instructionsContainer.getElementsByClassName('InstructionContainer');
-
-    for (i = instructionsContainers.length - 1; i >= 0; i--) {
-        if (instructionsContainers[i].style.display != "none") {
-
-            if (i > 0) {
-                instructionsContainers[i].style.display = "none";
-                instructionsContainers[i - 1].style.display = "";
-                return;
-            }
-        }
-    }
-
-    if (instructionsContainers.length > 0) {
-        // if nothing has been opened then open up the first one
-        instructionsContainers[0].style.display = "";
-    }
-}
-
-function InstructionTextChanged(instructionElement) {
-
-    var t = instructionElement.value;
-
-    t = FormatInstructionText(t);
-
-    console.log(t);
-
-    instructionElement.value = t;
-}
-
-function FormatInstructionText(inputText) {
-
-    var ingredientsRaw = document.getElementById('RecipeIngredients').value;
-    var ingredients = eval('(' + ingredientsRaw + ')');
-
-    var outputText = inputText;
-
-    for (i = 0; i < ingredients.length; i++) {
-
-        var ingredient = ingredients[i];
-        var regex = new RegExp('[^"]' + ingredient.Name + '[^"]', "gi");
-        outputText = outputText.replace(regex, ' "' + ingredient.Name + '" ');
-
-    }
-
-    return outputText;
-}
-
-function IngredientHighlight(element) {
-
-    var ingredientsRaw = document.getElementById('RecipeIngredients').value;
-    var ingredients = eval('(' + ingredientsRaw + ')');
-
-    for (i = 0; i < ingredients.length; i++) {
-
-        var ingredient = ingredients[i];
-
-        if (ingredient.Name == element.innerText) {
-            console.log("Found ingredient: " + ingredient.Name);
-
-
-
-            break;
-        }
-
-    }
-
 }
 
 function listSearch(searchInput,listBody,listCategoryClass,listRowClass,searchableElementType) {

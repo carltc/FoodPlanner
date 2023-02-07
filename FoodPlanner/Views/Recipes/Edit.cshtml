@@ -1,4 +1,4 @@
-﻿@using System.Text.RegularExpressions 
+﻿@using System.Text.RegularExpressions
 
 @model FoodPlanner.Models.Recipe
 
@@ -6,6 +6,8 @@
     ViewData["Title"] = "Edit Recipe";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<script src="~/js/recipeInstructions.js" asp-append-version="true"></script>
 
 <div class="container flistPage">
     <p style="text-align:right;">
@@ -113,20 +115,41 @@
                 </div>
 
                 <div class="form-group">
+                    @foreach (var ingredient in Model.Ingredients)
+                    {
+                        <div id="IngredientRow-@ingredient.Id" style="display: flex; margin-bottom: 5px; border-width: 1px; border-style: solid; padding: 5px;">
+                            <div style="width: 90%; margin: 0px;">
+                                @Html.DisplayFor(i => ingredient)
+                            </div>
+                            <div style="width: 10%; margin: auto;">
+                                <a asp-action="DeleteIngredient" asp-route-recipe_id="@Model.Id" asp-route-recipe_ingredient_id="@ingredient.Id" asp-route-edit="true"><i class="far fa-times-circle"></i></a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <i style="padding-left: 50px;"></i>
+                    <a class="btn btn-primary" asp-controller="Products" asp-action="Create">Create New Ingredient</a>
+                </div>
+
+                <hr />
+
+                <div class="form-group">
                     <label class="control-label">Instructions:</label>
                     @if (Model.Instructions != null)
                     {
-                        <div class="container" style="margin-bottom: 5px;">
+                        <div style="margin-bottom: 20px;">
 
                             @foreach (var recipeStep in Model.Instructions.Steps)
                             {
-                                <div class="row" style="margin: 3px;">
-                                    <div class="col-2">
+                                <div style="margin: 3px; display: flex;">
+                                    <div style="width: 20%;">
 
                                         @recipeStep.Order .
 
                                     </div>
-                                    <div class="col-10">
+                                    <div style="width: 80%;">
                                         @{
                                             string formattedText = recipeStep.Text;
                                             string pattern = @"""([\w\s]+)""";
@@ -165,31 +188,12 @@
                     }
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label">Source</label>
-                    <input asp-for="RecipeSource" class="form-control" />
-                    <span asp-validation-for="RecipeSource" class="text-danger"></span>
-                </div>
-
-                <div class="form-group">
-                    <i style="padding-left: 50px;"></i>
-                    <a class="btn btn-primary" asp-controller="Products" asp-action="Create">Create New Ingredient</a>
-                </div>
-
                 <hr />
 
                 <div class="form-group">
-                    @foreach (var ingredient in Model.Ingredients)
-                    {
-                        <div class="row" id="IngredientRow-@ingredient.Id">
-                            <div class="col-11">
-                                @Html.DisplayFor(i => ingredient)
-                            </div>
-                            <div class="col-1">
-                                <a asp-action="DeleteIngredient" asp-route-recipe_id="@Model.Id" asp-route-recipe_ingredient_id="@ingredient.Id" asp-route-edit="true"><i class="far fa-times-circle"></i></a>
-                            </div>
-                        </div>
-                    }
+                    <label class="control-label">Source</label>
+                    <input asp-for="RecipeSource" class="form-control" placeholder="enter name/description of the source that this recipe came from" />
+                    <span asp-validation-for="RecipeSource" class="text-danger"></span>
                 </div>
 
                 <div class="form-group" style="width: 100%; text-align: center;">

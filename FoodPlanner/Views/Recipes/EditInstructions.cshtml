@@ -5,6 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="~/js/recipeInstructions.js" asp-append-version="true"></script>
+
 <div class="container flistPage">
     <form asp-action="EditInstructions">
         <input type="hidden" name="id" value="@Model.Id" />
@@ -53,4 +55,10 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    {
+        NextInstructionsStep();
+    }
+</script>
 

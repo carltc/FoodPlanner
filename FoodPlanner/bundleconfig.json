@@ -14,7 +14,8 @@
     {
         "outputFileName": "wwwroot/js/site.min.js",
         "inputFiles": [
-            "wwwroot/js/site.js"
+            "wwwroot/js/site.js",
+            "wwwroot/js/recipeInstructions.js"
         ],
         "minify": {
             "enabled": true,
