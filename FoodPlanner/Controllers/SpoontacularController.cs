@@ -78,7 +78,7 @@ namespace FoodPlanner.Controllers
             return View();
         }
 
-        public IActionResult AddRecipe(string Name, int Servings, string Cuisine, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units, string previousSearchQuery = null)
+        public IActionResult AddRecipe(string Name, int Servings, string Cuisine, List<string> Names, List<string> Aisles, List<float> Amounts, List<string> Units, List<int> StepNumbers, List<string> StepTexts, string previousSearchQuery = null)
         {
             if (!String.IsNullOrWhiteSpace(Name))
             {
@@ -104,6 +104,25 @@ namespace FoodPlanner.Controllers
                 if (_context.Cuisines.Where(c => c.Name == Cuisine).Any())
                 {
                     newRecipe.Cuisine = _context.Cuisines.Where(c => c.Name == Cuisine).FirstOrDefault();
+                }
+
+                // Add the instructions
+                if (StepNumbers != null && StepTexts != null && StepNumbers.Count == StepTexts.Count)
+                {
+                    RecipeInstructions recipeInstructions = new RecipeInstructions();
+
+                    for (int i = 0; i < StepNumbers.Count; i++)
+                    {
+                        RecipeStep newStep = new RecipeStep()
+                        {
+                            Order = StepNumbers[i],
+                            Text = StepTexts[i]
+                        };
+
+                        recipeInstructions.Steps.Add(newStep);
+                    }
+
+                    newRecipe.Instructions = recipeInstructions;
                 }
 
                 // Get the current user

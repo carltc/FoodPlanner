@@ -136,48 +136,13 @@
                 <hr />
 
                 <div class="form-group">
+
                     <label class="control-label">Instructions:</label>
+
                     @if (Model.Instructions != null)
                     {
-                        <div style="margin-bottom: 20px;">
+                        @Html.DisplayFor(model => model.Instructions)
 
-                            @foreach (var recipeStep in Model.Instructions.Steps)
-                            {
-                                <div style="margin: 3px; display: flex;">
-                                    <div style="width: 20%;">
-
-                                        @recipeStep.Order .
-
-                                    </div>
-                                    <div style="width: 80%;">
-                                        @{
-                                            string formattedText = recipeStep.Text;
-                                            string pattern = @"""([\w\s]+)""";
-                                            Regex rg = new Regex(pattern);
-
-                                            MatchCollection matchedIngredients = rg.Matches(recipeStep.Text);
-                                            for (int count = 0; count < matchedIngredients.Count; count++)
-                                            {
-                                                var matchedIngredientText = matchedIngredients[count].Value;
-                                                var matchedIngredient = matchedIngredients[count].Groups[1].Value;
-
-                                                var split = formattedText.Split(matchedIngredientText);
-
-                                                @split[0]
-
-                                                formattedText = split[1];
-
-                                                var ingredient = Model.Ingredients.Find(i => i.Name == matchedIngredient);
-
-                                                await Html.RenderPartialAsync("IngredientHighlight", ingredient);
-                                            }
-
-                                            @formattedText
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        </div>
                         <a class="btn dark btn-coffee" asp-action="EditInstructions" asp-route-id="@Model.Id">Edit Instructions</a>
                     }
                     else

@@ -33,7 +33,7 @@
                             var matchedIngredientText = matchedIngredients[count].Value;
                             var matchedIngredient = matchedIngredients[count].Groups[1].Value;
 
-                            var split = formattedText.Split(matchedIngredientText);
+                            var split = formattedText.Split(matchedIngredientText, 2);
 
                             @split[0]
 
@@ -44,7 +44,18 @@
                                 var ingredients = (List<Ingredient>)ViewBag.Ingredients;
                                 var ingredient = ingredients.Find(i => i.Name == matchedIngredient);
 
-                                await Html.RenderPartialAsync("IngredientHighlight", ingredient);
+                                if (ingredient == null)
+                                {
+                                    @matchedIngredient
+                                }
+                                else
+                                {
+                                    await Html.RenderPartialAsync("IngredientHighlight", ingredient);
+                                }
+                            }
+                            else
+                            {
+                                @matchedIngredient
                             }
                         }
 

@@ -68,9 +68,13 @@ function FormatInstructionText(inputText) {
     for (i = 0; i < ingredients.length; i++) {
 
         var ingredient = ingredients[i];
-        var regex = new RegExp('[^"]' + ingredient.Name + '[^"]', "gi");
-        outputText = outputText.replace(regex, ' "' + ingredient.Name + '" ');
+        var regex = new RegExp('([^"]\\s*)(' + ingredient.Name + ')(\\s*[^"\\w])', "gi");
 
+        var result = outputText.replace(regex, function (match, group1, group2, group3) {
+            return group1 + '"' + group2 + '"' + group3;
+        });
+
+        outputText = result;
     }
 
     return outputText;
