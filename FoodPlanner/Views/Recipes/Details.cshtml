@@ -7,9 +7,12 @@
 
 <div class="container flistPage">
     <div style="display: flow-root;">
-        <div style="float: left; text-align: left;">
-            <a class="btn dark btn-alternative" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-        </div>
+        @if (Model.AddedBy == User.Identity.Name)
+        {
+            <div style="float: left; text-align: left;">
+                <a class="btn dark btn-alternative" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            </div>
+        }
         <div style="float: right;">
             <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
         </div>

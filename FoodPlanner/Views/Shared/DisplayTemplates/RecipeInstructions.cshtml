@@ -10,6 +10,11 @@
 
         @foreach (var recipeStep in Model.Steps)
         {
+            if (string.IsNullOrEmpty(recipeStep.Text))
+            {
+                continue;
+            }
+
             <div style="margin: 3px; display: flex;">
                 <div style="width: 20%;">
 
