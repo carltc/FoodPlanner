@@ -7,6 +7,8 @@
     var recipe = (OnlineRecipe)ViewBag.Recipe;
 }
 
+<script src="~/js/recipeInstructions.js" asp-append-version="true"></script>
+
 <div class="container flistPage">
     <p style="text-align:right;">
         @if (ViewData.ContainsKey("PreviousSearchQuery"))
@@ -88,8 +90,11 @@
 
             }
         </div>
-        
+
         <div class="table form-group">
+
+            <input id="RecipeIngredients" type="hidden" value="@System.Text.Json.JsonSerializer.Serialize(recipe.extendedIngredients)" />
+
             @{
                 var instructions = (OnlineInstructions)recipe.analyzedInstructions.FirstOrDefault();
             }
@@ -102,7 +107,7 @@
                             <input id="Step_Number" name="StepNumbers" class="ui-autocomplete-input" type="text" value="@step.number" autocomplete="on" style="padding: 5px; width: 100%;" />
                         </div>
                         <div class="col-10" style="padding: 5px;">
-                            <input id="Step_Text" name="StepTexts" class="ui-autocomplete-input" type="text" value="@step.step" autocomplete="on" style="padding: 5px; width: 100%;" />
+                            <input id="Step_Text" name="StepTexts" class="ui-autocomplete-input stepTextInput" type="text" value="@step.step" autocomplete="on" style="padding: 5px; width: 100%;" />
                         </div>
                     </div>
                 }
@@ -135,6 +140,14 @@
             $('#Category_Name').autocomplete({
                 source: '/Products/GetCategories'
             });
+
+            // When document has loaded then run a InstructionTextFormat on the instructions
+            var stepTextInputs = document.getElementsByClassName('stepTextInput');
+            for (var i = 0; i < stepTextInputs.length; i++) {
+                var stepTextInput = stepTextInputs[i];
+                InstructionTextChanged(stepTextInput);
+            }
+
         });
     </script>
 }

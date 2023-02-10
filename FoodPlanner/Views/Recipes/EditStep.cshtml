@@ -9,14 +9,12 @@
         </div>
     </div>
     <div class="row">
-        @*<input id="Instruction-@Model.Id-TextBox" type="text" oninput="InstructionTextChanged(this)" />*@
         <textarea name="Texts" id="Instruction-@Model.Id-TextBox" type="text" oninput="InstructionTextChanged(this)" style="width: 100%; min-height: 200px;" value="@Model.Text" onload="InstructionTextChanged(this)">@Model.Text</textarea>
     </div>
     <div class="row">
         <div class="col">
             <input type="hidden" name="StepIds" value="@Model.Id" />
             <input type="hidden" name="Orders" value="@Model.Order" />
-            @*<input name="PreTexts" type="Text" class="form-control" value="@Model.PreText" />*@
         </div>
     </div>
 </div>

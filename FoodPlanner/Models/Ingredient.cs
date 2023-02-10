@@ -16,6 +16,10 @@ namespace FoodPlanner.Models
 
         public string Category => Product.Category?.Name;
 
+        //public List<RecipeStep> RecipeSteps { get; set; }
+        [JsonIgnore]
+        public List<RecipeStepIngredient> RecipeStepIngredients { get; set; }
+
         public Ingredient()
         {
 

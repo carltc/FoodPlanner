@@ -1,0 +1,87 @@
+﻿@using FoodPlanner.Interfaces
+@using System.Text.RegularExpressions
+
+@model FoodPlanner.Models.RecipeStep
+
+<div class="container InstructionContainer" style="display: none" id="StepContainer-@Model.Id">
+
+    <div class="row">
+        <div class="col">
+            <h1>Step @Model.Order</h1>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row" style="display: block;">
+        @{
+            //var sentenceRegexPattern = @"[!|.|?]+";
+            var sentences = Regex.Split(Model.Text, @"(?<=[\.!\?])\s+");
+            //var sentences = Model.Text.Split(sentenceRegexPattern);
+
+            @foreach (var sentence in sentences)
+            {
+                <div style="margin: 5px;">
+                    @{
+                        string formattedText = sentence;
+                        string pattern = @"""([\w\s]+)""";
+                        Regex rg = new Regex(pattern);
+
+                        MatchCollection matchedIngredients = rg.Matches(formattedText);
+                        for (int count = 0; count < matchedIngredients.Count; count++)
+                        {
+                            var matchedIngredientText = matchedIngredients[count].Value;
+                            var matchedIngredient = matchedIngredients[count].Groups[1].Value;
+
+                            var split = formattedText.Split(matchedIngredientText, 2);
+
+                            <span>
+                                @split[0]
+                            </span>
+
+                            formattedText = split[1];
+
+                            if (ViewBag.Ingredients != null)
+                            {
+                                var ingredients = (List<Ingredient>
+                                    )ViewBag.Ingredients;
+                                var ingredient = ingredients.Find(i => i.Name == matchedIngredient);
+
+                                if (ingredient == null)
+                                {
+                                    <span>
+                                        @matchedIngredient
+                                    </span>
+                                }
+                                else
+                                {
+                                    await Html.RenderPartialAsync("IngredientHighlight", ingredient);
+                                }
+                            }
+                            else
+                            {
+                                <span>
+                                    @matchedIngredient
+                                </span>
+                            }
+                        }
+
+                        <span>
+                            @formattedText
+                        </span>
+                    }
+                </div>
+            }
+        }
+        </div>
+
+    <hr />
+
+    <div class="row">
+        <div class="col">
+            @Html.DisplayFor(model => model.Ingredients)
+        </div>
+    </div>
+
+</div>
+

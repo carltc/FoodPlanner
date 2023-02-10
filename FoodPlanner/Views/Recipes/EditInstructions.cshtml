@@ -30,7 +30,7 @@
                 <input id="RecipeIngredients" type="hidden" value="@System.Text.Json.JsonSerializer.Serialize(ViewBag.Ingredients)" />
 
                 <div id="InstructionsContainers">
-                    @foreach (var recipeStep in Model.Instructions.Steps)
+                    @foreach (var recipeStep in Model.Instructions.Steps.OrderBy(s => s.Order))
                     {
                         await Html.RenderPartialAsync("EditStep", recipeStep);
                     }
@@ -58,7 +58,7 @@
 
 <script>
     {
-        NextInstructionsStep();
+        PreviousInstructionsStep();
     }
 </script>
 

@@ -50,6 +50,7 @@ function InstructionTextChanged(instructionElement) {
 
     var t = instructionElement.value;
 
+    console.log(t);
     t = FormatInstructionText(t);
 
     console.log(t);
@@ -67,8 +68,14 @@ function FormatInstructionText(inputText) {
 
     for (i = 0; i < ingredients.length; i++) {
 
-        var ingredient = ingredients[i];
-        var regex = new RegExp('([^"]\\s*)(' + ingredient.Name + ')(\\s*[^"\\w])', "gi");
+        var ingredientName = ingredients[i].Name;
+
+        if (ingredientName == null) {
+            ingredientName = ingredients[i].name;
+        }
+
+
+        var regex = new RegExp('([^"]\\s*)(' + ingredientName + ')(\\s*[^"\\w])', "gi");
 
         var result = outputText.replace(regex, function (match, group1, group2, group3) {
             return group1 + '"' + group2 + '"' + group3;

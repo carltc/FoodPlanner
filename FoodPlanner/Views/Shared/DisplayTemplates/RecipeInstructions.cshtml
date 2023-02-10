@@ -8,7 +8,7 @@
 {
     <div style="margin-bottom: 20px;">
 
-        @foreach (var recipeStep in Model.Steps)
+        @foreach (var recipeStep in Model.Steps.OrderBy(s => s.Order))
         {
             if (string.IsNullOrEmpty(recipeStep.Text))
             {

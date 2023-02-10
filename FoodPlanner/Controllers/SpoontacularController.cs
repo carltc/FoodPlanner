@@ -106,25 +106,6 @@ namespace FoodPlanner.Controllers
                     newRecipe.Cuisine = _context.Cuisines.Where(c => c.Name == Cuisine).FirstOrDefault();
                 }
 
-                // Add the instructions
-                if (StepNumbers != null && StepTexts != null && StepNumbers.Count == StepTexts.Count)
-                {
-                    RecipeInstructions recipeInstructions = new RecipeInstructions();
-
-                    for (int i = 0; i < StepNumbers.Count; i++)
-                    {
-                        RecipeStep newStep = new RecipeStep()
-                        {
-                            Order = StepNumbers[i],
-                            Text = StepTexts[i]
-                        };
-
-                        recipeInstructions.Steps.Add(newStep);
-                    }
-
-                    newRecipe.Instructions = recipeInstructions;
-                }
-
                 // Get the current user
                 var user = GetCurrentUserAsync().Result;
                 if (user != null)
@@ -132,6 +113,7 @@ namespace FoodPlanner.Controllers
                     newRecipe.AddedBy = user.UserName;
                 }
 
+                // Add the new ingredients
                 if (Names!= null && Units != null && Aisles != null)
                 {
                     if (Names.Count == Units.Count && Names.Count == Aisles.Count && Names.Count == Amounts.Count)
@@ -163,6 +145,26 @@ namespace FoodPlanner.Controllers
                             newRecipe.Ingredients.Add(newIngredient);
                         }
                     }
+                }
+
+                // Add the instructions (must be done after ingredients as it links step to ingredients)
+                if (StepNumbers != null && StepTexts != null && StepNumbers.Count == StepTexts.Count)
+                {
+                    RecipeInstructions recipeInstructions = new RecipeInstructions();
+
+                    for (int i = 0; i < StepNumbers.Count; i++)
+                    {
+                        RecipeStep newStep = new RecipeStep()
+                        {
+                            Order = StepNumbers[i],
+                            Text = StepTexts[i]
+                        };
+
+                        newStep.PopulateIngredients(newRecipe.Ingredients);
+                        recipeInstructions.Steps.Add(newStep);
+                    }
+
+                    newRecipe.Instructions = recipeInstructions;
                 }
 
                 _context.Add(newRecipe);

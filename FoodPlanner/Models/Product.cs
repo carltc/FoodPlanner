@@ -15,7 +15,7 @@ namespace FoodPlanner.Models
         public int ProductTypeId { get; set; }
         public ProductType ProductType { get; set; }
 
-        public string FullName => $"{Name} {ProductType.Name}".Trim();
+        public string FullName => $"{Name} {ProductType?.Name}".Trim();
 
         public Product()
         {

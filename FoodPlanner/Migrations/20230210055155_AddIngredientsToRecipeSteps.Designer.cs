@@ -4,14 +4,16 @@ using FoodPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FoodPlanner.Migrations
 {
     [DbContext(typeof(FoodPlannerContext))]
-    partial class FoodPlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20230210055155_AddIngredientsToRecipeSteps")]
+    partial class AddIngredientsToRecipeSteps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

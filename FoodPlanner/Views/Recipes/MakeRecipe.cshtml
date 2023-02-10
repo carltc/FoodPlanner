@@ -1,0 +1,42 @@
+﻿@model FoodPlanner.Models.Recipe
+
+@{
+    ViewData["Title"] = "Recipe Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/js/recipeInstructions.js" asp-append-version="true"></script>
+
+<div class="container flistPage">
+    <div style="display: flow-root;">
+        <div style="float: right;">
+            <a class="btn dark btn-coffee" asp-action="Index" style="width: 100px;">Back</a>
+        </div>
+    </div>
+    <hr />
+    <h4>Make <b>@Model.Name</b></h4>
+    <hr />
+
+    <div style="display: flow-root;">
+        <div style="float: left;">
+            <div class="btn btn-secondary" id="previousRecipeStepButton" onclick="PreviousInstructionsStep()">Previous Step</div>
+        </div>
+        <div style="float: right;">
+            <div class="btn btn-secondary" id="nextRecipeStepButton" onclick="NextInstructionsStep()">Next Step</div>
+        </div>
+    </div>
+
+    <div id="InstructionsContainers">
+        @foreach (var recipeStep in Model.Instructions.Steps.OrderBy(s => s.Order))
+        {
+            await Html.RenderPartialAsync("MakeStep", recipeStep);
+        }
+    </div>
+
+</div>
+
+<script>
+    {
+        PreviousInstructionsStep();
+    }
+</script>

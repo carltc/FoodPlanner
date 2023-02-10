@@ -49,6 +49,39 @@ namespace FoodPlanner.Controllers
             return View(recipe);
         }
 
+        // GET: Recipes/EditInstructions/5
+        public async Task<IActionResult> MakeRecipe(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            // Get the current user
+            var user = GetCurrentUserAsync().Result;
+            if (user == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var recipe = await GetDatabaseRecipeAsync(id);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            var recipeTargets = new List<IRecipeStepTarget>();
+            recipeTargets.AddRange(recipe.Ingredients.Cast<IRecipeStepTarget>());
+            recipeTargets.AddRange(_context.RecipeStepTargetItems.Cast<IRecipeStepTarget>());
+            ViewData["Targets"] = recipeTargets;
+
+            ViewData["Actions"] = _context.RecipeStepActions.ToList();
+            ViewData["Ingredients"] = recipe.Ingredients.ToList();
+
+            return View(recipe);
+        }
+
         // GET: Recipes/Create
         public IActionResult Create()
         {
@@ -370,10 +403,7 @@ namespace FoodPlanner.Controllers
             }
 
             // Get actual recipe from database
-            var recipe = _context.Recipes.Where(r => r.Id == id)
-                .Include(r => r.Instructions)
-                    .ThenInclude(i => i.Steps)
-                .FirstOrDefault();
+            var recipe = GetDatabaseRecipe(id);
 
             // Check if this user is allowed to edit this recipe.
             // Only recipes created by the user or administrator can be edited by the user.
@@ -396,6 +426,9 @@ namespace FoodPlanner.Controllers
 
                         recipeStep.Order = Orders[i];
                         recipeStep.Text = Texts[i];
+
+                        // Find out which ingredients are used in this step and add
+                        recipeStep.PopulateIngredients(recipe.Ingredients);
 
                         _context.Update(recipeStep);
                     }
@@ -498,6 +531,7 @@ namespace FoodPlanner.Controllers
                         .ThenInclude(p => p.ProductType)
                 .Include(r => r.Instructions)
                     .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.RecipeStepIngredients)
                 .FirstOrDefault(m => m.Id == id);
         }
         
@@ -509,6 +543,7 @@ namespace FoodPlanner.Controllers
                         .ThenInclude(p => p.ProductType)
                 .Include(r => r.Instructions)
                     .ThenInclude(i => i.Steps)
+                        .ThenInclude(s => s.RecipeStepIngredients)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
 

@@ -59,6 +59,19 @@ namespace FoodPlanner.Data
                 .HasOne<AppUser>(sc => sc.AppUser)
                 .WithMany(s => s.HouseholdUsers)
                 .HasForeignKey(sc => sc.AppUserId);
+
+            modelBuilder.Entity<RecipeStepIngredient>()
+                .HasKey(rsi => new { rsi.IngredientId, rsi.RecipeStepId });
+
+            modelBuilder.Entity<RecipeStepIngredient>()
+                .HasOne(rsi => rsi.RecipeStep)
+                .WithMany(rs => rs.RecipeStepIngredients)
+                .HasForeignKey(rsi => rsi.RecipeStepId);
+
+            modelBuilder.Entity<RecipeStepIngredient>()
+                .HasOne(rsi => rsi.Ingredient)
+                .WithMany(i => i.RecipeStepIngredients)
+                .HasForeignKey(rsi => rsi.IngredientId);
         }
     }
 }
