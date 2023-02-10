@@ -108,11 +108,16 @@ namespace FoodPlanner.Classes
                 var mappingDictionary = new Dictionary<string, Unit>()
             {
                 {"teaspoon", Unit.tsp },
+                {"teaspoons", Unit.tsp },
                 {"tablespoon", Unit.tbsp },
+                {"tablespoons", Unit.tbsp },
                 {"tbp", Unit.tbsp },
                 {"tbs", Unit.tbsp },
                 {"ounce", Unit.oz },
-                {"ounces", Unit.oz }
+                {"ounces", Unit.oz },
+                {"cups", Unit.cup },
+                {"cps", Unit.cup },
+                {"cp", Unit.cup }
             };
 
                 return mappingDictionary.ContainsKey(unitName) ? mappingDictionary[unitName] : Unit.unit;
