@@ -39,6 +39,7 @@ namespace FoodPlanner.Controllers
             }
 
             var recipe = await GetDatabaseRecipeAsync(id);
+            ViewBag.Ingredients = recipe.Ingredients;
 
             if (recipe == null)
             {
